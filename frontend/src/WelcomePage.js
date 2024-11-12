@@ -1,3 +1,4 @@
+// Import necessary modules and components from React and Material UI
 import React from "react";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
@@ -15,12 +16,14 @@ import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 
 const WelcomePage = () => {
+  // Function to handle Sign In button click
   const handleSignIn = () => {
-    window.location.href = "http://localhost:8000/login";
+    window.location.href = "http://localhost:8000/login"; // Redirects to login page
   };
 
   return (
     <Box bgcolor="#212121" color="#1db954" minHeight="100vh">
+      {/* Top navigation bar with application title and sign-in button */}
       <AppBar position="fixed" sx={{ bgcolor: "#1db954", zIndex: 1300 }}>
         <Toolbar>
           <Typography variant="h6" sx={{ flexGrow: 1, color: "black" }}>
@@ -36,8 +39,10 @@ const WelcomePage = () => {
         </Toolbar>
       </AppBar>
 
+      {/* Spacer to ensure content doesn't hide under fixed AppBar */}
       <Box sx={{ marginTop: "64px" }} />
 
+      {/* Main container for welcome message */}
       <Container maxWidth="lg" sx={{ py: 5, textAlign: "center" }}>
         <Typography variant="h3" gutterBottom sx={{ color: "#1db954" }}>
           Quizzify
@@ -48,6 +53,7 @@ const WelcomePage = () => {
         </Typography>
       </Container>
 
+      {/* Section to showcase features with image cards */}
       <Container maxWidth="lg" sx={{ py: 5 }}>
         <Typography
           variant="h4"
@@ -73,6 +79,7 @@ const WelcomePage = () => {
         </Grid>
       </Container>
 
+      {/* Footer with About Us, social media links, and copyright notice */}
       <Box
         sx={{
           py: 5,
@@ -88,6 +95,7 @@ const WelcomePage = () => {
         }}
       >
         <Container maxWidth="lg">
+          {/* Link to About Us section */}
           <Typography variant="h6" gutterBottom sx={{ color: "#1db954" }}>
             <Link href="#about" color="inherit" underline="hover">
               About Us
@@ -105,6 +113,7 @@ const WelcomePage = () => {
             with Spotify for a personalized quiz experience!
           </Typography>
 
+          {/* Social media icons */}
           <Box>
             <IconButton
               href="https://facebook.com"
@@ -129,6 +138,7 @@ const WelcomePage = () => {
             </IconButton>
           </Box>
 
+          {/* Copyright notice */}
           <Typography
             variant="caption"
             display="block"
