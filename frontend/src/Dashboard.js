@@ -1,5 +1,16 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import {
+  Container,
+  Typography,
+  Card,
+  CardContent,
+  CardMedia,
+  Button,
+  Avatar,
+  Box,
+  Grid,
+} from "@mui/material";
 
 const Dashboard = () => {
   const [userInfo, setUserInfo] = useState(null);
@@ -9,7 +20,6 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        // Fetch user info from the backend
         const response = await axios.get("http://localhost:8000/user_info", {
           withCredentials: true,
         });
@@ -27,7 +37,7 @@ const Dashboard = () => {
             withCredentials: true,
           }
         );
-        setPlaylists(response.data.items); // Assuming response has `items` array
+        setPlaylists(response.data.items);
       } catch (error) {
         console.error("Failed to fetch user playlists:", error);
       }
@@ -37,7 +47,6 @@ const Dashboard = () => {
     fetchUserPlaylists();
   }, []);
 
-  // Fetch preview URL of a specific track
   const fetchTrackPreview = async (trackId) => {
     try {
       const response = await axios.get(`http://localhost:8000/track_preview`, {
@@ -55,42 +64,68 @@ const Dashboard = () => {
   }
 
   return (
-    <div>
-      <h1>Welcome to your Dashboard, {userInfo.display_name}!</h1>
-      <p>Email: {userInfo.email}</p>
-      <p>Spotify ID: {userInfo.id}</p>
+    <Container maxWidth="md">
+      <Box textAlign="center" mt={5} mb={3}>
+        <Avatar
+          src={userInfo.images?.[0]?.url}
+          alt={userInfo.display_name}
+          sx={{ width: 100, height: 100, margin: "auto" }}
+        />
+        <Typography variant="h4" component="h1" gutterBottom>
+          Welcome, {userInfo.display_name}!
+        </Typography>
+        <Typography variant="body1">Email: {userInfo.email}</Typography>
+        <Typography variant="body1">Spotify ID: {userInfo.id}</Typography>
+      </Box>
 
-      {/* Display the user's playlists with artwork and details */}
-      <h2>Your Playlists:</h2>
-      <div>
+      <Typography variant="h5" component="h2" gutterBottom>
+        Your Playlists
+      </Typography>
+      <Grid container spacing={3}>
         {playlists.map((playlist) => (
-          <div key={playlist.id} style={{ marginBottom: "20px" }}>
-            {playlist.images[0]?.url && (
-              <img
-                src={playlist.images[0].url}
-                alt={`${playlist.name} cover`}
-                style={{ width: "100px", height: "100px", objectFit: "cover" }}
-              />
-            )}
-            <h3>{playlist.name}</h3>
-            <p>{playlist.description || "No description available."}</p>
-            <p>Total Tracks: {playlist.tracks.total}</p>
-          </div>
+          <Grid item xs={12} sm={6} md={4} key={playlist.id}>
+            <Card>
+              {playlist.images[0]?.url && (
+                <CardMedia
+                  component="img"
+                  height="140"
+                  image={playlist.images[1].url}
+                  alt={`${playlist.name} cover`}
+                />
+              )}
+              <CardContent>
+                <Typography variant="h6" component="h3">
+                  {playlist.name}
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  {playlist.description || "No description available."}
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  Total Tracks: {playlist.tracks.total}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
         ))}
-      </div>
+      </Grid>
 
-      {/* Button to play the preview of a specific track */}
-      <button onClick={() => fetchTrackPreview("2plbrEY59IikOBgBGLjaoe")}>
-        Play Preview
-      </button>
-
-      {/* Audio player for the preview */}
-      {previewUrl && (
-        <audio controls src={previewUrl}>
-          Your browser does not support the audio element.
-        </audio>
-      )}
-    </div>
+      <Box textAlign="center" mt={4}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => fetchTrackPreview("2plbrEY59IikOBgBGLjaoe")}
+        >
+          Play Preview
+        </Button>
+        {previewUrl && (
+          <Box mt={2}>
+            <audio controls src={previewUrl}>
+              Your browser does not support the audio element.
+            </audio>
+          </Box>
+        )}
+      </Box>
+    </Container>
   );
 };
 

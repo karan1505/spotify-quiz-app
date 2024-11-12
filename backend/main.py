@@ -21,7 +21,7 @@ app.add_middleware(
     allow_origins=["http://localhost:3000"],  # React frontend origin
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE"],  # Specify allowed methods
-    allow_headers=["*"],  # Allow all headers
+    allow_headers=["*"],  # Allow all headers 
 )
 
 # Path to the token cache file
