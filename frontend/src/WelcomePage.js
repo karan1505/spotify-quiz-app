@@ -1,4 +1,3 @@
-// Import necessary modules and components from React and Material UI
 import React from "react";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
@@ -14,16 +13,15 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import Link from "@mui/material/Link";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
-import config from "./config";  // Import config file
+import config from "./config";
 
 const WelcomePage = () => {
   const handleSignIn = () => {
-    window.location.href = `${config.BASE_URL}${config.LOGIN_URL}`;  // Use the URL from config
+    window.location.href = `${config.BASE_URL}${config.LOGIN_URL}`;
   };
 
   return (
     <Box bgcolor="#121212" color="#f1f1f1" minHeight="100vh">
-      {/* Top navigation bar with application title and sign-in button */}
       <AppBar position="fixed" sx={{ bgcolor: "#1db954", zIndex: 1300 }}>
         <Toolbar>
           <Typography variant="h6" sx={{ flexGrow: 1, color: "#ffffff" }}>
@@ -39,10 +37,8 @@ const WelcomePage = () => {
         </Toolbar>
       </AppBar>
 
-      {/* Spacer to ensure content doesn't hide under fixed AppBar */}
       <Box sx={{ marginTop: "64px" }} />
 
-      {/* Main container for welcome message */}
       <Container maxWidth="lg" sx={{ py: 5, textAlign: "center" }}>
         <Typography variant="h3" gutterBottom sx={{ color: "#1db954" }}>
           Quizzify
@@ -53,7 +49,6 @@ const WelcomePage = () => {
         </Typography>
       </Container>
 
-      {/* Section to showcase features with image cards */}
       <Container maxWidth="lg" sx={{ py: 5 }}>
         <Typography
           variant="h4"
@@ -79,7 +74,6 @@ const WelcomePage = () => {
         </Grid>
       </Container>
 
-      {/* Footer with About Us, social media links, and copyright notice */}
       <Box
         sx={{
           py: 5,
@@ -87,15 +81,9 @@ const WelcomePage = () => {
           color: "#ffffff",
           textAlign: "center",
           width: "100vw",
-          position: "relative",
-          left: "50%",
-          right: "50%",
-          marginLeft: "-50vw",
-          marginRight: "-50vw",
         }}
       >
         <Container maxWidth="lg">
-          {/* Link to About Us section */}
           <Typography variant="h6" gutterBottom sx={{ color: "#1db954" }}>
             <Link href="#about" color="inherit" underline="hover">
               About Us
@@ -113,7 +101,6 @@ const WelcomePage = () => {
             with Spotify for a personalized quiz experience!
           </Typography>
 
-          {/* Social media icons */}
           <Box>
             <IconButton
               href="https://facebook.com"
@@ -138,7 +125,6 @@ const WelcomePage = () => {
             </IconButton>
           </Box>
 
-          {/* Copyright notice */}
           <Typography
             variant="caption"
             display="block"
