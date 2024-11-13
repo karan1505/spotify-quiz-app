@@ -16,11 +16,12 @@ const Dashboard = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
   const [playlists, setPlaylists] = useState([]);
+  const [globalPlaylists, setGlobalPlaylists] = useState([]);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/user_info", {
+        const response = await axios.get("https://spotify-quiz-app-abuw.onrender.com/user_info", {
           withCredentials: true,
         });
         setUserInfo(response.data.user_info);
@@ -32,7 +33,7 @@ const Dashboard = () => {
     const fetchUserPlaylists = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/user_playlists`,
+          `https://spotify-quiz-app-abuw.onrender.com/user_playlists`,
           {
             withCredentials: true,
           }
@@ -43,13 +44,23 @@ const Dashboard = () => {
       }
     };
 
+    const fetchGlobalPlaylists = async () => {
+      try {
+        const response = await axios.get(`https://spotify-quiz-app-abuw.onrender.com/global-top-playlists`);
+        setGlobalPlaylists(response.data.global_top_playlists.slice(0, 3)); // Top 3 global playlists
+      } catch (error) {
+        console.error("Failed to fetch global playlists:", error);
+      }
+    };
+
     fetchUserInfo();
     fetchUserPlaylists();
+    fetchGlobalPlaylists();
   }, []);
 
   const fetchTrackPreview = async (trackId) => {
     try {
-      const response = await axios.get(`http://localhost:8000/track_preview`, {
+      const response = await axios.get(`https://spotify-quiz-app-abuw.onrender.com/track_preview`, {
         params: { track_id: trackId },
         withCredentials: true,
       });
@@ -79,6 +90,34 @@ const Dashboard = () => {
       </Box>
 
       <Typography variant="h5" component="h2" gutterBottom>
+        Top 3 Global Playlists
+      </Typography>
+      <Grid container spacing={3}>
+        {globalPlaylists.map((playlist) => (
+          <Grid item xs={12} sm={6} md={4} key={playlist.name}>
+            <Card>
+              {playlist.image && (
+                <CardMedia
+                  component="img"
+                  height="140"
+                  image={playlist.image}
+                  alt={`${playlist.name} cover`}
+                />
+              )}
+              <CardContent>
+                <Typography variant="h6" component="h3">
+                  {playlist.name}
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  {playlist.description || "No description available."}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+
+      <Typography variant="h5" component="h2" gutterBottom mt={4}>
         Your Playlists
       </Typography>
       <Grid container spacing={3}>

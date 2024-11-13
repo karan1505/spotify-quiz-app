@@ -124,3 +124,27 @@ async def user_playlists(request: Request):
         except Exception as e:
             # Handle potential errors from Spotify API
             raise HTTPException(status_code=500, detail=f"Error fetching playlists: {str(e)}")
+        
+@app.get("/global-top-playlists")
+async def global_top_playlists(request: Request):
+    access_token = request.cookies.get("access_token")
+    if not access_token:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    
+    sp = Spotify(auth=access_token)
+    
+    try:
+        # Fetch featured playlists (can be considered as global popular playlists)
+        featured_playlists = sp.featured_playlists(limit=10)  # Adjust limit as needed
+        playlists_data = [
+            {
+                "name": playlist["name"],
+                "description": playlist["description"],
+                "image": playlist["images"][0]["url"] if playlist["images"] else None,
+                "id": playlist["id"],
+            }
+            for playlist in featured_playlists["playlists"]["items"]
+        ]
+        return {"global_top_playlists": playlists_data}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching global top playlists: {str(e)}")

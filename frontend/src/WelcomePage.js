@@ -17,7 +17,7 @@ import Toolbar from "@mui/material/Toolbar";
 
 const WelcomePage = () => {
   const handleSignIn = () => {
-    window.location.href = "http://localhost:8000/login";
+    window.location.href = "https://spotify-quiz-app-abuw.onrender.com/login";
   };
 
   return (
