@@ -25,6 +25,9 @@ class Config:
     # Frontend CORS settings
     FRONTEND_ORIGIN = "https://spotify-quiz-app-frontend.onrender.com"
     
+    # Frontend Dashboard URL (Updated)
+    FRONTEND_DASHBOARD_URL = "https://spotify-quiz-app-frontend.onrender.com/dashboard"
+    
     # Other configurations
     MAX_PLAYLISTS = 10
     TRACK_PREVIEW_LIMIT = 10

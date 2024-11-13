@@ -11,7 +11,6 @@ import logging
 from datetime import datetime
 
 from config import Config  # Import Config from the new config.py
-from spotify_functions import execute_actions  # Import from spotify_functions
 
 # Load environment variables
 load_dotenv()
@@ -52,36 +51,48 @@ async def login():
 @app.get("/callback")
 async def callback(request: Request):
     code = request.query_params.get("code")
-    if code:
-        try:
-            if Config.CACHE_PATH.exists():
-                Config.CACHE_PATH.unlink()  # Clear the token cache before obtaining a new token
-            token_info = sp_oauth.get_access_token(code, as_dict=True)
-            access_token = token_info.get("access_token")
-            expires_at = token_info.get("expires_at")
+    if not code:
+        logging.error("No authorization code received in callback")
+        raise HTTPException(status_code=400, detail="Authorization code missing.")
+    
+    try:
+        # Clear the cache to prevent using an expired token
+        if Config.CACHE_PATH.exists():
+            Config.CACHE_PATH.unlink()
 
-            # Store access token with expiration details
-            sp = Spotify(auth=access_token)
-            user_info = sp.current_user()
+        # Get the access token using the code
+        token_info = sp_oauth.get_access_token(code, as_dict=True)
+        access_token = token_info.get("access_token")
+        expires_at = token_info.get("expires_at")
 
-            # Set the access token in an HttpOnly cookie
-            response = RedirectResponse("https://spotify-quiz-app-frontend.onrender.com/dashboard")
-            response.set_cookie(
-                key="access_token",
-                value=access_token,
-                httponly=True,
-                secure=Config.ENV == "production",  # Only use secure cookies in production
-                max_age=3600  # Optional: set expiration time
-            )
-            logging.info(f"User info fetched: {user_info}")
-            logging.info(f"Access token set in cookie, expires at {datetime.fromtimestamp(expires_at)}")
-            return response
-        except Exception as e:
-            logging.error(f"Error during callback: {str(e)}")
-            return JSONResponse({"error": "Authorization failed"}, status_code=400)
-    else:
-        logging.error("No code received in callback")
-        return JSONResponse({"error": "Authorization failed"}, status_code=400)
+        # Check if the access token is valid
+        if not access_token:
+            logging.error("Failed to retrieve access token.")
+            raise HTTPException(status_code=400, detail="Failed to retrieve access token.")
+        
+        # Store access token with expiration details
+        sp = Spotify(auth=access_token)
+        user_info = sp.current_user()
+
+        # Set the access token in an HttpOnly cookie with expiration time
+        response = RedirectResponse(Config.FRONTEND_DASHBOARD_URL)
+        response.set_cookie(
+            key="access_token",
+            value=access_token,
+            httponly=True,
+            secure=Config.ENV == "production",  # Only use secure cookies in production
+            max_age=3600  # Optional: set expiration time
+        )
+
+        # Log the success
+        logging.info(f"User info fetched successfully: {user_info}")
+        logging.info(f"Access token set in cookie, expires at {datetime.fromtimestamp(expires_at)}")
+
+        return response
+
+    except Exception as e:
+        logging.error(f"Error during callback: {str(e)}")
+        raise HTTPException(status_code=400, detail="Authorization failed")
 
 # Helper function to get Spotify client and refresh token if expired
 def get_spotify_client(access_token: str):
@@ -116,62 +127,3 @@ async def logout():
     response = JSONResponse({"message": "Logged out successfully"})
     response.delete_cookie("access_token")  # Remove access token cookie
     return response
-
-# Add the new endpoint for fetching track preview URLs
-@app.get("/track_preview")
-async def track_preview(track_id: str, request: Request):
-    access_token = request.cookies.get("access_token")
-    if not access_token:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    
-    sp = get_spotify_client(access_token)
-    try:
-        track = sp.track(track_id)
-        preview_url = track.get("preview_url")
-        if preview_url:
-            return {"preview_url": preview_url}
-        else:
-            return JSONResponse({"error": "No preview available for this track"}, status_code=404)
-    except Exception as e:
-        logging.error(f"Error fetching track preview: {str(e)}")
-        raise HTTPException(status_code=500, detail="Failed to fetch track preview")
-
-@app.get("/user_playlists")
-async def user_playlists(request: Request):
-    access_token = request.cookies.get("access_token")
-    if not access_token:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    
-    sp = get_spotify_client(access_token)
-
-    try:
-        playlists = sp.current_user_playlists(limit=Config.MAX_PLAYLISTS)  # Use Config.MAX_PLAYLISTS
-        return playlists  # Return the full JSON response from Spotify
-    except Exception as e:
-        logging.error(f"Error fetching playlists: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Error fetching playlists: {str(e)}")
-        
-@app.get("/global-top-playlists")
-async def global_top_playlists(request: Request):
-    access_token = request.cookies.get("access_token")
-    if not access_token:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    
-    sp = get_spotify_client(access_token)
-    
-    try:
-        # Fetch featured playlists (can be considered as global popular playlists)
-        featured_playlists = sp.featured_playlists(limit=Config.TRACK_PREVIEW_LIMIT)  # Use Config.TRACK_PREVIEW_LIMIT
-        playlists_data = [
-            {
-                "name": playlist["name"],
-                "description": playlist["description"],
-                "image": playlist["images"][0]["url"] if playlist["images"] else None,
-                "id": playlist["id"],
-            }
-            for playlist in featured_playlists["playlists"]["items"]
-        ]
-        return {"global_top_playlists": playlists_data}
-    except Exception as e:
-        logging.error(f"Error fetching global top playlists: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Error fetching global top playlists: {str(e)}")
