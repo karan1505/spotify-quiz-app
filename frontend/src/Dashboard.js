@@ -10,6 +10,7 @@ import {
   Avatar,
   Box,
   Grid,
+  CircularProgress,
 } from "@mui/material";
 
 const Dashboard = () => {
@@ -17,6 +18,7 @@ const Dashboard = () => {
   const [previewUrl, setPreviewUrl] = useState("");
   const [playlists, setPlaylists] = useState([]);
   const [globalPlaylists, setGlobalPlaylists] = useState([]);
+  const [loading, setLoading] = useState(true);  // New state for loading indicator
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -32,12 +34,9 @@ const Dashboard = () => {
 
     const fetchUserPlaylists = async () => {
       try {
-        const response = await axios.get(
-          `https://spotify-quiz-app-abuw.onrender.com/user_playlists`,
-          {
-            withCredentials: true,
-          }
-        );
+        const response = await axios.get("https://spotify-quiz-app-abuw.onrender.com/user_playlists", {
+          withCredentials: true,
+        });
         setPlaylists(response.data.items);
       } catch (error) {
         console.error("Failed to fetch user playlists:", error);
@@ -46,47 +45,58 @@ const Dashboard = () => {
 
     const fetchGlobalPlaylists = async () => {
       try {
-        const response = await axios.get(`https://spotify-quiz-app-abuw.onrender.com/global-top-playlists`);
-        setGlobalPlaylists(response.data.global_top_playlists.slice(0, 3)); // Top 3 global playlists
+        const response = await axios.get("https://spotify-quiz-app-abuw.onrender.com/global-top-playlists", {
+          withCredentials: true,
+        });
+        setGlobalPlaylists(response.data.global_top_playlists.slice(0, 3));
       } catch (error) {
         console.error("Failed to fetch global playlists:", error);
       }
     };
 
-    fetchUserInfo();
-    fetchUserPlaylists();
-    fetchGlobalPlaylists();
+    const fetchData = async () => {
+      await fetchUserInfo();
+      await fetchUserPlaylists();
+      await fetchGlobalPlaylists();
+      setLoading(false);  // Set loading to false after data is fetched
+    };
+
+    fetchData();
   }, []);
 
   const fetchTrackPreview = async (trackId) => {
     try {
-      const response = await axios.get(`https://spotify-quiz-app-abuw.onrender.com/track_preview`, {
+      const response = await axios.get("https://spotify-quiz-app-abuw.onrender.com/track_preview", {
         params: { track_id: trackId },
         withCredentials: true,
       });
-      setPreviewUrl(response.data.preview_url);
+      setPreviewUrl(response.data.preview_url || "");
     } catch (error) {
       console.error("Failed to fetch track preview:", error);
     }
   };
 
-  if (!userInfo) {
-    return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+        <CircularProgress />
+      </Box>
+    );
   }
 
   return (
     <Container maxWidth="md">
       <Box textAlign="center" mt={5} mb={3}>
         <Avatar
-          src={userInfo.images?.[0]?.url}
-          alt={userInfo.display_name}
+          src={userInfo?.images?.[0]?.url}
+          alt={userInfo?.display_name}
           sx={{ width: 100, height: 100, margin: "auto" }}
         />
         <Typography variant="h4" component="h1" gutterBottom>
-          Welcome, {userInfo.display_name}!
+          Welcome, {userInfo?.display_name}!
         </Typography>
-        <Typography variant="body1">Email: {userInfo.email}</Typography>
-        <Typography variant="body1">Spotify ID: {userInfo.id}</Typography>
+        <Typography variant="body1">Email: {userInfo?.email}</Typography>
+        <Typography variant="body1">Spotify ID: {userInfo?.id}</Typography>
       </Box>
 
       <Typography variant="h5" component="h2" gutterBottom>
@@ -128,7 +138,7 @@ const Dashboard = () => {
                 <CardMedia
                   component="img"
                   height="140"
-                  image={playlist.images[1].url}
+                  image={playlist.images[0].url}  // Ensure there's an image at index 0
                   alt={`${playlist.name} cover`}
                 />
               )}

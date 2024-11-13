@@ -69,7 +69,7 @@ async def callback(request: Request):
 # Endpoint to retrieve user information with access token
 @app.get("/user_info")
 async def user_info(request: Request):
-    access_token = request.cookies.get("access_token")  # Retrieve access token from cookies
+    access_token = request.cookies.get("access_token") # Retrieve access token from cookies
     if not access_token:
         raise HTTPException(status_code=401, detail="Unauthorized")
     
