@@ -8,6 +8,7 @@ from spotipy.oauth2 import SpotifyOAuth
 from dotenv import load_dotenv
 from pathlib import Path
 import logging
+from datetime import datetime
 
 from spotify_functions import execute_actions  # Import from spotify_functions
 
@@ -43,6 +44,9 @@ sp_oauth = SpotifyOAuth(
 # Redirect to Spotify login
 @app.get("/login")
 async def login():
+    # Clear cache file on login to avoid using the same access token
+    if CACHE_PATH.exists():
+        CACHE_PATH.unlink()
     auth_url = sp_oauth.get_authorize_url()
     return RedirectResponse(auth_url)
 
@@ -52,21 +56,27 @@ async def callback(request: Request):
     code = request.query_params.get("code")
     if code:
         try:
-            token_info = sp_oauth.get_access_token(code)
+            if CACHE_PATH.exists():
+                CACHE_PATH.unlink()  # Clear the token cache before obtaining a new token
+            token_info = sp_oauth.get_access_token(code, as_dict=True)
             access_token = token_info.get("access_token")
+            expires_at = token_info.get("expires_at")
+
+            # Store access token with expiration details
             sp = Spotify(auth=access_token)
             user_info = sp.current_user()
 
             # Set the access token in an HttpOnly cookie
             response = RedirectResponse("https://spotify-quiz-app-test.vercel.app/dashboard")
             response.set_cookie(
-                key="access_token", 
-                value=access_token, 
+                key="access_token",
+                value=access_token,
                 httponly=True,
                 secure=os.getenv("ENV") == "production",  # Only use secure cookies in production
                 max_age=3600  # Optional: set expiration time
             )
             logging.info(f"User info fetched: {user_info}")
+            logging.info(f"Access token set in cookie, expires at {datetime.fromtimestamp(expires_at)}")
             return response
         except Exception as e:
             logging.error(f"Error during callback: {str(e)}")
@@ -75,6 +85,16 @@ async def callback(request: Request):
         logging.error("No code received in callback")
         return JSONResponse({"error": "Authorization failed"}, status_code=400)
 
+# Helper function to get Spotify client and refresh token if expired
+def get_spotify_client(access_token: str):
+    token_info = sp_oauth.get_cached_token()
+    if token_info and token_info['expires_at'] < int(datetime.now().timestamp()):
+        logging.info("Token expired, refreshing...")
+        token_info = sp_oauth.refresh_access_token(token_info['refresh_token'])
+        access_token = token_info['access_token']
+    
+    return Spotify(auth=access_token)
+
 # Endpoint to retrieve user information with access token
 @app.get("/user_info")
 async def user_info(request: Request):
@@ -82,7 +102,7 @@ async def user_info(request: Request):
     if not access_token:
         raise HTTPException(status_code=401, detail="Unauthorized")
     
-    sp = Spotify(auth=access_token)
+    sp = get_spotify_client(access_token)
     try:
         user_info = sp.current_user()
         return {"user_info": user_info}
@@ -99,7 +119,6 @@ async def logout():
     response.delete_cookie("access_token")  # Remove access token cookie
     return response
 
-
 # Add the new endpoint for fetching track preview URLs
 @app.get("/track_preview")
 async def track_preview(track_id: str, request: Request):
@@ -107,7 +126,7 @@ async def track_preview(track_id: str, request: Request):
     if not access_token:
         raise HTTPException(status_code=401, detail="Unauthorized")
     
-    sp = Spotify(auth=access_token)
+    sp = get_spotify_client(access_token)
     try:
         track = sp.track(track_id)
         preview_url = track.get("preview_url")
@@ -125,7 +144,7 @@ async def user_playlists(request: Request):
     if not access_token:
         raise HTTPException(status_code=401, detail="Unauthorized")
     
-    sp = Spotify(auth=access_token)
+    sp = get_spotify_client(access_token)
 
     try:
         playlists = sp.current_user_playlists(limit=10)  # Adjust the limit as needed
@@ -140,7 +159,7 @@ async def global_top_playlists(request: Request):
     if not access_token:
         raise HTTPException(status_code=401, detail="Unauthorized")
     
-    sp = Spotify(auth=access_token)
+    sp = get_spotify_client(access_token)
     
     try:
         # Fetch featured playlists (can be considered as global popular playlists)
