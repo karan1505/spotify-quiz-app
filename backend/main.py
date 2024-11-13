@@ -59,6 +59,7 @@ async def callback(request: Request):
             value=access_token, 
             httponly=True,  # Make the cookie HttpOnly
             secure=True,  # Set to True for HTTPS
+            sameSite="None", #SameSite is turned off
             max_age=3600  # Optional: set expiration time
         )
         return response
