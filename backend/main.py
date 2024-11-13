@@ -25,7 +25,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[Config.FRONTEND_ORIGIN],  # Use Config.FRONTEND_ORIGIN
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE"],  # Specify allowed methods
+    #allow_methods=["GET", "POST", "PUT", "DELETE"],  # Specify allowed methods
+    allow_methods = ["*"],
     allow_headers=["*"],  # Allow all headers 
 )
 
@@ -81,6 +82,7 @@ async def callback(request: Request):
             value=access_token,
             httponly=True,
             secure=Config.ENV == "production",  # Only use secure cookies in production
+            samesite="None",  # Allows cross-origin cookies
             max_age=3600  # Optional: set expiration time
         )
 
