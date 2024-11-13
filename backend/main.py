@@ -7,6 +7,7 @@ from spotipy import Spotify
 from spotipy.oauth2 import SpotifyOAuth
 from dotenv import load_dotenv
 from pathlib import Path
+import logging
 
 from spotify_functions import execute_actions  # Import from spotify_functions
 
@@ -14,6 +15,9 @@ from spotify_functions import execute_actions  # Import from spotify_functions
 load_dotenv()
 
 app = FastAPI()
+
+# Enable logging
+logging.basicConfig(level=logging.INFO)
 
 # Allow requests from the frontend with CORS settings
 app.add_middleware(
@@ -47,28 +51,34 @@ async def login():
 async def callback(request: Request):
     code = request.query_params.get("code")
     if code:
-        token_info = sp_oauth.get_access_token(code)
-        access_token = token_info.get("access_token")
-        sp = Spotify(auth=access_token)
-        user_info = sp.current_user()
+        try:
+            token_info = sp_oauth.get_access_token(code)
+            access_token = token_info.get("access_token")
+            sp = Spotify(auth=access_token)
+            user_info = sp.current_user()
 
-        # Set the access token in an HttpOnly cookie
-        response = RedirectResponse("https://spotify-quiz-app-test.vercel.app/dashboard")
-        response.set_cookie(
-            key="access_token", 
-            value=access_token, 
-            httponly=True,  # Make the cookie HttpOnly
-            secure=True,  # Set to True for HTTPS
-            max_age=3600  # Optional: set expiration time
-        )
-        return response
+            # Set the access token in an HttpOnly cookie
+            response = RedirectResponse("https://spotify-quiz-app-test.vercel.app/dashboard")
+            response.set_cookie(
+                key="access_token", 
+                value=access_token, 
+                httponly=True,
+                secure=os.getenv("ENV") == "production",  # Only use secure cookies in production
+                max_age=3600  # Optional: set expiration time
+            )
+            logging.info(f"User info fetched: {user_info}")
+            return response
+        except Exception as e:
+            logging.error(f"Error during callback: {str(e)}")
+            return JSONResponse({"error": "Authorization failed"}, status_code=400)
     else:
+        logging.error("No code received in callback")
         return JSONResponse({"error": "Authorization failed"}, status_code=400)
 
 # Endpoint to retrieve user information with access token
 @app.get("/user_info")
 async def user_info(request: Request):
-    access_token = request.cookies.get("access_token") # Retrieve access token from cookies
+    access_token = request.cookies.get("access_token")  # Retrieve access token from cookies
     if not access_token:
         raise HTTPException(status_code=401, detail="Unauthorized")
     
@@ -77,6 +87,7 @@ async def user_info(request: Request):
         user_info = sp.current_user()
         return {"user_info": user_info}
     except Exception as e:
+        logging.error(f"Error fetching user info: {str(e)}")
         raise HTTPException(status_code=401, detail="Invalid token")
 
 # Logout endpoint
@@ -88,8 +99,6 @@ async def logout():
     response.delete_cookie("access_token")  # Remove access token cookie
     return response
 
-
-# main.py
 
 # Add the new endpoint for fetching track preview URLs
 @app.get("/track_preview")
@@ -107,23 +116,23 @@ async def track_preview(track_id: str, request: Request):
         else:
             return JSONResponse({"error": "No preview available for this track"}, status_code=404)
     except Exception as e:
+        logging.error(f"Error fetching track preview: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to fetch track preview")
 
 @app.get("/user_playlists")
 async def user_playlists(request: Request):
-        access_token = request.cookies.get("access_token")
-        if not access_token:
-            raise HTTPException(status_code=401, detail="Unauthorized")
-        
-        sp = Spotify(auth=access_token)
+    access_token = request.cookies.get("access_token")
+    if not access_token:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    
+    sp = Spotify(auth=access_token)
 
-        try:
-            # Fetch the user's playlists with the full data for each playlist
-            playlists = sp.current_user_playlists(limit=10)  # Adjust the limit as needed
-            return playlists  # Return the full JSON response from Spotify
-        except Exception as e:
-            # Handle potential errors from Spotify API
-            raise HTTPException(status_code=500, detail=f"Error fetching playlists: {str(e)}")
+    try:
+        playlists = sp.current_user_playlists(limit=10)  # Adjust the limit as needed
+        return playlists  # Return the full JSON response from Spotify
+    except Exception as e:
+        logging.error(f"Error fetching playlists: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error fetching playlists: {str(e)}")
         
 @app.get("/global-top-playlists")
 async def global_top_playlists(request: Request):
@@ -147,4 +156,5 @@ async def global_top_playlists(request: Request):
         ]
         return {"global_top_playlists": playlists_data}
     except Exception as e:
+        logging.error(f"Error fetching global top playlists: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error fetching global top playlists: {str(e)}")
