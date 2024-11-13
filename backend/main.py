@@ -99,8 +99,8 @@ def get_spotify_client(access_token: str):
 @app.get("/user_info")
 async def user_info(request: Request):
     access_token = request.cookies.get("access_token")  # Retrieve access token from cookies
-    # if not access_token:
-    #     raise HTTPException(status_code=401, detail="Unauthorized")
+    if not access_token:
+        raise HTTPException(status_code=401, detail="Unauthorized")
     
     sp = get_spotify_client(access_token)
     try:
