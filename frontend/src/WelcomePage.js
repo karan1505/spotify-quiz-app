@@ -16,22 +16,21 @@ import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 
 const WelcomePage = () => {
-  // Function to handle Sign In button click
   const handleSignIn = () => {
-    window.location.href = "http://localhost:8000/login"; // Redirects to login page
+    window.location.href = "http://localhost:8000/login";
   };
 
   return (
-    <Box bgcolor="#212121" color="#1db954" minHeight="100vh">
+    <Box bgcolor="#121212" color="#f1f1f1" minHeight="100vh">
       {/* Top navigation bar with application title and sign-in button */}
       <AppBar position="fixed" sx={{ bgcolor: "#1db954", zIndex: 1300 }}>
         <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1, color: "black" }}>
+          <Typography variant="h6" sx={{ flexGrow: 1, color: "#ffffff" }}>
             Quizzify
           </Typography>
           <Button
-            color="inherit"
-            sx={{ color: "black" }}
+            variant="outlined"
+            sx={{ color: "#ffffff", borderColor: "#ffffff" }}
             onClick={handleSignIn}
           >
             Sign In
@@ -47,7 +46,7 @@ const WelcomePage = () => {
         <Typography variant="h3" gutterBottom sx={{ color: "#1db954" }}>
           Quizzify
         </Typography>
-        <Typography variant="subtitle1" color="white" gutterBottom>
+        <Typography variant="subtitle1" color="textSecondary" gutterBottom>
           Test your music knowledge with personalized quizzes based on your
           Spotify history!
         </Typography>
@@ -66,12 +65,12 @@ const WelcomePage = () => {
         <Grid container spacing={4} justifyContent="center">
           {[1, 2, 3].map((i) => (
             <Grid item xs={12} sm={6} md={4} key={i}>
-              <Card>
+              <Card sx={{ bgcolor: "#2c2c2c", color: "#f1f1f1" }}>
                 <CardMedia
                   component="img"
                   height="200"
                   image={`https://plus.unsplash.com/premium_photo-1673697239909-e11521d1ba94?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8ZXZlbmluZ3xlbnwwfHwwfHx8MA%3D%3D+${i}`}
-                  alt={`Screenshot ${i}`}
+                  alt={`Feature ${i}`}
                 />
               </Card>
             </Grid>
@@ -83,8 +82,8 @@ const WelcomePage = () => {
       <Box
         sx={{
           py: 5,
-          bgcolor: "#f5deb3",
-          color: "black",
+          bgcolor: "#333333",
+          color: "#ffffff",
           textAlign: "center",
           width: "100vw",
           position: "relative",
@@ -118,21 +117,21 @@ const WelcomePage = () => {
             <IconButton
               href="https://facebook.com"
               target="_blank"
-              color="primary"
+              sx={{ color: "#1db954" }}
             >
               <FacebookIcon />
             </IconButton>
             <IconButton
               href="https://twitter.com"
               target="_blank"
-              color="primary"
+              sx={{ color: "#1db954" }}
             >
               <TwitterIcon />
             </IconButton>
             <IconButton
               href="https://instagram.com"
               target="_blank"
-              color="primary"
+              sx={{ color: "#1db954" }}
             >
               <InstagramIcon />
             </IconButton>
