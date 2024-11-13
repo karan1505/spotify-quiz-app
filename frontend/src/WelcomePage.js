@@ -14,10 +14,11 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import Link from "@mui/material/Link";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
+import config from "./config";  // Import config file
 
 const WelcomePage = () => {
   const handleSignIn = () => {
-    window.location.href = "https://spotify-quiz-app-abuw.onrender.com/login";
+    window.location.href = `${config.BASE_URL}${config.LOGIN_URL}`;  // Use the URL from config
   };
 
   return (

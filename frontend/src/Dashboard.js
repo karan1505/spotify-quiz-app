@@ -6,11 +6,11 @@ import {
   Card,
   CardContent,
   CardMedia,
-  Button,
   Avatar,
   Box,
   Grid,
 } from "@mui/material";
+import config from "./config";  // Import the configuration file
 
 const Dashboard = () => {
   const [userInfo, setUserInfo] = useState(null);
@@ -23,7 +23,7 @@ const Dashboard = () => {
 
     const fetchUserInfo = async () => {
       try {
-        const response = await axios.get("https://spotify-quiz-app-abuw.onrender.com/user_info");
+        const response = await axios.get(`${config.BASE_URL}${config.ENDPOINTS.USER_INFO}`);
         setUserInfo(response.data.user_info);
       } catch (error) {
         console.error("Failed to fetch user info:", error);
@@ -32,7 +32,7 @@ const Dashboard = () => {
 
     const fetchUserPlaylists = async () => {
       try {
-        const response = await axios.get("https://spotify-quiz-app-abuw.onrender.com/user_playlists");
+        const response = await axios.get(`${config.BASE_URL}${config.ENDPOINTS.USER_PLAYLISTS}`);
         setPlaylists(response.data.items);
       } catch (error) {
         console.error("Failed to fetch user playlists:", error);
@@ -41,7 +41,7 @@ const Dashboard = () => {
 
     const fetchGlobalPlaylists = async () => {
       try {
-        const response = await axios.get("https://spotify-quiz-app-abuw.onrender.com/global-top-playlists");
+        const response = await axios.get(`${config.BASE_URL}${config.ENDPOINTS.GLOBAL_PLAYLISTS}`);
         setGlobalPlaylists(response.data.global_top_playlists.slice(0, 3)); // Top 3 global playlists
       } catch (error) {
         console.error("Failed to fetch global playlists:", error);
@@ -55,7 +55,7 @@ const Dashboard = () => {
 
   const fetchTrackPreview = async (trackId) => {
     try {
-      const response = await axios.get("https://spotify-quiz-app-abuw.onrender.com/track_preview", {
+      const response = await axios.get(`${config.BASE_URL}${config.ENDPOINTS.TRACK_PREVIEW}`, {
         params: { track_id: trackId },
       });
       setPreviewUrl(response.data.preview_url);
