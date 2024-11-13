@@ -23,7 +23,7 @@ logging.basicConfig(level=logging.INFO)
 # Allow requests from the frontend with CORS settings
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://spotify-quiz-app-test.vercel.app"],  # React frontend origin
+    allow_origins=["https://spotify-quiz-app-frontend.onrender.com"],  # React frontend origin
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE"],  # Specify allowed methods
     allow_headers=["*"],  # Allow all headers 
@@ -67,7 +67,7 @@ async def callback(request: Request):
             user_info = sp.current_user()
 
             # Set the access token in an HttpOnly cookie
-            response = RedirectResponse("https://spotify-quiz-app-test.vercel.app/dashboard")
+            response = RedirectResponse("https://spotify-quiz-app-frontend.onrender.com/dashboard")
             response.set_cookie(
                 key="access_token",
                 value=access_token,
