@@ -47,7 +47,6 @@ async def login():
     auth_url = sp_oauth.get_authorize_url()
     return RedirectResponse(auth_url)
 
-'''
 # Spotify callback after user login
 @app.get("/callback")
 async def callback(request: Request):
@@ -82,58 +81,6 @@ async def callback(request: Request):
             value=access_token,
             httponly=True,
             secure=Config.ENV == "production",  # Only use secure cookies in production
-            max_age=3600  # Optional: set expiration time
-        )
-
-        # Log the success
-        logging.info(f"User info fetched successfully: {user_info}")
-        logging.info(f"Access token set in cookie, expires at {datetime.fromtimestamp(expires_at)}")
-
-        return response
-
-    except Exception as e:
-        logging.error(f"Error during callback: {str(e)}")
-        raise HTTPException(status_code=400, detail="Authorization failed")
-'''
-@app.get("/callback")
-async def callback(request: Request):
-    code = request.query_params.get("code")
-    if not code:
-        logging.error("No authorization code received in callback")
-        raise HTTPException(status_code=400, detail="Authorization code missing.")
-    
-    try:
-        # Determine if we're in a production environment on Render
-        is_render = os.getenv("RENDER_ENV") == "production"
-
-        # Clear the cache to prevent using an expired token
-        if Config.CACHE_PATH.exists():
-            Config.CACHE_PATH.unlink()
-
-        # Get the access token using the code
-        token_info = sp_oauth.get_access_token(code, as_dict=True)
-        access_token = token_info.get("access_token")
-        expires_at = token_info.get("expires_at")
-
-        # Check if the access token is valid
-        if not access_token:
-            logging.error("Failed to retrieve access token.")
-            raise HTTPException(status_code=400, detail="Failed to retrieve access token.")
-        
-        # Store access token with expiration details
-        sp = Spotify(auth=access_token)
-        user_info = sp.current_user()
-
-        # Use the frontend dashboard URL specified in Config
-        redirect_url = Config.FRONTEND_DASHBOARD_URL
-
-        # Set the access token in an HttpOnly cookie with expiration time
-        response = RedirectResponse(redirect_url)
-        response.set_cookie(
-            key="access_token",
-            value=access_token,
-            httponly=True,
-            secure=is_render,  # Only use secure cookies in production
             max_age=3600  # Optional: set expiration time
         )
 
