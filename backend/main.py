@@ -10,6 +10,7 @@ from pathlib import Path
 import logging
 from datetime import datetime
 
+from config import Config  # Import Config from the new config.py
 from spotify_functions import execute_actions  # Import from spotify_functions
 
 # Load environment variables
@@ -23,30 +24,27 @@ logging.basicConfig(level=logging.INFO)
 # Allow requests from the frontend with CORS settings
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://spotify-quiz-app-frontend.onrender.com"],  # React frontend origin
+    allow_origins=[Config.FRONTEND_ORIGIN],  # Use Config.FRONTEND_ORIGIN
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE"],  # Specify allowed methods
     allow_headers=["*"],  # Allow all headers 
 )
 
-# Path to the token cache file
-CACHE_PATH = Path("token_cache.json")
-
 # Spotify OAuth setup
 sp_oauth = SpotifyOAuth(
-    client_id=os.getenv("SPOTIFY_CLIENT_ID"),
-    client_secret=os.getenv("SPOTIFY_CLIENT_SECRET"),
-    redirect_uri=os.getenv("SPOTIFY_REDIRECT_URI"),
-    scope="user-library-read user-read-private user-read-email user-top-read user-follow-read playlist-modify-public user-read-playback-state user-modify-playback-state",
-    cache_path=str(CACHE_PATH)
+    client_id=Config.SPOTIFY_CLIENT_ID,
+    client_secret=Config.SPOTIFY_CLIENT_SECRET,
+    redirect_uri=Config.SPOTIFY_REDIRECT_URI,
+    scope=Config.SCOPE,
+    cache_path=str(Config.CACHE_PATH)
 )
 
 # Redirect to Spotify login
 @app.get("/login")
 async def login():
     # Clear cache file on login to avoid using the same access token
-    if CACHE_PATH.exists():
-        CACHE_PATH.unlink()
+    if Config.CACHE_PATH.exists():
+        Config.CACHE_PATH.unlink()
     auth_url = sp_oauth.get_authorize_url()
     return RedirectResponse(auth_url)
 
@@ -56,8 +54,8 @@ async def callback(request: Request):
     code = request.query_params.get("code")
     if code:
         try:
-            if CACHE_PATH.exists():
-                CACHE_PATH.unlink()  # Clear the token cache before obtaining a new token
+            if Config.CACHE_PATH.exists():
+                Config.CACHE_PATH.unlink()  # Clear the token cache before obtaining a new token
             token_info = sp_oauth.get_access_token(code, as_dict=True)
             access_token = token_info.get("access_token")
             expires_at = token_info.get("expires_at")
@@ -72,7 +70,7 @@ async def callback(request: Request):
                 key="access_token",
                 value=access_token,
                 httponly=True,
-                secure=os.getenv("ENV") == "production",  # Only use secure cookies in production
+                secure=Config.ENV == "production",  # Only use secure cookies in production
                 max_age=3600  # Optional: set expiration time
             )
             logging.info(f"User info fetched: {user_info}")
@@ -113,8 +111,8 @@ async def user_info(request: Request):
 # Logout endpoint
 @app.get("/logout")
 async def logout():
-    if CACHE_PATH.exists():
-        CACHE_PATH.unlink()
+    if Config.CACHE_PATH.exists():
+        Config.CACHE_PATH.unlink()
     response = JSONResponse({"message": "Logged out successfully"})
     response.delete_cookie("access_token")  # Remove access token cookie
     return response
@@ -147,7 +145,7 @@ async def user_playlists(request: Request):
     sp = get_spotify_client(access_token)
 
     try:
-        playlists = sp.current_user_playlists(limit=10)  # Adjust the limit as needed
+        playlists = sp.current_user_playlists(limit=Config.MAX_PLAYLISTS)  # Use Config.MAX_PLAYLISTS
         return playlists  # Return the full JSON response from Spotify
     except Exception as e:
         logging.error(f"Error fetching playlists: {str(e)}")
@@ -163,7 +161,7 @@ async def global_top_playlists(request: Request):
     
     try:
         # Fetch featured playlists (can be considered as global popular playlists)
-        featured_playlists = sp.featured_playlists(limit=10)  # Adjust limit as needed
+        featured_playlists = sp.featured_playlists(limit=Config.TRACK_PREVIEW_LIMIT)  # Use Config.TRACK_PREVIEW_LIMIT
         playlists_data = [
             {
                 "name": playlist["name"],
