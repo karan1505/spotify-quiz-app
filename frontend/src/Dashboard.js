@@ -1,22 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import {
-  Container,
-  Typography,
-  Card,
-  CardContent,
-  CardMedia,
-  Avatar,
-  Box,
-  Grid,
-} from "@mui/material";
+import { Container, Typography, Card, CardContent, CardMedia, Avatar, Box, Grid, Button } from "@mui/material";
 import config from "./config"; // Import the configuration file
+import { useNavigate } from "react-router-dom"; // Use useNavigate
 
 const Dashboard = () => {
   const [userInfo, setUserInfo] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState("");
   const [playlists, setPlaylists] = useState([]);
   const [globalPlaylists, setGlobalPlaylists] = useState([]);
+  const navigate = useNavigate(); // Use the navigate function
 
   useEffect(() => {
     axios.defaults.withCredentials = true; // Ensure cookies are sent with requests
@@ -37,7 +29,7 @@ const Dashboard = () => {
         const response = await axios.get(
           `${config.BASE_URL}${config.ENDPOINTS.USER_PLAYLISTS}`
         );
-        setPlaylists(response.data.items);
+        setPlaylists(response.data.items); // Set the playlists data
       } catch (error) {
         console.error("Failed to fetch user playlists:", error);
       }
@@ -55,24 +47,26 @@ const Dashboard = () => {
     };
 
     fetchUserInfo();
-    fetchUserPlaylists();
+    fetchUserPlaylists();  // Fetch user playlists
     fetchGlobalPlaylists();
   }, []);
 
-  const fetchTrackPreview = async (trackId) => {
+  // Function to sign out the user
+  const signOut = async () => {
     try {
-      const response = await axios.get(
-        `${config.BASE_URL}${config.ENDPOINTS.TRACK_PREVIEW}`,
-        {
-          params: { track_id: trackId },
+      const newWindow = window.open('https://accounts.spotify.com/en/logout', '_blank');
+      setTimeout(() => {
+        if (newWindow) {
+          newWindow.close();
         }
-      );
-      setPreviewUrl(response.data.preview_url);
+      },500);
+      // Redirect to the welcome page after logout
+      navigate("/");
     } catch (error) {
-      console.error("Failed to fetch track preview:", error);
+      console.error("Error during sign out:", error);
     }
-  };
-
+  }; 
+  
   if (!userInfo) {
     return <div>Loading...</div>;
   }
@@ -126,9 +120,7 @@ const Dashboard = () => {
               <CardMedia
                 component="img"
                 height="140"
-                image={
-                  playlist.images[0]?.url || "https://via.placeholder.com/140"
-                }
+                image={playlist.images[0]?.url || "https://via.placeholder.com/140"}
                 alt={playlist.name}
               />
               <CardContent>
@@ -141,6 +133,13 @@ const Dashboard = () => {
           </Grid>
         ))}
       </Grid>
+
+      {/* Sign out button */}
+      <Box textAlign="center" mt={5}>
+        <Button variant="contained" color="secondary" onClick={signOut}>
+          Sign Out
+        </Button>
+      </Box>
     </Container>
   );
 };

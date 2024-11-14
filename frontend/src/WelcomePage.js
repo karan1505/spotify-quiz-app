@@ -13,12 +13,15 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import Link from "@mui/material/Link";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
-import config from "./config";
+import config from "./config"; // Import the config file
 
 const WelcomePage = () => {
+  // Redirect to login endpoint for user authentication
   const handleSignIn = () => {
-    window.location.href = `${config.BASE_URL}${config.LOGIN_URL}`;
+    // Redirect to Spotify login
+    window.location.href = `${config.BASE_URL}/login`;
   };
+  
 
   return (
     <Box bgcolor="#121212" color="#f1f1f1" minHeight="100vh">

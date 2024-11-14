@@ -14,6 +14,7 @@ class Config:
 
     # Caching settings
     CACHE_PATH = Path("token_cache.json")
+    CACHE_PATH_FILE = Path(".cache")
 
     # OAuth scopes
     SCOPE = (
@@ -23,10 +24,8 @@ class Config:
     )
 
     # Frontend CORS settings
-    FRONTEND_ORIGIN = "https://spotify-quiz-app-frontend.onrender.com"
-    
-    # Frontend Dashboard URL (Updated)
-    FRONTEND_DASHBOARD_URL = "https://spotify-quiz-app-frontend.onrender.com/dashboard"
+    FRONTEND_ORIGIN = os.getenv("FRONTEND_ORIGIN")  # Now loads from .env
+    FRONTEND_DASHBOARD_URL = os.getenv("FRONTEND_DASHBOARD_URL")  # Now loads from .env
     
     # Other configurations
     MAX_PLAYLISTS = 10
