@@ -16,8 +16,7 @@ const Dashboard = () => {
     const fetchUserInfo = async () => {
       try {
         const response = axios.get(
-          "https://spotify-quiz-app-abuw.onrender.com/user_info",
-    { withCredentials: true }
+          "https://spotify-quiz-app-abuw.onrender.com/user_info"
         );
         setUserInfo(response.data.user_info);
       } catch (error) {
