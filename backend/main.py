@@ -23,9 +23,9 @@ logging.basicConfig(level=logging.INFO)
 # Allow requests from localhost frontend with CORS settings
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[Config.FRONTEND_ORIGIN],  # Frontend origin
+    allow_origins="https://spotify-quiz-app-frontend.onrender.com/",  # Frontend origin
     allow_credentials=True,                    # Allow cookies to be sent
-    allow_methods=["*"],                       # Allow all HTTP methods
+    allow_methods=["GET", "POST", "PUT", "DELETE"],  # Specify allowed methods
     allow_headers=["*"],                       # Allow all headers
 )
 
