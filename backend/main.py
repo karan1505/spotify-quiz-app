@@ -23,22 +23,20 @@ logging.basicConfig(level=logging.INFO)
 # Allow requests from localhost frontend with CORS settings
 app.add_middleware(
     CORSMiddleware,
-    allow_origins="https://spotify-quiz-app-frontend.onrender.com/",  # Frontend origin
-    allow_credentials=True,                    # Allow cookies to be sent
-    allow_methods=["GET", "POST", "PUT", "DELETE"],  # Specify allowed methods
-    allow_headers=["*"],                       # Allow all headers
+    allow_origins=["http://localhost:3000"],  # Frontend origin
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Spotify OAuth setup for localhost
 sp_oauth = SpotifyOAuth(
     client_id=Config.SPOTIFY_CLIENT_ID,
     client_secret=Config.SPOTIFY_CLIENT_SECRET,
-    redirect_uri=Config.SPOTIFY_REDIRECT_URI,  # Local callback URI
+    redirect_uri="http://localhost:8000/callback",
     scope=Config.SCOPE,
-    #cache_path=str(Config.CACHE_PATH)
 )
 
-# Redirect to Spotify login
 @app.get("/login")
 async def login():
     if Config.CACHE_PATH.exists():
@@ -48,7 +46,6 @@ async def login():
     auth_url = sp_oauth.get_authorize_url()
     return RedirectResponse(auth_url)
 
-# Spotify callback after user login
 @app.get("/callback")
 async def callback(request: Request):
     code = request.query_params.get("code")
@@ -57,32 +54,27 @@ async def callback(request: Request):
         raise HTTPException(status_code=400, detail="Authorization code missing.")
     
     try:
-        # Clear cache to prevent expired tokens
         if Config.CACHE_PATH.exists():
             Config.CACHE_PATH.unlink()
 
-        # Retrieve access token using authorization code
         token_info = sp_oauth.get_access_token(code, as_dict=True)
         access_token = token_info.get("access_token")
         expires_at = token_info.get("expires_at")
 
-        # Check if access token was retrieved successfully
         if not access_token:
             logging.error("Failed to retrieve access token.")
             raise HTTPException(status_code=400, detail="Failed to retrieve access token.")
         
-        # Set the access token in an HttpOnly cookie for local use
-        response = RedirectResponse(Config.FRONTEND_DASHBOARD_URL)  # Redirect to local dashboard
+        response = RedirectResponse("http://localhost:3000/dashboard")
         response.set_cookie(
             key="access_token",
             value=access_token,
             httponly=True,
-            secure=False,  # Not secure for localhost
-            samesite="Lax",  # Compatible with local setup
-            max_age=3600  # Optional: set expiration time
+            secure=False,
+            samesite="Lax",
+            max_age=3600
         )
 
-        # Log success
         logging.info(f"Access token set, expires at {datetime.fromtimestamp(expires_at)}")
 
         return response
@@ -91,7 +83,6 @@ async def callback(request: Request):
         logging.error(f"Error during callback: {str(e)}")
         raise HTTPException(status_code=400, detail="Authorization failed")
 
-# Function to retrieve Spotify client, refreshing token if expired
 def get_spotify_client(access_token: str):
     token_info = sp_oauth.get_cached_token()
     if token_info and token_info['expires_at'] < int(datetime.now().timestamp()):
@@ -101,10 +92,9 @@ def get_spotify_client(access_token: str):
     
     return Spotify(auth=access_token)
 
-# Endpoint to get user information with access token
 @app.get("/user_info")
 async def user_info(request: Request):
-    access_token = request.cookies.get("access_token")  # Access token from cookies
+    access_token = request.cookies.get("access_token")
     if not access_token:
         raise HTTPException(status_code=401, detail="Unauthorized")
     
@@ -116,55 +106,73 @@ async def user_info(request: Request):
         logging.error(f"Error fetching user info: {str(e)}")
         raise HTTPException(status_code=401, detail="Invalid token")
 
-
 @app.get("/logout")
 async def logout():
-    # Clear the cache file to prevent cached tokens from being reused
     if Config.CACHE_PATH.exists():
         Config.CACHE_PATH.unlink()
-
     if Config.CACHE_PATH_FILE.exists():
         os.remove(Config.CACHE_PATH_FILE)
     
-    # Reinitialize SpotifyOAuth to clear in-memory tokens if required
     global sp_oauth
     sp_oauth = SpotifyOAuth(
         client_id=Config.SPOTIFY_CLIENT_ID,
         client_secret=Config.SPOTIFY_CLIENT_SECRET,
-        redirect_uri=Config.SPOTIFY_REDIRECT_URI,  # Local callback URI
+        redirect_uri="http://localhost:8000/callback",
         scope=Config.SCOPE,
         cache_path=str(Config.CACHE_PATH)
     )
 
-    # Create a RedirectResponse and clear the access token cookie
-    response = RedirectResponse(url=Config.FRONTEND_ORIGIN, status_code=303)
-    response.delete_cookie("access_token")  # Remove the access token cookie
-
-    # Explicitly set cache headers to prevent any caching on this response
+    response = RedirectResponse(url="http://localhost:3000", status_code=303)
+    response.delete_cookie("access_token")
     response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
 
     return response
 
-
-
-
-# Endpoint to get user playlists
 @app.get("/user_playlists")
 async def user_playlists(request: Request):
-    access_token = request.cookies.get("access_token")  # Access token from cookies
+    access_token = request.cookies.get("access_token")
     if not access_token:
         raise HTTPException(status_code=401, detail="Unauthorized")
     
-    sp = get_spotify_client(access_token)  # Get Spotify client
-    
+    sp = get_spotify_client(access_token)
     try:
-        # Fetch user's playlists using the Spotify client
         playlists = sp.current_user_playlists()
-        
-        # Return the playlists data
         return {"items": playlists["items"]}
     except Exception as e:
         logging.error(f"Error fetching user playlists: {str(e)}")
         raise HTTPException(status_code=400, detail="Error fetching playlists")
+
+# New function to fetch a playlist by URL and return track previews
+@app.get("/fetch_playlist")
+async def fetch_playlist(request: Request, playlist_url: str):
+    access_token = request.cookies.get("access_token")
+    if not access_token:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    
+    sp = get_spotify_client(access_token)
+    try:
+        # Extract playlist ID from URL (assuming format 'https://open.spotify.com/playlist/{playlist_id}')
+        playlist_id = playlist_url.split('/')[-1].split('?')[0]
+        
+        # Fetch playlist details
+        playlist = sp.playlist(playlist_id)
+        
+        # Extract track names, artists, and preview URLs
+        tracks = []
+        for item in playlist['tracks']['items']:
+            track = item['track']
+            track_info = {
+                "name": track['name'],
+                "artist": ", ".join([artist['name'] for artist in track['artists']]),
+                "preview_url": track['preview_url'],
+                "album_cover": track['album']['images'][0]['url'] if track['album']['images'] else None
+            }
+            tracks.append(track_info)
+        
+        return {"playlist_name": playlist['name'], "tracks": tracks}
+
+    except Exception as e:
+        logging.error(f"Error fetching playlist: {str(e)}")
+        raise HTTPException(status_code=400, detail="Error fetching playlist")

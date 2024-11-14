@@ -1,23 +1,31 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Container, Typography, Card, CardContent, CardMedia, Avatar, Box, Grid, Button } from "@mui/material";
-import config from "./config"; // Import the configuration file
-import { useNavigate } from "react-router-dom"; // Use useNavigate
+import {
+  Container,
+  Typography,
+  Card,
+  CardContent,
+  CardMedia,
+  Avatar,
+  Box,
+  Grid,
+  Button,
+} from "@mui/material";
+import config from "./config";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [playlists, setPlaylists] = useState([]);
-  const [globalPlaylists, setGlobalPlaylists] = useState([]);
-  const navigate = useNavigate(); // Use the navigate function
+  const navigate = useNavigate();
 
   useEffect(() => {
-    axios.defaults.withCredentials = true; // Ensure cookies are sent with requests
+    axios.defaults.withCredentials = true;
 
     const fetchUserInfo = async () => {
       try {
-        const response = axios.get(
-          "https://spotify-quiz-app-abuw.onrender.com/user_info",
-    { withCredentials: true }
+        const response = await axios.get(
+          `${config.BASE_URL}${config.ENDPOINTS.USER_INFO}`
         );
         setUserInfo(response.data.user_info);
       } catch (error) {
@@ -30,44 +38,33 @@ const Dashboard = () => {
         const response = await axios.get(
           `${config.BASE_URL}${config.ENDPOINTS.USER_PLAYLISTS}`
         );
-        setPlaylists(response.data.items); // Set the playlists data
+        setPlaylists(response.data.items);
       } catch (error) {
         console.error("Failed to fetch user playlists:", error);
       }
     };
 
-    const fetchGlobalPlaylists = async () => {
-      try {
-        const response = await axios.get(
-          `${config.BASE_URL}${config.ENDPOINTS.GLOBAL_PLAYLISTS}`
-        );
-        setGlobalPlaylists(response.data.global_top_playlists.slice(0, 3)); // Top 3 global playlists
-      } catch (error) {
-        console.error("Failed to fetch global playlists:", error);
-      }
-    };
-
     fetchUserInfo();
-    fetchUserPlaylists();  // Fetch user playlists
-    fetchGlobalPlaylists();
+    fetchUserPlaylists();
   }, []);
 
-  // Function to sign out the user
   const signOut = async () => {
     try {
-      const newWindow = window.open('https://accounts.spotify.com/en/logout', '_blank');
+      const newWindow = window.open(
+        "https://accounts.spotify.com/en/logout",
+        "_blank"
+      );
       setTimeout(() => {
         if (newWindow) {
           newWindow.close();
         }
-      },500);
-      // Redirect to the welcome page after logout
+      }, 500);
       navigate("/");
     } catch (error) {
       console.error("Error during sign out:", error);
     }
-  }; 
-  
+  };
+
   if (!userInfo) {
     return <div>Loading...</div>;
   }
@@ -85,32 +82,72 @@ const Dashboard = () => {
         </Typography>
         <Typography variant="body1">Email: {userInfo.email}</Typography>
         <Typography variant="body1">Spotify ID: {userInfo.id}</Typography>
+        <Box mt={2}>
+          <Button variant="contained" color="secondary" onClick={signOut}>
+            Sign Out
+          </Button>
+        </Box>
       </Box>
 
-      <Typography variant="h5" component="h2" gutterBottom>
-        Top 3 Global Playlists
-      </Typography>
-      <Grid container spacing={3}>
-        {globalPlaylists.map((playlist) => (
-          <Grid item xs={12} md={4} key={playlist.id}>
-            <Card>
-              <CardMedia
-                component="img"
-                height="140"
-                image={playlist.image || "https://via.placeholder.com/140"}
-                alt={playlist.name}
-              />
-              <CardContent>
-                <Typography variant="h6">{playlist.name}</Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {playlist.description}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+      {/* Game Mode Card */}
+      <Box mt={5} mb={3}>
+        <Card
+          onClick={() => navigate("/gamemode1")}
+          sx={{
+            cursor: "pointer",
+            transition: "transform 0.2s",
+            "&:hover": {
+              transform: "scale(1.05)",
+            },
+          }}
+        >
+          <CardMedia
+            component="img"
+            height="140"
+            image="https://images.pexels.com/photos/1037999/pexels-photo-1037999.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" // Replace with actual image URL if available
+            alt="Game Mode 1"
+          />
+          <CardContent>
+            <Typography variant="h5" component="h2">
+              Can you guess the top songs of the week?
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Test your music knowledge and see if you can guess this week's top
+              hits!
+            </Typography>
+          </CardContent>
+        </Card>
+      </Box>
 
+      {/* Placeholder Coming Soon Card */}
+      <Box mt={5} mb={3}>
+        <Card
+          sx={{
+            cursor: "pointer",
+            transition: "transform 0.2s",
+            "&:hover": {
+              transform: "scale(1.05)",
+            },
+          }}
+        >
+          <CardMedia
+            component="img"
+            height="140"
+            image="https://earlsribpalace.com/wp-content/uploads/2019/07/coming-soon-store-placeholder-image.gif" // Replace with actual image URL if available
+            alt="Coming Soon"
+          />
+          <CardContent>
+            <Typography variant="h5" component="h2">
+              Coming Soon
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Stay tuned for more exciting challenges!
+            </Typography>
+          </CardContent>
+        </Card>
+      </Box>
+
+      {/* User Playlists */}
       <Typography variant="h5" component="h2" gutterBottom mt={5}>
         Your Playlists
       </Typography>
@@ -121,7 +158,9 @@ const Dashboard = () => {
               <CardMedia
                 component="img"
                 height="140"
-                image={playlist.images[0]?.url || "https://via.placeholder.com/140"}
+                image={
+                  playlist.images[0]?.url || "https://via.placeholder.com/140"
+                }
                 alt={playlist.name}
               />
               <CardContent>
@@ -134,13 +173,6 @@ const Dashboard = () => {
           </Grid>
         ))}
       </Grid>
-
-      {/* Sign out button */}
-      <Box textAlign="center" mt={5}>
-        <Button variant="contained" color="secondary" onClick={signOut}>
-          Sign Out
-        </Button>
-      </Box>
     </Container>
   );
 };

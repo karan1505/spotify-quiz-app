@@ -1,57 +1,55 @@
 import React from "react";
-import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Grid";
-import Card from "@mui/material/Card";
-import CardMedia from "@mui/material/CardMedia";
+import {
+  Container,
+  Box,
+  Button,
+  Typography,
+  Grid,
+  Card,
+  CardMedia,
+  CardContent,
+} from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import Link from "@mui/material/Link";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
 import config from "./config"; // Import the config file
 
 const WelcomePage = () => {
-  // Redirect to login endpoint for user authentication
   const handleSignIn = () => {
-    // Redirect to Spotify login
     document.cookie = "access_token=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
-    sessionStorage.clear();  // Clear session storage just to be sure
+    sessionStorage.clear();
     window.location.href = `${config.BASE_URL}/login`;
   };
-  
 
   return (
-    <Box bgcolor="#121212" color="#f1f1f1" minHeight="100vh">
-      <AppBar position="fixed" sx={{ bgcolor: "#1db954", zIndex: 1300 }}>
-        <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1, color: "#ffffff" }}>
-            Quizzify
-          </Typography>
-          <Button
-            variant="outlined"
-            sx={{ color: "#ffffff", borderColor: "#ffffff" }}
-            onClick={handleSignIn}
-          >
-            Sign In
-          </Button>
-        </Toolbar>
-      </AppBar>
-
-      <Box sx={{ marginTop: "64px" }} />
-
+    <Box minHeight="100vh" sx={{ backgroundColor: "#f9f9f9" }}>
       <Container maxWidth="lg" sx={{ py: 5, textAlign: "center" }}>
-        <Typography variant="h3" gutterBottom sx={{ color: "#1db954" }}>
+        <Typography variant="h3" gutterBottom sx={{ color: "#000000" }}>
           Quizzify
         </Typography>
         <Typography variant="subtitle1" color="textSecondary" gutterBottom>
           Test your music knowledge with personalized quizzes based on your
           Spotify history!
         </Typography>
+
+        <Box mt={3}>
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{
+              bgcolor: "#1e88e5", // Blue color to match Gamemode1
+              color: "#ffffff",
+              "&:hover": {
+                bgcolor: "#1565c0",
+              },
+            }}
+            onClick={handleSignIn}
+          >
+            Sign In
+          </Button>
+        </Box>
       </Container>
 
       <Container maxWidth="lg" sx={{ py: 5 }}>
@@ -59,37 +57,38 @@ const WelcomePage = () => {
           variant="h4"
           align="center"
           gutterBottom
-          sx={{ color: "#1db954" }}
+          sx={{ color: "#000000" }}
         >
-          Explore Our Features
+          Explore Our Gamemodes
         </Typography>
         <Grid container spacing={4} justifyContent="center">
           {[1, 2, 3].map((i) => (
             <Grid item xs={12} sm={6} md={4} key={i}>
-              <Card sx={{ bgcolor: "#2c2c2c", color: "#f1f1f1" }}>
+              <Card sx={{ bgcolor: "#ffffff", boxShadow: 2 }}>
                 <CardMedia
                   component="img"
                   height="200"
-                  image={`https://plus.unsplash.com/premium_photo-1673697239909-e11521d1ba94?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8ZXZlbmluZ3xlbnwwfHwwfHx8MA%3D%3D+${i}`}
-                  alt={`Feature ${i}`}
+                  image={`https://via.placeholder.com/300?text=Gamemode+${i}`} // Placeholder image for each gamemode
+                  alt={`Gamemode ${i}`}
                 />
+                <CardContent>
+                  <Typography variant="h6" sx={{ color: "#000000" }}>
+                    Gamemode {i}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    Description for Gamemode {i}. This gamemode challenges your
+                    music knowledge in unique and fun ways!
+                  </Typography>
+                </CardContent>
               </Card>
             </Grid>
           ))}
         </Grid>
       </Container>
 
-      <Box
-        sx={{
-          py: 5,
-          bgcolor: "#333333",
-          color: "#ffffff",
-          textAlign: "center",
-          width: "100vw",
-        }}
-      >
+      <Box sx={{ py: 5, backgroundColor: "#f9f9f9", textAlign: "center" }}>
         <Container maxWidth="lg">
-          <Typography variant="h6" gutterBottom sx={{ color: "#1db954" }}>
+          <Typography variant="h6" gutterBottom sx={{ color: "#000000" }}>
             <Link href="#about" color="inherit" underline="hover">
               About Us
             </Link>
@@ -110,21 +109,21 @@ const WelcomePage = () => {
             <IconButton
               href="https://facebook.com"
               target="_blank"
-              sx={{ color: "#1db954" }}
+              sx={{ color: "#1e88e5" }}
             >
               <FacebookIcon />
             </IconButton>
             <IconButton
               href="https://twitter.com"
               target="_blank"
-              sx={{ color: "#1db954" }}
+              sx={{ color: "#1e88e5" }}
             >
               <TwitterIcon />
             </IconButton>
             <IconButton
               href="https://instagram.com"
               target="_blank"
-              sx={{ color: "#1db954" }}
+              sx={{ color: "#1e88e5" }}
             >
               <InstagramIcon />
             </IconButton>
