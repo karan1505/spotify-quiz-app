@@ -19,6 +19,8 @@ const WelcomePage = () => {
   // Redirect to login endpoint for user authentication
   const handleSignIn = () => {
     // Redirect to Spotify login
+    document.cookie = "access_token=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    sessionStorage.clear();  // Clear session storage just to be sure
     window.location.href = `${config.BASE_URL}/login`;
   };
   
