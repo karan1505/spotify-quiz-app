@@ -27,11 +27,18 @@ const Dashboard = () => {
         const response = await axios.get(
           `${config.BASE_URL}${config.ENDPOINTS.USER_INFO}`
         );
-        setUserInfo(response.data.user_info);
+        if (response.status === 401) {
+          // If not authorized, redirect to login page
+          navigate("/login");
+        } else {
+          setUserInfo(response.data.user_info);
+        }
       } catch (error) {
         console.error("Failed to fetch user info:", error);
+        navigate("/login");  // Redirect to login if there's an error
       }
     };
+    
 
     const fetchUserPlaylists = async () => {
       try {
@@ -50,6 +57,10 @@ const Dashboard = () => {
 
   const signOut = async () => {
     try {
+      // Clear the cookie with SameSite=None and Secure attributes
+      document.cookie = "access_token=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;Secure;SameSite=None;HttpOnly";
+      
+      // Open Spotify logout in a new window
       const newWindow = window.open(
         "https://accounts.spotify.com/en/logout",
         "_blank"
@@ -59,15 +70,23 @@ const Dashboard = () => {
           newWindow.close();
         }
       }, 500);
+  
+      // Redirect to the homepage
       navigate("/");
     } catch (error) {
       console.error("Error during sign out:", error);
     }
   };
+  
 
   if (!userInfo) {
-    return <div>Loading...</div>;
+    return (
+      <Box textAlign="center" mt={5}>
+        <CircularProgress />
+      </Box>
+    );
   }
+  
 
   return (
     <Container maxWidth="md">

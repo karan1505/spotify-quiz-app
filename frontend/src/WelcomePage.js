@@ -18,10 +18,16 @@ import config from "./config"; // Import the config file
 
 const WelcomePage = () => {
   const handleSignIn = () => {
-    document.cookie = "access_token=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    // Clear the cookie with the same attributes
+    document.cookie = "access_token=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;Secure;SameSite=None;HttpOnly";
+    
+    // Clear session storage
     sessionStorage.clear();
+    
+    // Redirect to login page
     window.location.href = `${config.BASE_URL}/login`;
   };
+  
 
   return (
     <Box minHeight="100vh" sx={{ backgroundColor: "#f9f9f9" }}>
