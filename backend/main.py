@@ -23,7 +23,7 @@ logging.basicConfig(level=logging.INFO)
 # Allow requests from localhost frontend with CORS settings
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Frontend origin
+    allow_origins=["https://quizzify-frontend-6sp3.onrender.com"],  # Frontend origin
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -33,7 +33,7 @@ app.add_middleware(
 sp_oauth = SpotifyOAuth(
     client_id=Config.SPOTIFY_CLIENT_ID,
     client_secret=Config.SPOTIFY_CLIENT_SECRET,
-    redirect_uri="http://localhost:8000/callback",
+    redirect_uri="https://quizzify-backend-5kpq.onrender.com/callback",
     scope=Config.SCOPE,
 )
 
@@ -65,7 +65,7 @@ async def callback(request: Request):
             logging.error("Failed to retrieve access token.")
             raise HTTPException(status_code=400, detail="Failed to retrieve access token.")
         
-        response = RedirectResponse("http://localhost:3000/dashboard")
+        response = RedirectResponse("https://quizzify-frontend-6sp3.onrender.com/dashboard")
         response.set_cookie(
             key="access_token",
             value=access_token,
@@ -117,12 +117,12 @@ async def logout():
     sp_oauth = SpotifyOAuth(
         client_id=Config.SPOTIFY_CLIENT_ID,
         client_secret=Config.SPOTIFY_CLIENT_SECRET,
-        redirect_uri="http://localhost:8000/callback",
+        redirect_uri="https://quizzify-backend-5kpq.onrender.com/callback",
         scope=Config.SCOPE,
         cache_path=str(Config.CACHE_PATH)
     )
 
-    response = RedirectResponse(url="http://localhost:3000", status_code=303)
+    response = RedirectResponse(url="https://quizzify-frontend-6sp3.onrender.com", status_code=303)
     response.delete_cookie("access_token")
     response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
     response.headers["Pragma"] = "no-cache"
