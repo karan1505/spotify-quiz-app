@@ -1,5 +1,5 @@
 const config = {
-  BASE_URL: "http://localhost:8000", // Backend URL on localhost
+  BASE_URL: "https://spotify-quiz-app-abuw.onrender.com", // Backend URL on localhost
   LOGIN_URL: "/login",
   DASHBOARD_URL: "/dashboard",
   ENDPOINTS: {
