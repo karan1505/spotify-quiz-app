@@ -28,15 +28,9 @@ const Dashboard = () => {
         const response = await axios.get(
           `${config.BASE_URL}${config.ENDPOINTS.USER_INFO}`
         );
-        if (response.status === 401) {
-          // If not authorized, redirect to login page
-          navigate("/login");
-        } else {
-          setUserInfo(response.data.user_info);
-        }
+        setUserInfo(response.data.user_info);
       } catch (error) {
         console.error("Failed to fetch user info:", error);
-        navigate("/login");  // Redirect to login if there's an error
       }
     };
     
