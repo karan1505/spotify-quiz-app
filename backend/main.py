@@ -71,7 +71,7 @@ async def callback(request: Request):
             value=access_token,
             httponly=True,
             secure=True,
-            samesite="Lax",
+            samesite="None",
             max_age=3600
         )
 
