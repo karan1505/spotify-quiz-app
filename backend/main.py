@@ -77,7 +77,7 @@ async def callback(request: Request):
             key="access_token",
             value=access_token,
             httponly=True,
-            secure=False,  # Not secure for localhost
+            secure=True,  # Not secure for localhost
             samesite="Lax",  # Compatible with local setup
             max_age=3600  # Optional: set expiration time
         )
