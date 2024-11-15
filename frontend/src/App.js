@@ -11,7 +11,6 @@ function App() {
         <Route path="/" element={<WelcomePage />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/gamemode1" element={<Gamemode1 />} />{" "}
-        {/* Add the route for gamemode1 */}
       </Routes>
     </Router>
   );

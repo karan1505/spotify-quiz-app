@@ -70,7 +70,7 @@ async def callback(request: Request):
             key="access_token",
             value=access_token,
             httponly=True,
-            secure=False,
+            secure=True,
             samesite="Lax",
             max_age=3600
         )

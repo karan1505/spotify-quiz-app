@@ -30,7 +30,7 @@ const Gamemode1 = () => {
     const fetchPlaylist = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/fetch_playlist`,
+          `https://quizzify-backend-5kpq.onrender.com/fetch_playlist`,
           {
             params: { playlist_url: playlistUrl },
             withCredentials: true,
