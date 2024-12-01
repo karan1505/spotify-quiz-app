@@ -24,13 +24,13 @@ const Gamemode1 = () => {
   const [hasAnswered, setHasAnswered] = useState(false);
 
   const playlistUrl =
-    "https://open.spotify.com/playlist/37i9dQZEVXbNG2KDcFcKOF?si=Xz-CxFqjSSGUBmLK73iExg";
+    "https://open.spotify.com/playlist/37i9dQZEVXbNG2KDcFcKOF";
 
   useEffect(() => {
     const fetchPlaylist = async () => {
       try {
         const response = await axios.get(
-          `https://quizzify-backend-5kpq.onrender.com/fetch_playlist`,
+          `http://localhost:8000/fetch_playlist`,
           {
             params: { playlist_url: playlistUrl },
             withCredentials: true,
