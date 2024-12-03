@@ -1,0 +1,5 @@
+source /home/karan/Desktop/UIC/CS484/Project/env/bin/activate
+
+npm i, npm run start
+
+uvicorn main:app --reload

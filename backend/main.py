@@ -7,8 +7,11 @@ from spotipy import Spotify
 from spotipy.oauth2 import SpotifyOAuth
 from dotenv import load_dotenv
 from pathlib import Path
+import requests
 import logging
 from datetime import datetime
+from gamemode1_logic import load_playlist_data, validate_playlist, generate_quiz_questions
+
 
 from config import Config  # Import Config from config.py
 
@@ -176,3 +179,84 @@ async def fetch_playlist(request: Request, playlist_url: str):
     except Exception as e:
         logging.error(f"Error fetching playlist: {str(e)}")
         raise HTTPException(status_code=400, detail="Error fetching playlist")
+
+
+@app.get("/extract_playlist")
+async def extract_playlist(request: Request):
+    access_token = request.cookies.get("access_token")
+    if not access_token:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    sp = get_spotify_client(access_token)
+    try:
+        # Define the Spotify playlist URL
+        playlist_url = "https://open.spotify.com/playlist/0VwyWEWKjI9KQ7WkA4INvm?si=1955fe4b4a5c47e0"  # Replace with actual URL as needed
+
+        # Extract playlist ID from URL
+        playlist_id = playlist_url.split('/')[-1].split('?')[0]
+
+        # Fetch playlist details
+        playlist = sp.playlist(playlist_id)
+
+        # Extract track names, artist names, and album cover URLs
+        tracks = []
+        for item in playlist['tracks']['items']:
+            track = item['track']
+            track_info = {
+                "name": track['name'],
+                "artist": ", ".join([artist['name'] for artist in track['artists']]),
+                "album_cover": track['album']['images'][0]['url']  # Get the highest resolution album cover
+            }
+            tracks.append(track_info)
+
+            # Download and save album cover image
+            album_cover_url = track_info["album_cover"]
+            image_filename = f"{track_info['name']}_{track_info['artist']}.jpg".replace(" ", "_").replace("/", "_")
+            image_path = Path(f"./album_covers/{image_filename}")
+
+            # Create directory if it doesn't exist
+            if not image_path.parent.exists():
+                image_path.parent.mkdir(parents=True, exist_ok=True)
+
+            # Download the image
+            if not image_path.exists():
+                img_data = requests.get(album_cover_url).content
+                with open(image_path, 'wb') as img_file:
+                    img_file.write(img_data)
+
+        # Define the file path for tracks data
+        file_path = Path("./playlist_data/playlist_tracks.json")
+
+        # Check if the file exists and is empty
+        if not file_path.exists() or file_path.stat().st_size == 0:
+            # Create directories if they don't exist
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+
+            # Write the data to the file
+            with open(file_path, "w", encoding="utf-8") as file:
+                json.dump(tracks, file, ensure_ascii=False, indent=4)
+
+        # Return a success message
+        return {"message": "Tracks processed successfully.", "track_count": len(tracks)}
+
+    except Exception as e:
+        logging.error(f"Error in extract_playlist: {str(e)}")
+        raise HTTPException(status_code=400, detail="Error processing playlist")
+
+@app.get("/fetch_gamemode1")
+async def fetch_gamemode1():
+    try:
+        # Load and validate the playlist
+        tracks = load_playlist_data()
+        validate_playlist(tracks)
+
+        # Generate quiz questions
+        questions = generate_quiz_questions(tracks)
+
+        return {"questions": questions}
+
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        logging.error(f"Error in fetch_gamemode1: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error processing gamemode1.")
