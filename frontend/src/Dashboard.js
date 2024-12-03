@@ -33,7 +33,6 @@ const Dashboard = () => {
         console.error("Failed to fetch user info:", error);
       }
     };
-    
 
     const fetchUserPlaylists = async () => {
       try {
@@ -53,8 +52,9 @@ const Dashboard = () => {
   const signOut = async () => {
     try {
       // Clear the cookie with SameSite=None and Secure attributes
-      document.cookie = "access_token=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;Secure;SameSite=None;HttpOnly";
-      
+      document.cookie =
+        "access_token=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;Secure;SameSite=None;HttpOnly";
+
       // Open Spotify logout in a new window
       const newWindow = window.open(
         "https://accounts.spotify.com/en/logout",
@@ -65,14 +65,13 @@ const Dashboard = () => {
           newWindow.close();
         }
       }, 500);
-  
+
       // Redirect to the homepage
       navigate("/");
     } catch (error) {
       console.error("Error during sign out:", error);
     }
   };
-  
 
   if (!userInfo) {
     return (
@@ -81,7 +80,6 @@ const Dashboard = () => {
       </Box>
     );
   }
-  
 
   return (
     <Container maxWidth="md">
@@ -136,6 +134,7 @@ const Dashboard = () => {
       {/* Placeholder Coming Soon Card */}
       <Box mt={5} mb={3}>
         <Card
+          onClick={() => navigate("/gamemode2")} // Updated onClick handler
           sx={{
             cursor: "pointer",
             transition: "transform 0.2s",

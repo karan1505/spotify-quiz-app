@@ -157,7 +157,7 @@ async def fetch_playlist(request: Request, playlist_url: str):
         playlist_id = playlist_url.split('/')[-1].split('?')[0]
         logging.debug(f"{playlist_url}")
         # Fetch playlist details
-        playlist = sp.playlist(playlist_id, market='US')
+        playlist = sp.playlist(playlist_id)
         
         # Extract track names, artists, and preview URLs
         tracks = []
