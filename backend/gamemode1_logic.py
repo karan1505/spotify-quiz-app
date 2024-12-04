@@ -65,5 +65,10 @@ def generate_quiz_questions(tracks):
             }
         })
 
+    # Save questions to a file
+    with open("quiz_questions.json", "w") as file:
+        json.dump(questions, file)
+
     return questions
+
 

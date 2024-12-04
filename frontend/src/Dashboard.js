@@ -51,11 +51,8 @@ const Dashboard = () => {
 
   const signOut = async () => {
     try {
-      // Clear the cookie with SameSite=None and Secure attributes
       document.cookie =
         "access_token=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;Secure;SameSite=None;HttpOnly";
-
-      // Open Spotify logout in a new window
       const newWindow = window.open(
         "https://accounts.spotify.com/en/logout",
         "_blank"
@@ -65,8 +62,6 @@ const Dashboard = () => {
           newWindow.close();
         }
       }, 500);
-
-      // Redirect to the homepage
       navigate("/");
     } catch (error) {
       console.error("Error during sign out:", error);
@@ -116,7 +111,7 @@ const Dashboard = () => {
           <CardMedia
             component="img"
             height="140"
-            image="https://images.pexels.com/photos/1037999/pexels-photo-1037999.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" // Replace with actual image URL if available
+            image="https://images.pexels.com/photos/1037999/pexels-photo-1037999.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
             alt="Game Mode 1"
           />
           <CardContent>
@@ -131,10 +126,10 @@ const Dashboard = () => {
         </Card>
       </Box>
 
-      {/* Placeholder Coming Soon Card */}
+      {/* New Daily Songs Card */}
       <Box mt={5} mb={3}>
         <Card
-          onClick={() => navigate("/gamemode2")} // Updated onClick handler
+          onClick={() => navigate("/gamemode2")}
           sx={{
             cursor: "pointer",
             transition: "transform 0.2s",
@@ -146,7 +141,65 @@ const Dashboard = () => {
           <CardMedia
             component="img"
             height="140"
-            image="https://earlsribpalace.com/wp-content/uploads/2019/07/coming-soon-store-placeholder-image.gif" // Replace with actual image URL if available
+            image="https://images.pexels.com/photos/12419211/pexels-photo-12419211.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+            alt="Daily Songs"
+          />
+          <CardContent>
+            <Typography variant="h5" component="h2">
+              Do you recognize the top songs of the day?
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Challenge yourself to identify today's chart-topping tracks!
+            </Typography>
+          </CardContent>
+        </Card>
+      </Box>
+
+      {/* Custom Game Mode Card */}
+      <Box mt={5} mb={3}>
+        <Card
+          onClick={() => navigate("/customgamemode")}
+          sx={{
+            cursor: "pointer",
+            transition: "transform 0.2s",
+            "&:hover": {
+              transform: "scale(1.05)",
+            },
+          }}
+        >
+          <CardMedia
+            component="img"
+            height="140"
+            image="https://images.pexels.com/photos/144429/pexels-photo-144429.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+            alt="Custom Gamemode"
+          />
+          <CardContent>
+            <Typography variant="h5" component="h2">
+              Custom Gamemode
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Create and play with custom playlists of your choice!
+            </Typography>
+          </CardContent>
+        </Card>
+      </Box>
+
+      {/* Placeholder Coming Soon Card */}
+      <Box mt={5} mb={3}>
+        <Card
+          onClick={() => navigate("/ExtractPlaylist")}
+          sx={{
+            cursor: "pointer",
+            transition: "transform 0.2s",
+            "&:hover": {
+              transform: "scale(1.05)",
+            },
+          }}
+        >
+          <CardMedia
+            component="img"
+            height="140"
+            image="https://earlsribpalace.com/wp-content/uploads/2019/07/coming-soon-store-placeholder-image.gif"
             alt="Coming Soon"
           />
           <CardContent>

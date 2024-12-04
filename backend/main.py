@@ -10,7 +10,10 @@ from pathlib import Path
 import requests
 import logging
 from datetime import datetime
+from pydantic import BaseModel
 from gamemode1_logic import load_playlist_data, validate_playlist, generate_quiz_questions
+from dynamic_scraper import update_playlist_with_previews
+import asyncio
 
 
 from config import Config  # Import Config from config.py
@@ -39,6 +42,8 @@ sp_oauth = SpotifyOAuth(
     redirect_uri="http://localhost:8000/callback",
     scope=Config.SCOPE,
 )
+
+ongoing_processes = {}
 
 @app.get("/login")
 async def login():
@@ -147,101 +152,135 @@ async def user_playlists(request: Request):
         logging.error(f"Error fetching user playlists: {str(e)}")
         raise HTTPException(status_code=400, detail="Error fetching playlists")
 
-# New function to fetch a playlist by URL and return track previews
-@app.get("/fetch_playlist")
-async def fetch_playlist(request: Request, playlist_url: str):
-    access_token = request.cookies.get("access_token")
-    if not access_token:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    
-    sp = get_spotify_client(access_token)
+
+@app.post("/cancel_process")
+async def cancel_process(request: Request):
+    """
+    Cancels an ongoing playlist extraction process and deletes associated JSON files.
+    """
     try:
-        # Extract playlist ID from URL (assuming format 'https://open.spotify.com/playlist/{playlist_id}')
-        playlist_id = playlist_url.split('/')[-1].split('?')[0]
-        logging.debug(f"{playlist_url}")
-        # Fetch playlist details
-        playlist = sp.playlist(playlist_id)
-        
-        # Extract track names, artists, and preview URLs
-        tracks = []
-        for item in playlist['tracks']['items']:
-            track = item['track']
-            track_info = {
-                "name": track['name'],
-                "artist": ", ".join([artist['name'] for artist in track['artists']]),
-                "preview_url": track['preview_url'],
-                "album_cover": track['album']['images'][0]['url'] if track['album']['images'] else None
-            }
-            tracks.append(track_info)
-        
-        return {"playlist_name": playlist['name'], "tracks": tracks}
+        body = await request.json()
+        playlist_id = body.get("playlistId")
+        if not playlist_id:
+            raise HTTPException(status_code=400, detail="Missing playlist ID")
 
+        # Check if the process exists
+        process = ongoing_processes.get(playlist_id)
+        if process and not process.done():
+            process.cancel()  # Cancel the asyncio task
+            del ongoing_processes[playlist_id]
+            logging.info(f"Canceled process for playlist ID: {playlist_id}")
+            return {"message": "Processing canceled successfully."}
+        else:
+            logging.info(f"No active process found for playlist ID: {playlist_id}")
+            return {"message": "No active process to cancel."}
     except Exception as e:
-        logging.error(f"Error fetching playlist: {str(e)}")
-        raise HTTPException(status_code=400, detail="Error fetching playlist")
+        logging.error(f"Error in cancel_process: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to cancel process.")
 
-
-@app.get("/extract_playlist")
+@app.post("/extract_playlist")
 async def extract_playlist(request: Request):
+    """
+    Extracts playlist data and processes it using the scraper service.
+    """
     access_token = request.cookies.get("access_token")
     if not access_token:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
     sp = get_spotify_client(access_token)
-    try:
-        # Define the Spotify playlist URL
-        playlist_url = "https://open.spotify.com/playlist/0VwyWEWKjI9KQ7WkA4INvm?si=1955fe4b4a5c47e0"  # Replace with actual URL as needed
 
-        # Extract playlist ID from URL
-        playlist_id = playlist_url.split('/')[-1].split('?')[0]
+    try:
+        # Parse playlist ID and name from the request body
+        body = await request.json()
+        playlist_id = body.get("playlistId")
+        playlist_name = body.get("playlistName")
+
+        if not playlist_id or not playlist_name:
+            raise HTTPException(status_code=400, detail="Missing playlist ID or name")
 
         # Fetch playlist details
         playlist = sp.playlist(playlist_id)
-
-        # Extract track names, artist names, and album cover URLs
         tracks = []
         for item in playlist['tracks']['items']:
             track = item['track']
-            track_info = {
+            tracks.append({
                 "name": track['name'],
                 "artist": ", ".join([artist['name'] for artist in track['artists']]),
-                "album_cover": track['album']['images'][0]['url']  # Get the highest resolution album cover
-            }
-            tracks.append(track_info)
+            })
 
-            # Download and save album cover image
-            album_cover_url = track_info["album_cover"]
-            image_filename = f"{track_info['name']}_{track_info['artist']}.jpg".replace(" ", "_").replace("/", "_")
-            image_path = Path(f"./album_covers/{image_filename}")
+        # Call the scraper service
+        response = requests.post(
+            "http://localhost:8001/fetch_preview_urls",
+            json={"tracks": tracks}
+        )
+        if response.status_code != 200:
+            raise Exception("Scraper service failed")
 
-            # Create directory if it doesn't exist
-            if not image_path.parent.exists():
-                image_path.parent.mkdir(parents=True, exist_ok=True)
+        enriched_tracks = response.json()["tracks"]
 
-            # Download the image
-            if not image_path.exists():
-                img_data = requests.get(album_cover_url).content
-                with open(image_path, 'wb') as img_file:
-                    img_file.write(img_data)
+        # Save to JSON file
+        sanitized_name = "".join(c if c.isalnum() else "_" for c in playlist_name)
+        output_path = Path(f"./user_playlists/{sanitized_name}.json")
+        output_path.parent.mkdir(parents=True, exist_ok=True)
 
-        # Define the file path for tracks data
-        file_path = Path("./playlist_data/playlist_tracks.json")
+        with open(output_path, "w", encoding="utf-8") as file:
+            json.dump(enriched_tracks, file, ensure_ascii=False, indent=4)
 
-        # Check if the file exists and is empty
-        if not file_path.exists() or file_path.stat().st_size == 0:
-            # Create directories if they don't exist
-            file_path.parent.mkdir(parents=True, exist_ok=True)
+        logging.info(f"Playlist saved successfully: {output_path}")
 
-            # Write the data to the file
-            with open(file_path, "w", encoding="utf-8") as file:
-                json.dump(tracks, file, ensure_ascii=False, indent=4)
-
-        # Return a success message
-        return {"message": "Tracks processed successfully.", "track_count": len(tracks)}
+        return {"message": "Request received. Playlist processing started."}
 
     except Exception as e:
-        logging.error(f"Error in extract_playlist: {str(e)}")
+        logging.error(f"Error processing playlist: {str(e)}")
         raise HTTPException(status_code=400, detail="Error processing playlist")
+
+
+async def process_playlist(sp, playlist_id):
+    """
+    Processes the playlist and retrieves preview URLs using an external API.
+    """
+    try:
+        playlist = sp.playlist(playlist_id)
+        playlist_name = playlist['name']
+        sanitized_playlist_name = "".join([c if c.isalnum() else "_" for c in playlist_name])
+
+        tracks = []
+        for item in playlist['tracks']['items']:
+            if asyncio.current_task().cancelled():
+                raise asyncio.CancelledError()
+
+            track = item['track']
+            tracks.append({
+                "name": track['name'],
+                "artist": ", ".join([artist['name'] for artist in track['artists']])
+            })
+
+        # Call the external scraper API
+        response = requests.post(
+            "http://localhost:8001/fetch_preview_urls",
+            json={"tracks": tracks}
+        )
+        if response.status_code != 200:
+            raise Exception(f"Scraper API failed: {response.json()}")
+
+        enriched_tracks = response.json()["tracks"]
+
+        # Save enriched tracks
+        final_file_path = Path(f"./user_playlists/{sanitized_playlist_name}.json")
+        final_file_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(final_file_path, "w", encoding="utf-8") as file:
+            json.dump(enriched_tracks, file, ensure_ascii=False, indent=4)
+
+        return {"tracks": enriched_tracks, "message": "Playlist processed successfully."}
+    except asyncio.CancelledError:
+        logging.info(f"Task canceled for playlist {playlist_id}")
+        raise
+    except Exception as e:
+        logging.error(f"Error in process_playlist: {str(e)}")
+        raise HTTPException(status_code=400, detail="Error processing playlist")
+
+
+
 
 @app.get("/fetch_gamemode1")
 async def fetch_gamemode1():
@@ -260,3 +299,34 @@ async def fetch_gamemode1():
     except Exception as e:
         logging.error(f"Error in fetch_gamemode1: {str(e)}")
         raise HTTPException(status_code=500, detail="Error processing gamemode1.")
+
+class SelectedOption(BaseModel):
+    name: str
+    artist: str
+    album_cover: str
+
+class ValidateAnswerRequest(BaseModel):
+    question_id: int
+    selected_option: SelectedOption
+
+@app.post("/validate_answer")
+async def validate_answer(payload: ValidateAnswerRequest):
+    try:
+        # Simulating fetching the correct question for validation
+        with open("quiz_questions.json", "r") as file:
+            questions = json.load(file)
+
+        question_data = next(
+            (q for q in questions if q["question_id"] == payload.question_id), None
+        )
+
+        if not question_data:
+            raise HTTPException(status_code=404, detail="Question not found.")
+
+        is_correct = question_data["correct_option"]["name"] == payload.selected_option.name
+        return {"is_correct": is_correct}
+
+    except Exception as e:
+        logging.error(f"Validation error: {e}")
+        raise HTTPException(status_code=500, detail="Error validating answer.")
+
