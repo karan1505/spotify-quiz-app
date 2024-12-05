@@ -12,6 +12,7 @@ import {
   CardActionArea,
   Button,
   Slider,
+  Container,
 } from "@mui/material";
 import { motion } from "framer-motion";
 import Confetti from "react-confetti";
@@ -189,156 +190,211 @@ const Gamemode1 = () => {
   const currentQuestion = questions[currentQuestionIndex];
 
   return (
-    <Box>
-      {/* AppBar for top-level navigation */}
-      <AppBar
-        position="static"
-        style={{ padding: "0px", backgroundColor: "#f5f5f5" }}
-      >
-        <Toolbar
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <BackToDashboardButton />
-          <Box
-            style={{
-              flex: 1,
-              display: "flex",
-              justifyContent: "center",
+    <Box
+      minHeight="100vh"
+      sx={{
+        backgroundImage: `url(https://images.unsplash.com/photo-1460355976672-71c3f0a4bdac?q=80&w=2669&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        py: 5,
+      }}
+    >
+      <Container maxWidth="lg">
+        <BackToDashboardButton />
+
+        {/* Question Tracker */}
+        <Box textAlign="center" mb={4}>
+          <Typography
+            variant="h4"
+            sx={{
+              color: "#ffffff",
+              fontWeight: 200,
+              textAlign: "center",
             }}
           >
-            <Card
-              style={{
-                padding: "10px 60px",
-                alignContent: "center",
-                boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-              }}
-            >
-              <Typography variant="h6" style={{ textAlign: "center" }}>
-                Question {currentQuestionIndex + 1} - Time Left: {timeLeft}s
-              </Typography>
-            </Card>
-          </Box>
-          <Box display={{ xs: "none", sm: "flex" }} alignItems="center">
-            {/* <Typography style={{ marginRight: 10 }}>Volume:</Typography> */}
-            <Slider
-              value={volume}
-              onChange={(e, newValue) => {
-                setVolume(newValue);
-                if (audioRef.current) {
-                  audioRef.current.volume = newValue;
-                }
-              }}
-              step={0.1}
-              min={0}
-              max={1}
-              style={{
-                width: "150px",
-                color: "#3f51b5",
-              }}
-            />
-          </Box>
-        </Toolbar>
-      </AppBar>
+            Question {currentQuestionIndex + 1} of {questions.length} - Time
+            Left: {timeLeft}s
+          </Typography>
+        </Box>
 
-      {/* Main Card for the Question and Options */}
-      <Box textAlign="center" mt={4} px={2}>
+        {/* Question Card */}
         <Card
-          style={{
-            margin: "0 auto",
-            padding: "0px",
-            maxWidth: 1000,
-            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+          sx={{
+            mb: 4,
+            backgroundColor: "#ffffff",
+            boxShadow: 3,
+            p: 3,
+            display: "none",
           }}
         >
-          <CardContent>
-            <audio
-              ref={audioRef}
-              src={currentQuestion.audio_preview_url}
-              autoPlay
-              onLoadedMetadata={() => {
-                if (audioRef.current) audioRef.current.volume = volume;
-              }}
-            />
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: 600,
+              textAlign: "center",
+            }}
+          >
+            {currentQuestion.question}
+          </Typography>
+          <audio
+            ref={audioRef}
+            src={currentQuestion.audio_preview_url}
+            autoPlay
+            onLoadedMetadata={() => {
+              if (audioRef.current) audioRef.current.volume = volume;
+            }}
+            style={{
+              position: "absolute",
+              width: 0,
+              height: 0,
+              overflow: "hidden",
+              visibility: "hidden",
+              display: "none",
+            }}
+          />
+        </Card>
+
+        {/* Options */}
+        <Grid
+          container
+          spacing={2} // Adjust spacing as needed
+          justifyContent="center"
+          alignItems="stretch"
+        >
+          {currentQuestion.options.map((option, index) => (
             <Grid
-              container
-              spacing={2}
-              justifyContent="center"
-              mt={2}
-              style={{ maxHeight: "600px", overflow: "auto" }}
+              item
+              xs={12} // 4x1 on small screens
+              sm={6} // 2x2 on medium screens
+              md={3} // Always 2x2 on larger screens
+              key={index}
             >
-              {currentQuestion.options.map((option, index) => (
-                <Grid item key={index} xs={12} sm={6}>
-                  <Card
-                    style={{
-                      border:
-                        selectedOptionFeedback?.option === option
-                          ? selectedOptionFeedback.isCorrect
-                            ? "3px solid green"
-                            : "3px solid red"
-                          : "1px solid #ddd",
-                      transition: "border-color 0.3s",
-                      borderRadius: "8px",
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Card
+                  onClick={() => {
+                    if (!isLoading) handleAnswerClick(option); // Ensure click only works if not loading
+                  }}
+                  sx={{
+                    cursor: "pointer",
+                    bgcolor:
+                      selectedOptionFeedback?.option === option
+                        ? selectedOptionFeedback.isCorrect
+                          ? "#4caf50"
+                          : "#f44336"
+                        : "#ffffff",
+                    boxShadow: 3,
+                    transformOrigin: "center",
+                    transform: "scale(1)",
+                    transition: "transform 0.3s, background-color 0.3s",
+                    "&:hover": { transform: "scale(0.85)" },
+                    height: "100%", // Ensures consistent height for all cards
+                  }}
+                >
+                  <CardMedia
+                    component="img"
+                    height="200"
+                    image={option.album_cover}
+                    alt={option.name}
+                    sx={{
+                      objectFit: "cover",
                     }}
-                  >
-                    <CardActionArea
-                      onClick={() => handleAnswerClick(option)}
-                      disabled={isLoading}
-                      style={{
-                        height: "100%",
-                        display: "flex",
-                        flexDirection: "column",
+                  />
+                  <CardContent>
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        fontWeight: 600,
+                        textAlign: "center",
+                        color:
+                          selectedOptionFeedback?.option === option
+                            ? "#ffffff"
+                            : "#000000",
                       }}
                     >
-                      <CardMedia
-                        component="img"
-                        src={option.album_cover}
-                        alt={option.name}
-                        style={{ height: "140px", objectFit: "cover" }}
-                      />
-                      <CardContent>
-                        <Typography
-                          style={{
-                            fontSize: option.name.length > 20 ? "14px" : "16px",
-                            textAlign: "center",
-                          }}
-                        >
-                          {option.name}
-                        </Typography>
-                        <Typography
-                          variant="caption"
-                          style={{ display: "block", textAlign: "center" }}
-                        >
-                          {option.artist}
-                        </Typography>
-                      </CardContent>
-                    </CardActionArea>
-                  </Card>
-                </Grid>
-              ))}
+                      {option.name}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        display: "block",
+                        textAlign: "center",
+                        color:
+                          selectedOptionFeedback?.option === option
+                            ? "#e0e0e0"
+                            : "#4a5568",
+                      }}
+                    >
+                      {option.artist}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </motion.div>
             </Grid>
-            {renderConfetti()}
-            {isLoading && (
-              <Box
-                mt={2}
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
+          ))}
+        </Grid>
+
+        {renderConfetti()}
+
+        {isLoading && (
+          <Box
+            mt={4}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            sx={{
+              position: "relative",
+              flexDirection: "column",
+            }}
+          >
+            {/* Animated Text */}
+            <motion.div
+              initial={{ scale: 1, opacity: 0.5 }}
+              animate={{
+                scale: [1, 1.2, 1],
+                opacity: [0.5, 1, 0.5],
+              }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+              }}
+            >
+              <Typography
+                variant="h4"
+                sx={{
+                  color: "#ffffff",
+                  fontWeight: 700,
+                  textAlign: "center",
+                }}
               >
-                <Typography variant="h6" style={{ marginRight: "10px" }}>
-                  Next question coming up!
-                </Typography>
-                <Box width="100%" maxWidth="200px">
-                  <Slider value={50} step={1} marks disabled />
-                </Box>
-              </Box>
-            )}
-          </CardContent>
-        </Card>
-      </Box>
+                Next question coming up!
+              </Typography>
+            </motion.div>
+
+            {/* Pulsing Circle Animation */}
+            <motion.div
+              initial={{ scale: 1, opacity: 0.8 }}
+              animate={{
+                scale: [1, 1.5, 1],
+                opacity: [0.8, 0.4, 0.8],
+              }}
+              transition={{
+                duration: 1.2,
+                repeat: Infinity,
+              }}
+              style={{
+                width: "60px",
+                height: "60px",
+                marginTop: "20px",
+                borderRadius: "50%",
+                background: "linear-gradient(45deg, #f44336, #4caf50)",
+              }}
+            ></motion.div>
+          </Box>
+        )}
+      </Container>
     </Box>
   );
 };
