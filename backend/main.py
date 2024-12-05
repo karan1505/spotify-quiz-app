@@ -12,9 +12,8 @@ import logging
 from datetime import datetime
 from pydantic import BaseModel
 from gamemode1_logic import load_playlist_data, validate_playlist, generate_quiz_questions
-from dynamic_scraper import update_playlist_with_previews
+# from dynamic_scraper import update_playlist_with_previews
 import asyncio
-
 
 from config import Config  # Import Config from config.py
 
@@ -206,6 +205,7 @@ async def extract_playlist(request: Request):
             tracks.append({
                 "name": track['name'],
                 "artist": ", ".join([artist['name'] for artist in track['artists']]),
+                "playlistsIncluded": playlist_id
             })
 
         # Call the scraper service
@@ -233,6 +233,7 @@ async def extract_playlist(request: Request):
     except Exception as e:
         logging.error(f"Error processing playlist: {str(e)}")
         raise HTTPException(status_code=400, detail="Error processing playlist")
+
 
 
 async def process_playlist(sp, playlist_id):
