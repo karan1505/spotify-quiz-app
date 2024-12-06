@@ -18,7 +18,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import config from "./config";
 
-const CustomGamemode = () => {
+const SavePlaylist = () => {
   const [playlists, setPlaylists] = useState([]);
   const [selectedPlaylist, setSelectedPlaylist] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -225,4 +225,4 @@ const CustomGamemode = () => {
   );
 };
 
-export default CustomGamemode;
+export default SavePlaylist;

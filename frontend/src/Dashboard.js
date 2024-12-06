@@ -193,7 +193,7 @@ const Dashboard = () => {
                 component="img"
                 height="200"
                 image="https://images.pexels.com/photos/12204293/pexels-photo-12204293.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                alt="Top 50 Global Song Quiz"
+                alt="80's Quiz"
               />
               <CardContent>
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
@@ -220,7 +220,7 @@ const Dashboard = () => {
                 component="img"
                 height="200"
                 image="https://cdn.pixabay.com/photo/2017/02/22/16/04/guitar-2089802_1280.jpg"
-                alt="Top 50 Global Song Quiz"
+                alt="70's Quiz"
               />
               <CardContent>
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
@@ -246,16 +246,43 @@ const Dashboard = () => {
               <CardMedia
                 component="img"
                 height="200"
-                image="https://cdn.pixabay.com/photo/2015/05/07/11/02/guitar-756326_1280.jpg"
-                alt="Top 50 Global Song Quiz"
+                image="https://media-cldnry.s-nbcnews.com/image/upload/t_fit-560w,f_auto,q_auto:best/rockcms/2024-12/241204-taylor-swift-ch-0941-61ea5a.jpg"
+                alt="Taylor Swift"
               />
               <CardContent>
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                  Top 50 Global Song Quiz
+                  The "Written by Taylor Swift" Quiz
                 </Typography>
                 <Typography variant="body2" sx={{ color: "#4a5568" }}>
-                  Test your music knowledge and see if you can guess this week's
-                  top hits!
+                  Consider yourself a Swiftie?! Prove yourself!
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={4}>
+            <Card
+              onClick={() => navigate("/gamemode1")}
+              sx={{
+                cursor: "pointer",
+                bgcolor: "#ffffff",
+                boxShadow: 3,
+                transition: "transform 0.3s",
+                "&:hover": { transform: "scale(1.05)" },
+              }}
+            >
+              <CardMedia
+                component="img"
+                height="200"
+                image="https://cdn.pixabay.com/photo/2016/03/26/14/04/marshall-1280626_1280.jpg"
+                alt="Rock Classics"
+              />
+              <CardContent>
+                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                  Rock Classics Quiz
+                </Typography>
+                <Typography variant="body2" sx={{ color: "#4a5568" }}>
+                  How well do you know the Rock Classics?
                 </Typography>
               </CardContent>
             </Card>
@@ -283,8 +310,7 @@ const Dashboard = () => {
                   Top 50 Global Song Quiz
                 </Typography>
                 <Typography variant="body2" sx={{ color: "#4a5568" }}>
-                  Test your music knowledge and see if you can guess this week's
-                  top hits!
+                  Can you guess this week's top hits?
                 </Typography>
               </CardContent>
             </Card>
@@ -306,7 +332,7 @@ const Dashboard = () => {
           {/* Utility Cards */}
           <Grid item xs={12} sm={6} md={4}>
             <Card
-              onClick={() => navigate("/customgamemode")}
+              onClick={() => navigate("/showsaved")}
               sx={{
                 cursor: "pointer",
                 bgcolor: "#ffffff",
@@ -334,7 +360,7 @@ const Dashboard = () => {
           </Grid>
           <Grid item xs={12} sm={6} md={4}>
             <Card
-              onClick={() => navigate("/customgamemode")}
+              onClick={() => navigate("/saveplaylist")}
               sx={{
                 cursor: "pointer",
                 bgcolor: "#ffffff",
@@ -361,7 +387,7 @@ const Dashboard = () => {
           </Grid>
           <Grid item xs={12} sm={6} md={4}>
             <Card
-              onClick={() => navigate("/gamemode1")}
+              onClick={() => navigate("/removeplaylist")}
               sx={{
                 cursor: "pointer",
                 bgcolor: "#ffffff",
