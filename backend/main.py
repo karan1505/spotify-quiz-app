@@ -252,7 +252,7 @@ async def extract_playlist(request: Request):
         # Only scrape missing tracks
         if missing_tracks:
             response = requests.post(
-                "https://quizzify-scraper.onrender.com/fetch_preview_urls",
+                "http://scraper-production-af04.up.railway.app/fetch_preview_urls",
                 json={"tracks": missing_tracks}
             )
             if response.status_code != 200:
@@ -365,7 +365,7 @@ async def process_playlist(sp, playlist_id):
 
         # Call the external scraper API
         response = requests.post(
-            "https://quizzify-scraper.onrender.com/fetch_preview_urls",
+            "http://scraper-production-af04.up.railway.app/fetch_preview_urls",
             json={"tracks": tracks}
         )
         if response.status_code != 200:
@@ -686,7 +686,7 @@ async def extract_playlist(request: Request):
         # Only scrape missing tracks
         if missing_tracks:
             response = requests.post(
-                "https://quizzify-scraper.onrender.com/fetch_preview_urls",
+                "http://scraper-production-af04.up.railway.app/fetch_preview_urls",
                 json={"tracks": missing_tracks}
             )
             if response.status_code != 200:
@@ -798,7 +798,7 @@ async def process_playlist(sp, playlist_id):
 
         # Call the scraper API and wait for the response synchronously
         response = requests.post(
-            "https://quizzify-scraper.onrender.com/fetch_preview_urls",
+            "http://scraper-production-af04.up.railway.app/fetch_preview_urls",
             json={"tracks": tracks},
             timeout=None  # No timeout
         )
