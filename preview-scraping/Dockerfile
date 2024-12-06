@@ -1,45 +1,36 @@
-# Use a lightweight base image with Python and Chrome
-FROM python:3.10-slim-bullseye
+# Use a lightweight Python 3.11 image
+FROM python:3.11-slim
 
-# Install system dependencies for ChromeDriver and Selenium
+# Install necessary dependencies for Chromium and Selenium
 RUN apt-get update && apt-get install -y \
-    wget \
-    unzip \
-    curl \
-    gnupg \
-    libnss3 \
-    libgconf-2-4 \
-    libxss1 \
-    libasound2 \
-    fonts-liberation \
-    libatk1.0-0 \
-    libatk-bridge2.0-0 \
-    libcups2 \
-    libxcomposite1 \
-    libxcursor1 \
-    libxdamage1 \
-    libxrandr2 \
-    xdg-utils \
+    # Install dependencies for running Chromium in headless mode
     chromium \
-    chromium-driver \
-    --no-install-recommends && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    # Install Xvfb to simulate display for headless mode
+    xvfb \
+    # Install necessary libraries for Selenium
+    libglib2.0-0 libnss3 libgdk-pixbuf2.0-0 libx11-xcb1 libxcomposite1 libxrandr2 \
+    # Clean up to reduce image size
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Set environment variables to disable Chrome sandboxing
-ENV CHROME_BIN=/usr/bin/chromium
-ENV CHROMEDRIVER_BIN=/usr/bin/chromedriver
-
-# Copy the application code
-WORKDIR /app
-COPY scraper.py /app/scraper.py
-COPY requirements.txt /app/requirements.txt
+# Set the environment variable for Chromium
+ENV CHROMIUM_PATH=/usr/bin/chromium
 
 # Install Python dependencies
+COPY requirements.txt /app/requirements.txt
+WORKDIR /app
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose FastAPI default port
+# Install the ChromeDriver (matches Chromium version)
+RUN wget -q "https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip" -O /tmp/chromedriver.zip \
+    && unzip /tmp/chromedriver.zip -d /usr/local/bin/ \
+    && rm /tmp/chromedriver.zip
+
+# Expose the port that the app will run on
 EXPOSE 8000
 
-# Start the FastAPI application
-CMD ["uvicorn", "scraper:app", "--host", "0.0.0.0", "--port", "8000"]
+# Copy the FastAPI app and related files into the container
+COPY . /app
+
+# Command to run FastAPI using Uvicorn
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
