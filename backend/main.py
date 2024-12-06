@@ -16,6 +16,12 @@ from gamemode1_logic import load_playlist_data, validate_playlist, generate_quiz
 import asyncio
 
 from config import Config  # Import Config from config.py
+from pymongo import MongoClient
+MONGO_URI = "mongodb+srv://srinathquizzify:Quizzify123@quizzifycluster.i7npc.mongodb.net/Spotify?retryWrites=true&w=majority"
+
+client = MongoClient(MONGO_URI)
+db = client["Spotify"]  # Database name
+playlists_collection = db["Playlists"]  # Collection name
 
 # Load environment variables
 load_dotenv()
@@ -177,6 +183,67 @@ async def cancel_process(request: Request):
         logging.error(f"Error in cancel_process: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to cancel process.")
 
+'''
+@app.post("/extract_playlist")
+async def extract_playlist(request: Request):
+    """
+    Extracts playlist data and processes it using the scraper service.
+    """
+    access_token = request.cookies.get("access_token")
+    if not access_token:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    sp = get_spotify_client(access_token)
+
+    try:
+        # Parse playlist ID and name from the request body
+        body = await request.json()
+        playlist_id = body.get("playlistId")
+        playlist_name = body.get("playlistName")
+
+        if not playlist_id or not playlist_name:
+            raise HTTPException(status_code=400, detail="Missing playlist ID or name")
+
+        # Fetch playlist details
+        playlist = sp.playlist(playlist_id)
+        tracks = []
+        for item in playlist['tracks']['items']:
+            track = item['track']
+            tracks.append({
+                "name": track['name'],
+                "artist": ", ".join([artist['name'] for artist in track['artists']]),
+                "playlistsIncluded": playlist_id
+            })
+
+        # Call the scraper service
+        response = requests.post(
+            "http://localhost:8001/fetch_preview_urls",
+            json={"tracks": tracks}
+        )
+        if response.status_code != 200:
+            raise Exception("Scraper service failed")
+
+        enriched_tracks = response.json()["tracks"]
+        # Save to JSON file
+        sanitized_name = "".join(c if c.isalnum() else "_" for c in playlist_name)
+        output_path = Path(f"./user_playlists/{sanitized_name}.json")
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+
+
+
+        with open(output_path, "w", encoding="utf-8") as file:
+            json.dump(enriched_tracks, file, ensure_ascii=False, indent=4)
+
+        logging.info(f"Playlist saved successfully: {output_path}")
+
+        return {"message": "Request received. Playlist processing started."}
+
+    except Exception as e:
+        logging.error(f"Error processing playlist: {str(e)}")
+        raise HTTPException(status_code=400, detail="Error processing playlist")
+'''
+
+'''
 @app.post("/extract_playlist")
 async def extract_playlist(request: Request):
     """
@@ -218,6 +285,114 @@ async def extract_playlist(request: Request):
 
         enriched_tracks = response.json()["tracks"]
 
+        # Save each track to MongoDB Atlas
+        for track in enriched_tracks:
+            # Check if the track already exists in the database
+            existing_track = playlists_collection.find_one({"name": track["name"], "artist": track["artist"]})
+
+            if existing_track:
+                # Update the playlistsIncluded array if the track exists
+                playlists_collection.update_one(
+                    {"_id": existing_track["_id"]},
+                    {"$addToSet": {"playlistsIncluded": playlist_id}}  # Add playlist_id if not already in the array
+                )
+            else:
+                # Insert a new track document
+                playlists_collection.insert_one({
+                    "name": track["name"],
+                    "artist": track["artist"],
+                    "preview_url": track.get("preview_url"),
+                    "playlistsIncluded": [playlist_id]
+                })
+
+        logging.info(f"Tracks from playlist {playlist_id} saved to MongoDB")
+
+        # Save to JSON file
+        sanitized_name = "".join(c if c.isalnum() else "_" for c in playlist_name)
+        output_path = Path(f"./user_playlists/{sanitized_name}.json")
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+
+        with open(output_path, "w", encoding="utf-8") as file:
+            json.dump(enriched_tracks, file, ensure_ascii=False, indent=4)
+
+        logging.info(f"Playlist saved successfully: {output_path}")
+
+        return {"message": "Request received. Playlist processing started."}
+
+    except Exception as e:
+        logging.error(f"Error processing playlist: {str(e)}")
+        raise HTTPException(status_code=400, detail="Error processing playlist")
+'''
+
+@app.post("/extract_playlist")
+async def extract_playlist(request: Request):
+    """
+    Extracts playlist data and processes it using the scraper service.
+    """
+    access_token = request.cookies.get("access_token")
+    if not access_token:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    sp = get_spotify_client(access_token)
+
+    try:
+        # Parse playlist ID and name from the request body
+        body = await request.json()
+        playlist_id = body.get("playlistId")
+        playlist_name = body.get("playlistName")
+
+        if not playlist_id or not playlist_name:
+            raise HTTPException(status_code=400, detail="Missing playlist ID or name")
+
+        # Fetch playlist details
+        playlist = sp.playlist(playlist_id)
+        tracks = []
+        for item in playlist['tracks']['items']:
+            track = item['track']
+            tracks.append({
+                "name": track['name'],
+                "artist": ", ".join([artist['name'] for artist in track['artists']]),
+                "playlistsIncluded": playlist_id
+            })
+
+        # Check the database for existing tracks
+        missing_tracks = []
+        for track in tracks:
+            existing_track = playlists_collection.find_one({"name": track["name"], "artist": track["artist"]})
+            if existing_track:
+                # Track exists, append playlist_id if not already present
+                playlists_collection.update_one(
+                    {"_id": existing_track["_id"]},
+                    {"$addToSet": {"playlistsIncluded": playlist_id}}  # Add playlist_id if not already in the array
+                )
+            else:
+                # Track does not exist, add to missing_tracks for scraping
+                missing_tracks.append(track)
+
+        # Only scrape missing tracks
+        if missing_tracks:
+            response = requests.post(
+                "http://localhost:8001/fetch_preview_urls",
+                json={"tracks": missing_tracks}
+            )
+            if response.status_code != 200:
+                raise Exception("Scraper service failed")
+
+            enriched_tracks = response.json()["tracks"]
+
+            # Insert new tracks into the database
+            for track in enriched_tracks:
+                playlists_collection.insert_one({
+                    "name": track["name"],
+                    "artist": track["artist"],
+                    "preview_url": track.get("preview_url"),
+                    "playlistsIncluded": [playlist_id]
+                })
+        else:
+            enriched_tracks = []  # No new tracks to scrape
+
+        logging.info(f"Tracks from playlist {playlist_id} saved to MongoDB")
+
         # Save to JSON file
         sanitized_name = "".join(c if c.isalnum() else "_" for c in playlist_name)
         output_path = Path(f"./user_playlists/{sanitized_name}.json")
@@ -234,6 +409,35 @@ async def extract_playlist(request: Request):
         logging.error(f"Error processing playlist: {str(e)}")
         raise HTTPException(status_code=400, detail="Error processing playlist")
 
+@app.delete("/remove_playlist")
+async def remove_playlist(request: Request):
+    """
+    Removes a playlist ID from the playlistsIncluded field in the database.
+    """
+    try:
+        # Parse playlist ID from the request body
+        body = await request.json()
+        playlist_id = body.get("playlistId")
+
+        if not playlist_id:
+            raise HTTPException(status_code=400, detail="Missing playlist ID")
+
+        # Perform the update operation
+        result = playlists_collection.update_many(
+            {"playlistsIncluded": playlist_id},  # Match songs containing the playlist ID
+            {"$pull": {"playlistsIncluded": playlist_id}}  # Remove the playlist ID from the array
+        )
+
+        logging.info(f"Playlist ID {playlist_id} removed from {result.modified_count} tracks")
+
+        return {
+            "message": f"Playlist ID {playlist_id} successfully removed from tracks.",
+            "modified_count": result.modified_count
+        }
+
+    except Exception as e:
+        logging.error(f"Error removing playlist ID: {str(e)}")
+        raise HTTPException(status_code=400, detail="Error removing playlist ID")
 
 
 async def process_playlist(sp, playlist_id):
