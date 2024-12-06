@@ -7,7 +7,7 @@ echo "Updating and installing system dependencies..."
 
 # Update package list and install Chromium and required libraries
 apt-get update && apt-get install -y \
-    chromium \
+    chromium-browser \
     wget \
     unzip \
     fonts-liberation \
@@ -27,8 +27,14 @@ apt-get update && apt-get install -y \
 
 echo "Chromium and dependencies installed successfully."
 
+# Ensure Chromium is installed
+if ! command -v chromium-browser &> /dev/null; then
+    echo "Chromium installation failed. Exiting..."
+    exit 1
+fi
+
 # Check Chromium version
-CHROMIUM_VERSION=$(chromium --version | grep -oP '\d+\.\d+\.\d+')
+CHROMIUM_VERSION=$(chromium-browser --version | grep -oP '\d+\.\d+\.\d+')
 echo "Chromium version: $CHROMIUM_VERSION"
 
 # Determine the compatible ChromeDriver version
@@ -58,7 +64,7 @@ echo "Python dependencies installed successfully."
 
 # Confirm installations
 echo "Confirming installations..."
-chromium --version
+chromium-browser --version
 chromedriver --version
 
 echo "Setup complete. Your environment is ready to run the web service."
