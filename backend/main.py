@@ -1,6 +1,6 @@
 import os
 import json
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request, HTTPException, Body
 from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from spotipy import Spotify
@@ -228,9 +228,10 @@ async def extract_playlist(request: Request):
         for item in playlist['tracks']['items']:
             track = item['track']
             tracks.append({
-                "name": track['name'],
-                "artist": ", ".join([artist['name'] for artist in track['artists']]),
-                "playlistsIncluded": playlist_id
+                    "name": track['name'],
+                    "artist": ", ".join([artist['name'] for artist in track['artists']]),
+                    "album_cover": track['album']['images'][0]['url'],
+                    "playlistsIncluded": playlist_id,
             })
 
         # Check the database for existing tracks
@@ -241,7 +242,7 @@ async def extract_playlist(request: Request):
                 # Track exists, append playlist_id if not already present
                 playlists_collection.update_one(
                     {"_id": existing_track["_id"]},
-                    {"$addToSet": {"playlistsIncluded": playlist_id}}  # Add playlist_id if not already in the array
+                    {"$addToSet": {"playlistsIncluded": playlist_id}}
                 )
             else:
                 # Track does not exist, add to missing_tracks for scraping
@@ -264,7 +265,8 @@ async def extract_playlist(request: Request):
                     "name": track["name"],
                     "artist": track["artist"],
                     "preview_url": track.get("preview_url"),
-                    "playlistsIncluded": [playlist_id]
+                    "playlistsIncluded": [playlist_id],
+                    "album_cover": track.get("album_cover")  # Include album cover URL
                 })
         else:
             enriched_tracks = []  # No new tracks to scrape
@@ -286,6 +288,28 @@ async def extract_playlist(request: Request):
     except Exception as e:
         logging.error(f"Error processing playlist: {str(e)}")
         raise HTTPException(status_code=400, detail="Error processing playlist")
+
+@app.get("/filtered_playlists")
+async def filtered_playlists(request: Request):
+    access_token = request.cookies.get("access_token")
+    if not access_token:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    
+    sp = get_spotify_client(access_token)
+    try:
+        playlists = sp.current_user_playlists()
+        user_playlists = playlists["items"]
+
+        # Filter playlists with more than 20 tracks
+        filtered_playlists = [
+            playlist for playlist in user_playlists if playlist["tracks"]["total"] > 20
+        ]
+
+        return {"filtered_playlists": filtered_playlists}
+    except Exception as e:
+        logging.error(f"Error fetching filtered playlists: {str(e)}")
+        raise HTTPException(status_code=400, detail="Error fetching playlists")
+
 
 @app.delete("/remove_playlist")
 async def remove_playlist(request: Request):
@@ -362,23 +386,25 @@ async def process_playlist(sp, playlist_id):
         logging.error(f"Error in process_playlist: {str(e)}")
         raise HTTPException(status_code=400, detail="Error processing playlist")
 
+@app.post("/fetch_gamemode1")
+async def fetch_gamemode1(payload: dict = Body(...)):
+    playlist_id = payload.get("playlistID")
+    if not playlist_id:
+        raise HTTPException(status_code=400, detail="Playlist ID is required.")
 
-
-
-@app.get("/fetch_gamemode1")
-async def fetch_gamemode1():
     try:
-        # Load and validate the playlist
-        tracks = load_playlist_data()
-        validate_playlist(tracks)
+        # Query MongoDB for tracks associated with the given playlistID
+        tracks_cursor = playlists_collection.find({"playlistsIncluded": playlist_id})
+        tracks = list(tracks_cursor)
+
+        if not tracks:
+            raise HTTPException(status_code=404, detail="No tracks found for this playlist.")
 
         # Generate quiz questions
         questions = generate_quiz_questions(tracks)
 
         return {"questions": questions}
 
-    except HTTPException as e:
-        raise e
     except Exception as e:
         logging.error(f"Error in fetch_gamemode1: {str(e)}")
         raise HTTPException(status_code=500, detail="Error processing gamemode1.")

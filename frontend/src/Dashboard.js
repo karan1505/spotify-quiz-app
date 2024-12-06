@@ -152,7 +152,7 @@ const Dashboard = () => {
         <Grid container spacing={4} justifyContent="center">
           <Grid item xs={12} sm={6} md={4}>
             <Card
-              onClick={() => navigate("/gamemode1")}
+              onClick={() => navigate("/quiz1")}
               sx={{
                 cursor: "pointer",
                 bgcolor: "#ffffff",
@@ -290,7 +290,7 @@ const Dashboard = () => {
 
           <Grid item xs={12} sm={6} md={4}>
             <Card
-              onClick={() => navigate("/gamemode1")}
+              onClick={() => navigate("/quiz3")}
               sx={{
                 cursor: "pointer",
                 bgcolor: "#ffffff",
@@ -302,15 +302,15 @@ const Dashboard = () => {
               <CardMedia
                 component="img"
                 height="200"
-                image="https://cdn.pixabay.com/photo/2015/05/07/11/02/guitar-756326_1280.jpg"
-                alt="Top 50 Global Song Quiz"
+                image="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Queen_A_Night_At_The_Opera_%281975_Elektra_publicity_photo_02%29.jpg/1200px-Queen_A_Night_At_The_Opera_%281975_Elektra_publicity_photo_02%29.jpg"
+                alt="Queen Quiz"
               />
               <CardContent>
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                  Top 50 Global Song Quiz
+                  Queen Quiz
                 </Typography>
                 <Typography variant="body2" sx={{ color: "#4a5568" }}>
-                  Can you guess this week's top hits?
+                  If you love Queen, you'll wanna play this!
                 </Typography>
               </CardContent>
             </Card>

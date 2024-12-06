@@ -11,45 +11,50 @@ import {
   Grid,
   Dialog,
   DialogContent,
+  DialogTitle,
   DialogActions,
   Container,
+  DialogContentText,
 } from "@mui/material";
-import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import config from "./config";
 
 const SavePlaylist = () => {
   const [playlists, setPlaylists] = useState([]);
   const [selectedPlaylist, setSelectedPlaylist] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [confirmSubmit, setConfirmSubmit] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [loadingDialogOpen, setLoadingDialogOpen] = useState(false);
+  const [showConditions, setShowConditions] = useState(true);
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUserPlaylists = async () => {
+    const fetchFilteredPlaylists = async () => {
       try {
         const response = await axios.get(
-          `${config.BASE_URL}${config.ENDPOINTS.USER_PLAYLISTS}`
+          `${config.BASE_URL}/filtered_playlists`
         );
-        setPlaylists(response.data.items || []);
+        setPlaylists(response.data.filtered_playlists || []);
       } catch (error) {
-        console.error("Failed to fetch playlists:", error);
+        console.error("Failed to fetch filtered playlists:", error);
       }
     };
 
-    fetchUserPlaylists();
+    fetchFilteredPlaylists();
   }, []);
 
   const handleCardClick = (playlist) => {
     if (isProcessing) return;
     setSelectedPlaylist(playlist);
+    setDialogOpen(true);
   };
 
-  const handleFinalSubmit = async () => {
+  const handleSubmitPlaylist = async () => {
     if (!selectedPlaylist || isProcessing) return;
 
-    setIsSubmitting(true);
+    setDialogOpen(false);
+    setLoadingDialogOpen(true);
     setIsProcessing(true);
 
     try {
@@ -59,168 +64,149 @@ const SavePlaylist = () => {
       });
 
       alert(
-        "Request received! Your playlist is being generated. Please wait until it's complete."
+        "Your playlist has been processed! Go to the saved playlists section on the dashboard to test yourself!"
       );
       navigate("/dashboard");
     } catch (error) {
       console.error("Error processing playlist:", error);
       alert("There was an error submitting your playlist. Please try again.");
     } finally {
-      setIsSubmitting(false);
       setIsProcessing(false);
+      setLoadingDialogOpen(false);
     }
   };
-
-  const BackToDashboardButton = () => (
-    <Button
-      variant="contained"
-      color="primary"
-      onClick={() => navigate("/dashboard")}
-      style={{
-        position: "absolute",
-        top: "10px",
-        left: "10px",
-        backgroundColor: "#007BFF",
-        color: "#FFF",
-        textTransform: "none",
-      }}
-      startIcon={<span>&larr;</span>}
-    >
-      Back
-    </Button>
-  );
 
   return (
     <Box
       minHeight="100vh"
       sx={{
-        backgroundImage: `url(https://images.unsplash.com/photo-1465146633011-14f8e0781093?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)`,
+        backgroundImage: `url(https://images.pexels.com/photos/3721941/pexels-photo-3721941.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2)`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         py: 5,
       }}
     >
       <Container maxWidth="lg">
-        <BackToDashboardButton />
-        <Box textAlign="center" mt={5}>
-          <Typography
-            variant="h4"
-            gutterBottom
-            sx={{ color: "#ffffff", fontWeight: 100 }}
-          >
-            Your Playlists:
-          </Typography>
-
-          {isProcessing && (
-            <Box mt={3}>
-              <CircularProgress />
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                mt={2}
-                sx={{ color: "#ffffff" }}
-              >
-                Your playlist is being processed. Please wait...
-              </Typography>
-            </Box>
-          )}
-
-          {!isProcessing && (
-            <Box mt={3}>
-              <Grid container spacing={3} justifyContent="center">
-                {playlists.map((playlist) => (
-                  <Grid item xs={12} sm={6} md={4} key={playlist.id}>
-                    <motion.div
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <Card
-                        sx={{
-                          cursor: isProcessing ? "not-allowed" : "pointer",
-                          border:
-                            selectedPlaylist?.id === playlist.id
-                              ? "2px solid #1976d2"
-                              : "none",
-                          boxShadow: 3,
-                          transition: "transform 0.3s, border-color 0.3s",
-                        }}
-                        onClick={() => handleCardClick(playlist)}
-                      >
-                        <CardMedia
-                          component="img"
-                          height="140"
-                          image={playlist.images[0]?.url || "/placeholder.jpg"}
-                          alt={playlist.name}
-                        />
-                        <CardContent>
-                          <Typography
-                            variant="h6"
-                            gutterBottom
-                            sx={{
-                              fontWeight: 600,
-                              textAlign: "center",
-                              color: "#000000",
-                            }}
-                          >
-                            {playlist.name}
-                          </Typography>
-                          <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            sx={{ textAlign: "center" }}
-                          >
-                            {playlist.description || "No description available"}
-                          </Typography>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  </Grid>
-                ))}
-              </Grid>
-
-              <Box mt={4} textAlign="center">
-                <motion.div whileHover={{ scale: 1.1 }}>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    disabled={!selectedPlaylist || isSubmitting || isProcessing}
-                    onClick={() => setConfirmSubmit(true)}
-                  >
-                    Submit
-                  </Button>
-                </motion.div>
-              </Box>
-            </Box>
-          )}
-
-          <Dialog
-            open={confirmSubmit}
-            onClose={() => setConfirmSubmit(false)}
-            aria-labelledby="confirm-submit-dialog"
-          >
-            <DialogContent>
-              <Typography variant="body1">
-                Submitting this playlist is final. It will be saved on our
-                servers and used for future quizzes. Do you want to continue?
-              </Typography>
-            </DialogContent>
-            <DialogActions>
-              <Button
-                onClick={() => {
-                  setConfirmSubmit(false);
-                  handleFinalSubmit();
+        <Dialog
+          open={showConditions}
+          onClose={() => setShowConditions(false)}
+          aria-labelledby="conditions-dialog"
+        >
+          <DialogTitle id="conditions-dialog">
+            Conditions to Save a Playlist
+          </DialogTitle>
+          <DialogContent>
+            <Typography variant="body1">
+              To be able to save a playlist, it needs to meet the following
+              conditions:
+            </Typography>
+            <ul>
+              <li>The playlist must have at least 20 tracks</li>
+              <li>The playlist must be public and part of your library</li>
+            </ul>
+            <p>
+              Note: If the playlist is over 50 songs, 50 at random will be
+              considered
+            </p>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setShowConditions(false)} color="primary">
+              OK, Got It
+            </Button>
+          </DialogActions>
+        </Dialog>
+        ;
+        <Typography
+          variant="h4"
+          align="center"
+          gutterBottom
+          sx={{
+            color: "#fff",
+            textShadow: "0px 1px 2px rgba(0, 0, 0, 0.5)",
+            fontWeight: 500,
+            mb: 3,
+          }}
+        >
+          Your Playlists
+        </Typography>
+        <Grid container spacing={4} justifyContent="center">
+          {playlists.map((playlist) => (
+            <Grid item xs={12} sm={6} md={4} key={playlist.id}>
+              <Card
+                sx={{
+                  cursor: isProcessing ? "not-allowed" : "pointer",
+                  bgcolor: "#ffffff",
+                  boxShadow: 3,
+                  transition: "transform 0.3s",
+                  "&:hover": { transform: "scale(1.05)" },
                 }}
-                color="primary"
+                onClick={() => handleCardClick(playlist)}
               >
-                Yes, Submit
-              </Button>
-              <Button onClick={() => setConfirmSubmit(false)} color="secondary">
-                No, Cancel
-              </Button>
-            </DialogActions>
-          </Dialog>
-        </Box>
+                <CardMedia
+                  component="img"
+                  height="200"
+                  image={
+                    playlist.images?.[0]?.url ||
+                    "https://via.placeholder.com/200x200?text=No+Image"
+                  }
+                  alt={playlist.name}
+                />
+                <CardContent>
+                  <Typography
+                    variant="h6"
+                    sx={{ fontWeight: 600, textAlign: "center" }}
+                  >
+                    {playlist.name}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{ textAlign: "center", color: "#4a5568" }}
+                  >
+                    {playlist.description || "No description available"}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
       </Container>
+
+      {/* Confirmation Dialog */}
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+        <DialogTitle>Submit Playlist</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to submit the playlist "
+            {selectedPlaylist?.name}"? Once processed, it will be available for
+            quizzes.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDialogOpen(false)} color="primary">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSubmitPlaylist}
+            color="primary"
+            variant="contained"
+          >
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Loading Dialog */}
+      <Dialog open={loadingDialogOpen} disableEscapeKeyDown>
+        <DialogContent>
+          <Box textAlign="center">
+            <CircularProgress />
+            <Typography variant="body1" mt={2}>
+              Please wait while your playlist is being processed. Do not
+              navigate away from this page.
+            </Typography>
+          </Box>
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 };

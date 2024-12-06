@@ -18,32 +18,43 @@ import { motion } from "framer-motion";
 import Confetti from "react-confetti";
 import config from "./config";
 
-const Gamemode1 = () => {
+// Gamemode1.js - Updated function
+const Quiz1 = () => {
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [showResults, setShowResults] = useState(false);
   const [quizStarted, setQuizStarted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [volume, setVolume] = useState(0.5); // Default volume at 50%
-  const [timeLeft, setTimeLeft] = useState(30); // Timer starts at 30 seconds
-  const [selectedOptionFeedback, setSelectedOptionFeedback] = useState(null); // Tracks feedback for answer
-  const timerRef = useRef(null); // Ref for the timer
-  const audioRef = useRef(null); // Ref for the audio element
+  const [volume, setVolume] = useState(0.5);
+  const [timeLeft, setTimeLeft] = useState(30);
+  const [selectedOptionFeedback, setSelectedOptionFeedback] = useState(null);
+  const timerRef = useRef(null);
+  const audioRef = useRef(null);
+
+  // New state for playlistID
+  const [playlistID, setPlaylistID] = useState("2eeijnQ6uPptmB9BP9xClO"); // Default playlist ID
 
   // Fetch questions from the backend
   useEffect(() => {
     const fetchGamemode1 = async () => {
       try {
         axios.defaults.withCredentials = true;
-        const response = await axios.get(`${config.BASE_URL}/fetch_gamemode1`);
+        const response = await axios.post(
+          `${config.BASE_URL}/fetch_gamemode1`,
+          {
+            playlistID,
+          }
+        );
         setQuestions(response.data.questions);
       } catch (error) {
         console.error("Failed to fetch gamemode1 data:", error);
       }
     };
     fetchGamemode1();
-  }, []);
+  }, [playlistID]);
+
+  // Rest of the component remains unchanged
 
   // Timer management
   useEffect(() => {
@@ -399,4 +410,4 @@ const Gamemode1 = () => {
   );
 };
 
-export default Gamemode1;
+export default Quiz1;
