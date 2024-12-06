@@ -4,6 +4,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options  # Import Options
 import time
 import urllib.parse
 
@@ -12,8 +13,14 @@ def get_song_preview(song_name, artist_name=""):
         driver_path = "/usr/bin/chromedriver"
         service = Service(driver_path)
 
-        # Initialize the WebDriver
-        driver = webdriver.Chrome(service=service)
+        # Set up Chrome options to run in headless mode
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")  # Run in headless mode
+        chrome_options.add_argument("--no-sandbox")  # Required for certain environments like Docker or Render
+        chrome_options.add_argument("--disable-dev-shm-usage")  # To overcome some issues in containers
+
+        # Initialize the WebDriver with the options
+        driver = webdriver.Chrome(service=service, options=chrome_options)
 
         # Encode the query for the URL
         query = song_name.strip()
