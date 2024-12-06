@@ -17,7 +17,7 @@ RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r re
 COPY . .
 
 # Expose port for FastAPI
-EXPOSE 8000
+EXPOSE 8001
 
 # Command to run the FastAPI service
-CMD ["gunicorn", "scraper_service:app", "--workers", "4", "--bind", "0.0.0.0:8000", "-k", "uvicorn.workers.UvicornWorker"]
+CMD ["gunicorn", "scraper:app", "--workers", "4", "--bind", "0.0.0.0:8001", "-k", "uvicorn.workers.UvicornWorker"]
