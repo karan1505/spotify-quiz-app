@@ -31,6 +31,7 @@ const Quiz1 = () => {
   const [selectedOptionFeedback, setSelectedOptionFeedback] = useState(null);
   const timerRef = useRef(null);
   const audioRef = useRef(null);
+  const [difficulty, setDifficulty] = useState(null); // Default difficulty
 
   // New state for playlistID
   const [playlistID, setPlaylistID] = useState("2eeijnQ6uPptmB9BP9xClO"); // Default playlist ID
@@ -66,7 +67,9 @@ const Quiz1 = () => {
 
   const resetTimer = () => {
     clearInterval(timerRef.current);
-    setTimeLeft(30); // Reset timer to 30 seconds
+    const initialTime =
+      difficulty === "Easy" ? 30 : difficulty === "Medium" ? 15 : 5;
+    setTimeLeft(initialTime); // Set timer based on selected difficulty
     timerRef.current = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
@@ -90,7 +93,13 @@ const Quiz1 = () => {
     setIsLoading(false);
   };
 
-  const handleStartQuiz = () => setQuizStarted(true);
+  const handleStartQuiz = () => {
+    if (!difficulty) {
+      alert("Please select a difficulty level before starting the quiz.");
+      return;
+    }
+    setQuizStarted(true);
+  };
 
   const handleAnswerClick = async (option) => {
     if (isLoading) return; // Prevent multiple clicks
@@ -170,7 +179,122 @@ const Quiz1 = () => {
   if (!quizStarted) {
     return (
       <Box textAlign="center" mt={4}>
-        <Typography variant="h4">Welcome to Gamemode 1 Quiz</Typography>
+        <Grid
+          container
+          spacing={2}
+          justifyContent="center"
+          alignItems="center"
+          style={{ marginTop: "20px" }}
+        >
+          <Grid item xs={12} sm={6} md={4}>
+            <Card
+              sx={{
+                cursor: "pointer",
+                bgcolor: "#ffffff",
+                boxShadow: 3,
+                transition: "transform 0.3s",
+                "&:hover": { transform: "scale(1.05)" },
+              }}
+            >
+              <CardContent>
+                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                  Top 50 Global Song Quiz
+                </Typography>
+                <Typography variant="body2" sx={{ color: "#4a5568" }}>
+                  Choose one of the difficulties and select Start Quiz to begin!
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+
+        <Grid
+          container
+          spacing={2}
+          justifyContent="center"
+          alignItems="center"
+          style={{ marginTop: "20px" }}
+        >
+          <Grid item xs={12} sm={4}>
+            <Card
+              onClick={() => {
+                setDifficulty("Easy");
+                setTimeLeft(30);
+              }}
+              sx={{
+                cursor: "pointer",
+                backgroundColor: difficulty === "Easy" ? "#4caf50" : "#ffffff",
+                "&:hover": { backgroundColor: "#e0f7fa" },
+                padding: "10px",
+                textAlign: "center",
+                "&:hover": { transform: "scale(1.05)" },
+              }}
+            >
+              <CardContent>
+                <Typography variant="h6" fontWeight={600}>
+                  Easy
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  Timer: 30 seconds
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} sm={4}>
+            <Card
+              onClick={() => {
+                setDifficulty("Medium");
+                setTimeLeft(15);
+              }}
+              sx={{
+                cursor: "pointer",
+                backgroundColor:
+                  difficulty === "Medium" ? "#4caf50" : "#ffffff",
+                "&:hover": { backgroundColor: "#e0f7fa" },
+                padding: "10px",
+                textAlign: "center",
+                "&:hover": { transform: "scale(1.05)" },
+              }}
+            >
+              <CardContent>
+                <Typography variant="h6" fontWeight={600}>
+                  Medium
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  Timer: 15 seconds
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} sm={4}>
+            <Card
+              onClick={() => {
+                setDifficulty("Hard");
+                setTimeLeft(5);
+              }}
+              sx={{
+                cursor: "pointer",
+                backgroundColor: difficulty === "Hard" ? "#4caf50" : "#ffffff",
+                "&:hover": { backgroundColor: "#e0f7fa" },
+                padding: "10px",
+                textAlign: "center",
+                "&:hover": { transform: "scale(1.05)" },
+              }}
+            >
+              <CardContent>
+                <Typography variant="h6" fontWeight={600}>
+                  Hard
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  Timer: 5 seconds
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+
         <motion.div whileHover={{ scale: 1.1 }}>
           <Button
             variant="contained"
