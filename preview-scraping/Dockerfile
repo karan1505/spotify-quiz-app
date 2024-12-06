@@ -1,36 +1,23 @@
-# Use a lightweight Python 3.11 image
-FROM python:3.11-slim
+FROM python:3.10-slim
 
-# Install necessary dependencies for Chromium and Selenium
+# Install Chromium and ChromeDriver
 RUN apt-get update && apt-get install -y \
-    # Install dependencies for running Chromium in headless mode
-    chromium \
-    # Install Xvfb to simulate display for headless mode
-    xvfb \
-    # Install necessary libraries for Selenium
-    libglib2.0-0 libnss3 libgdk-pixbuf2.0-0 libx11-xcb1 libxcomposite1 libxrandr2 \
-    # Clean up to reduce image size
-    && apt-get clean \
+    chromium chromium-driver wget unzip fonts-liberation \
     && rm -rf /var/lib/apt/lists/*
 
-# Set the environment variable for Chromium
-ENV CHROMIUM_PATH=/usr/bin/chromium
+# Set environment variables for Chromium
+ENV CHROME_BIN=/usr/bin/chromium
+ENV CHROMEDRIVER_PATH=/usr/bin/chromedriver
 
 # Install Python dependencies
-COPY requirements.txt /app/requirements.txt
-WORKDIR /app
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements.txt .
+RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
-# Install the ChromeDriver (matches Chromium version)
-RUN wget -q "https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip" -O /tmp/chromedriver.zip \
-    && unzip /tmp/chromedriver.zip -d /usr/local/bin/ \
-    && rm /tmp/chromedriver.zip
+# Copy application code
+COPY . .
 
-# Expose the port that the app will run on
+# Expose port for FastAPI
 EXPOSE 8000
 
-# Copy the FastAPI app and related files into the container
-COPY . /app
-
-# Command to run FastAPI using Uvicorn
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+# Command to run the FastAPI service
+CMD ["gunicorn", "scraper_service:app", "--workers", "4", "--bind", "0.0.0.0:8000", "-k", "uvicorn.workers.UvicornWorker"]

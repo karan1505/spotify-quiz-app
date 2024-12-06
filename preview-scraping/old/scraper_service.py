@@ -8,6 +8,7 @@ app = FastAPI()
 class TrackRequest(BaseModel):
     name: str
     artist: str
+    album_cover: str
     playlistsIncluded: str  # Assuming this is already a comma-separated string
 
 class TracksRequest(BaseModel):
@@ -20,18 +21,17 @@ async def fetch_preview_urls(request: TracksRequest):
         for track in request.tracks:
             song_name = sanitize_input(track.name)
             artist_name = sanitize_input(track.artist)
-            print("////////////////////////////////")
-            print(track.playlistsIncluded)
-            print("//////////////////////")
             preview_url = fetch_preview_url_with_retries(song_name, artist_name)
 
             # Combine the existing playlist string with the new one
             enriched_tracks.append({
-                "name": track.name,
-                "artist": track.artist,
-                "preview_url": preview_url,
-                "playlistsIncluded": track.playlistsIncluded + (", " if track.playlistsIncluded else "")  # Here, you append new playlist
+            "name": track.name,
+            "artist": track.artist,
+            "preview_url": preview_url,
+            "playlistsIncluded": track.playlistsIncluded,
+            "album_cover": track.album_cover  # Pass along album cover
             })
+
 
         return {"tracks": enriched_tracks}
     except Exception as e:

@@ -1,19 +1,39 @@
 import os
 import json
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request, HTTPException, Body
 from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from spotipy import Spotify
 from spotipy.oauth2 import SpotifyOAuth
 from dotenv import load_dotenv
 from pathlib import Path
+import requests
 import logging
 from datetime import datetime
+from pydantic import BaseModel
+from gamemode1_logic import load_playlist_data, validate_playlist, generate_quiz_questions
+# from dynamic_scraper import update_playlist_with_previews
+import asyncio
 
 from config import Config  # Import Config from config.py
+from pymongo import MongoClient
+MONGO_URI = "mongodb+srv://srinathquizzify:Quizzify123@quizzifycluster.i7npc.mongodb.net/Spotify?retryWrites=true&w=majority"
+
+client = MongoClient(MONGO_URI)
+db = client["Spotify"]  # Database name
+playlists_collection = db["Playlists"]  # Collection name
 
 # Load environment variables
 load_dotenv()
+
+class SelectedOption(BaseModel):
+    name: str
+    artist: str
+    album_cover: str
+
+class ValidateAnswerRequest(BaseModel):
+    question_id: int
+    selected_option: SelectedOption
 
 app = FastAPI()
 
@@ -36,6 +56,8 @@ sp_oauth = SpotifyOAuth(
     redirect_uri="https://quizzify-backend-5kpq.onrender.com/callback",
     scope=Config.SCOPE,
 )
+
+ongoing_processes = {}
 
 @app.get("/login")
 async def login():
@@ -144,35 +166,267 @@ async def user_playlists(request: Request):
         logging.error(f"Error fetching user playlists: {str(e)}")
         raise HTTPException(status_code=400, detail="Error fetching playlists")
 
-# New function to fetch a playlist by URL and return track previews
-@app.get("/fetch_playlist")
-async def fetch_playlist(request: Request, playlist_url: str):
+@app.get("/saved_playlists")
+async def saved_playlists(request: Request):
+    """
+    Fetches the user's playlists from Spotify and returns the playlists 
+    that are already saved in the database.
+    """
+    access_token = request.cookies.get("access_token")
+    if not access_token:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    
+    sp = get_spotify_client(access_token)
+
+    try:
+        # Fetch playlists from Spotify
+        playlists = sp.current_user_playlists()
+        user_playlists = playlists["items"]
+
+        # Extract playlist IDs from user's playlists
+        playlist_ids = [playlist["id"] for playlist in user_playlists]
+
+        # Query the database for saved playlist IDs
+        saved_playlist_ids = set(
+            playlists_collection.distinct("playlistsIncluded", {"playlistsIncluded": {"$in": playlist_ids}})
+        )
+
+        # Filter user playlists to only include saved ones
+        saved_playlists = [
+            playlist for playlist in user_playlists if playlist["id"] in saved_playlist_ids
+        ]
+
+        return {"saved_playlists": saved_playlists}
+
+    except Exception as e:
+        logging.error(f"Error fetching saved playlists: {str(e)}")
+        raise HTTPException(status_code=400, detail="Error fetching saved playlists")
+
+@app.post("/extract_playlist")
+async def extract_playlist(request: Request):
+    """
+    Extracts playlist data and processes it using the scraper service.
+    """
+    access_token = request.cookies.get("access_token")
+    if not access_token:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    sp = get_spotify_client(access_token)
+
+    try:
+        # Parse playlist ID and name from the request body
+        body = await request.json()
+        playlist_id = body.get("playlistId")
+        playlist_name = body.get("playlistName")
+
+        if not playlist_id or not playlist_name:
+            raise HTTPException(status_code=400, detail="Missing playlist ID or name")
+
+        # Fetch playlist details
+        playlist = sp.playlist(playlist_id)
+        tracks = []
+        for item in playlist['tracks']['items']:
+            track = item['track']
+            tracks.append({
+                    "name": track['name'],
+                    "artist": ", ".join([artist['name'] for artist in track['artists']]),
+                    "album_cover": track['album']['images'][0]['url'],
+                    "playlistsIncluded": playlist_id,
+            })
+
+        # Check the database for existing tracks
+        missing_tracks = []
+        for track in tracks:
+            existing_track = playlists_collection.find_one({"name": track["name"], "artist": track["artist"]})
+            if existing_track:
+                # Track exists, append playlist_id if not already present
+                playlists_collection.update_one(
+                    {"_id": existing_track["_id"]},
+                    {"$addToSet": {"playlistsIncluded": playlist_id}}
+                )
+            else:
+                # Track does not exist, add to missing_tracks for scraping
+                missing_tracks.append(track)
+
+        # Only scrape missing tracks
+        if missing_tracks:
+            response = requests.post(
+                "http://localhost:8001/fetch_preview_urls",
+                json={"tracks": missing_tracks}
+            )
+            if response.status_code != 200:
+                raise Exception("Scraper service failed")
+
+            enriched_tracks = response.json()["tracks"]
+
+            # Insert new tracks into the database
+            for track in enriched_tracks:
+                playlists_collection.insert_one({
+                    "name": track["name"],
+                    "artist": track["artist"],
+                    "preview_url": track.get("preview_url"),
+                    "playlistsIncluded": [playlist_id],
+                    "album_cover": track.get("album_cover")  # Include album cover URL
+                })
+        else:
+            enriched_tracks = []  # No new tracks to scrape
+
+        logging.info(f"Tracks from playlist {playlist_id} saved to MongoDB")
+
+        # Save to JSON file
+        sanitized_name = "".join(c if c.isalnum() else "_" for c in playlist_name)
+        output_path = Path(f"./user_playlists/{sanitized_name}.json")
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+
+        with open(output_path, "w", encoding="utf-8") as file:
+            json.dump(enriched_tracks, file, ensure_ascii=False, indent=4)
+
+        logging.info(f"Playlist saved successfully: {output_path}")
+
+        return {"message": "Request received. Playlist processing started."}
+
+    except Exception as e:
+        logging.error(f"Error processing playlist: {str(e)}")
+        raise HTTPException(status_code=400, detail="Error processing playlist")
+
+@app.get("/filtered_playlists")
+async def filtered_playlists(request: Request):
     access_token = request.cookies.get("access_token")
     if not access_token:
         raise HTTPException(status_code=401, detail="Unauthorized")
     
     sp = get_spotify_client(access_token)
     try:
-        # Extract playlist ID from URL (assuming format 'https://open.spotify.com/playlist/{playlist_id}')
-        playlist_id = playlist_url.split('/')[-1].split('?')[0]
-        
-        # Fetch playlist details
-        playlist = sp.playlist(playlist_id)
-        
-        # Extract track names, artists, and preview URLs
-        tracks = []
-        for item in playlist['tracks']['items']:
-            track = item['track']
-            track_info = {
-                "name": track['name'],
-                "artist": ", ".join([artist['name'] for artist in track['artists']]),
-                "preview_url": track['preview_url'],
-                "album_cover": track['album']['images'][0]['url'] if track['album']['images'] else None
-            }
-            tracks.append(track_info)
-        
-        return {"playlist_name": playlist['name'], "tracks": tracks}
+        playlists = sp.current_user_playlists()
+        user_playlists = playlists["items"]
+
+        # Filter playlists with more than 20 tracks
+        filtered_playlists = [
+            playlist for playlist in user_playlists if playlist["tracks"]["total"] > 20
+        ]
+
+        return {"filtered_playlists": filtered_playlists}
+    except Exception as e:
+        logging.error(f"Error fetching filtered playlists: {str(e)}")
+        raise HTTPException(status_code=400, detail="Error fetching playlists")
+
+
+@app.delete("/remove_playlist")
+async def remove_playlist(request: Request):
+    """
+    Removes a playlist ID from the playlistsIncluded field in the database.
+    """
+    try:
+        # Parse playlist ID from the request body
+        body = await request.json()
+        playlist_id = body.get("playlistId")
+
+        if not playlist_id:
+            raise HTTPException(status_code=400, detail="Missing playlist ID")
+
+        # Perform the update operation
+        result = playlists_collection.update_many(
+            {"playlistsIncluded": playlist_id},  # Match songs containing the playlist ID
+            {"$pull": {"playlistsIncluded": playlist_id}}  # Remove the playlist ID from the array
+        )
+
+        logging.info(f"Playlist ID {playlist_id} removed from {result.modified_count} tracks")
+
+        return {
+            "message": f"Playlist ID {playlist_id} successfully removed from tracks.",
+            "modified_count": result.modified_count
+        }
 
     except Exception as e:
-        logging.error(f"Error fetching playlist: {str(e)}")
-        raise HTTPException(status_code=400, detail="Error fetching playlist")
+        logging.error(f"Error removing playlist ID: {str(e)}")
+        raise HTTPException(status_code=400, detail="Error removing playlist ID")
+
+
+async def process_playlist(sp, playlist_id):
+    """
+    Processes the playlist and retrieves preview URLs using an external API.
+    """
+    try:
+        playlist = sp.playlist(playlist_id)
+        playlist_name = playlist['name']
+        sanitized_playlist_name = "".join([c if c.isalnum() else "_" for c in playlist_name])
+
+        tracks = []
+        for item in playlist['tracks']['items']:
+            if asyncio.current_task().cancelled():
+                raise asyncio.CancelledError()
+
+            track = item['track']
+            tracks.append({
+                "name": track['name'],
+                "artist": ", ".join([artist['name'] for artist in track['artists']])
+            })
+
+        # Call the external scraper API
+        response = requests.post(
+            "http://localhost:8001/fetch_preview_urls",
+            json={"tracks": tracks}
+        )
+        if response.status_code != 200:
+            raise Exception(f"Scraper API failed: {response.json()}")
+
+        enriched_tracks = response.json()["tracks"]
+
+        # Save enriched tracks
+        final_file_path = Path(f"./user_playlists/{sanitized_playlist_name}.json")
+        final_file_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(final_file_path, "w", encoding="utf-8") as file:
+            json.dump(enriched_tracks, file, ensure_ascii=False, indent=4)
+
+        return {"tracks": enriched_tracks, "message": "Playlist processed successfully."}
+    except asyncio.CancelledError:
+        logging.info(f"Task canceled for playlist {playlist_id}")
+        raise
+    except Exception as e:
+        logging.error(f"Error in process_playlist: {str(e)}")
+        raise HTTPException(status_code=400, detail="Error processing playlist")
+
+@app.post("/fetch_gamemode1")
+async def fetch_gamemode1(payload: dict = Body(...)):
+    playlist_id = payload.get("playlistID")
+    if not playlist_id:
+        raise HTTPException(status_code=400, detail="Playlist ID is required.")
+
+    try:
+        # Query MongoDB for tracks associated with the given playlistID
+        tracks_cursor = playlists_collection.find({"playlistsIncluded": playlist_id})
+        tracks = list(tracks_cursor)
+
+        if not tracks:
+            raise HTTPException(status_code=404, detail="No tracks found for this playlist.")
+
+        # Generate quiz questions
+        questions = generate_quiz_questions(tracks)
+
+        return {"questions": questions}
+
+    except Exception as e:
+        logging.error(f"Error in fetch_gamemode1: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error processing gamemode1.")
+
+@app.post("/validate_answer")
+async def validate_answer(payload: ValidateAnswerRequest):
+    try:
+        # Simulating fetching the correct question for validation
+        with open("quiz_questions.json", "r") as file:
+            questions = json.load(file)
+
+        question_data = next(
+            (q for q in questions if q["question_id"] == payload.question_id), None
+        )
+
+        if not question_data:
+            raise HTTPException(status_code=404, detail="Question not found.")
+
+        is_correct = question_data["correct_option"]["name"] == payload.selected_option.name
+        return {"is_correct": is_correct}
+
+    except Exception as e:
+        logging.error(f"Validation error: {e}")
+        raise HTTPException(status_code=500, detail="Error validating answer.")
+
