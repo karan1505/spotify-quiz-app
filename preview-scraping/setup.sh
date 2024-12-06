@@ -1,17 +1,18 @@
 #!/bin/bash
 
-# Install chromium
-apt-get update
-apt-get install -y chromium
+# Update and install prerequisites
+apt-get update && apt-get install -y chromium wget unzip
 
-# Install wget (if it's not already installed)
-apt-get install -y wget
+# Fetch Chromium version
+CHROMIUM_VERSION=$(chromium --version | grep -oP '\d+\.\d+\.\d+')
+
+# Determine the compatible ChromeDriver version
+CHROMEDRIVER_VERSION=$(curl -s https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROMIUM_VERSION)
 
 # Install ChromeDriver
-CHROMEDRIVER_VERSION=114.0.5735.90
 wget https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip
-unzip chromedriver_linux64.zip
-mv chromedriver /usr/local/bin/
+unzip chromedriver_linux64.zip -d /usr/local/bin/
+chmod +x /usr/local/bin/chromedriver
 
 # Clean up
 rm chromedriver_linux64.zip
