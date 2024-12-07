@@ -32,9 +32,6 @@ def sanitize_input(text):
     return sanitized
 
 async def get_song_preview(song_name, artist_name="", max_retries=3):
-    """
-    Scrape Apple Music for a song preview URL using Playwright's async API.
-    """
     log_resource_usage()
     try:
         async with async_playwright() as p:
@@ -43,9 +40,7 @@ async def get_song_preview(song_name, artist_name="", max_retries=3):
             page = await context.new_page()
 
             # Encode the query for the URL
-            query = song_name.strip()
-            if artist_name.strip():
-                query += " " + artist_name.strip()
+            query = f"{song_name.strip()} {artist_name.strip()}".strip()
             encoded_query = urllib.parse.quote(query)
             url = f"https://music.apple.com/us/search?term={encoded_query}"
 
@@ -53,40 +48,32 @@ async def get_song_preview(song_name, artist_name="", max_retries=3):
 
             for attempt in range(max_retries):
                 try:
-                    # Navigate to the page and wait for network idle
                     await page.goto(url, timeout=60000)
                     await page.wait_for_load_state("networkidle")
 
-                    # Check if the search results container is available
                     if not await page.locator(".top-search-lockup").first.is_visible():
                         logging.warning("Top search lockup element is not visible.")
                         continue
 
-                    logging.info("Search results loaded. Locating top result.")
-
-                    # Get the top search result element
                     play_button = page.locator(".top-search-lockup").nth(0)
                     if not await play_button.is_visible():
                         logging.warning("Top result element is not visible.")
                         continue
 
-                    # Hover over the top result element to reveal play button
                     await play_button.hover()
 
-                    # Ensure the play button is available and interactable
                     button = play_button.locator("button.play-button")
                     if not await button.is_visible():
                         logging.warning("Play button is not visible.")
                         continue
                     await button.click()
 
-                    # Wait for the audio player to load
                     logging.info("Clicked play button. Waiting for audio player to load.")
                     audio_player = page.locator("#apple-music-player")
                     await audio_player.wait_for(state="attached", timeout=15000)
 
-                    # Retrieve the `src` attribute directly
-                    audio_src = await audio_player.evaluate("el => el.getAttribute('src')")
+                    # Wait for `src` attribute
+                    audio_src = await wait_for_audio_src(audio_player)
                     if audio_src:
                         logging.info(f"Retrieved preview URL: {audio_src}")
                         await browser.close()
@@ -106,6 +93,7 @@ async def get_song_preview(song_name, artist_name="", max_retries=3):
     except Exception as e:
         logging.error(f"Error in get_song_preview: {e}")
         return None
+
 
 @app.post("/fetch_preview_url")
 async def fetch_preview_url(request: Request):
