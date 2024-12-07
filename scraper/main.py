@@ -79,19 +79,32 @@ async def get_song_preview(song_name, artist_name=""):
             await audio_player.wait_for(state="attached", timeout=10000)
             logging.info("Audio player loaded.")
 
-            # Add an extra wait to allow the `src` to populate
-            logging.info("Waiting for audio source to populate...")
-            await page.wait_for_timeout(3000)  # Additional 3 seconds
+            # Extra debugging steps
+            logging.info("Retrieving and logging audio player HTML and attributes...")
+            audio_player_html = await audio_player.inner_html()
+            logging.info(f"Audio player HTML: {audio_player_html}")
 
-            # Retrieve the `src` attribute directly
+            audio_attributes = await audio_player.evaluate("el => Object.fromEntries([...el.attributes].map(attr => [attr.name, attr.value]))")
+            logging.info(f"Audio player attributes: {audio_attributes}")
+
+            logging.info("Waiting for audio source to populate...")
+            await page.wait_for_timeout(3000)
+
+            # Attempt to retrieve the `src` attribute
             audio_src = await audio_player.evaluate("el => el.getAttribute('src')")
             if audio_src:
                 logging.info(f"Retrieved preview URL: {audio_src}")
             else:
-                logging.warning("Audio source URL is None.")
+                logging.warning("Audio source URL is None. Investigating further...")
 
+            # Log network requests to see if the audio URL is fetched dynamically
+            page.on("request", lambda request: logging.info(f"Request made: {request.url}"))
+            page.on("response", lambda response: logging.info(f"Response received: {response.url}"))
+
+            # Close the browser
             await browser.close()
             logging.info("Browser closed successfully.")
+
             return audio_src
 
     except Exception as e:
