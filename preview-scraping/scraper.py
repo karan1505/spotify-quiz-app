@@ -7,15 +7,27 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
-from fastapi.concurrency import run_in_threadpool
 import json
 import re
 import os
 import time
+import logging
+import psutil
 import urllib.parse
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
 
 # FastAPI instance
 app = FastAPI()
+
+def log_resource_usage():
+    """
+    Logs the current process's memory and CPU usage.
+    """
+    process = psutil.Process(os.getpid())
+    logging.info(f"Memory usage: {process.memory_info().rss / 1e6:.2f} MB")
+    logging.info(f"CPU usage: {process.cpu_percent(interval=None):.2f}%")
 
 # Utility functions
 def sanitize_input(text):
@@ -31,6 +43,7 @@ def get_song_preview(song_name, artist_name=""):
     """
     Scrape Apple Music for a song preview URL.
     """
+    log_resource_usage()
     try:
         driver_path = "/usr/bin/chromedriver"
         service = Service(driver_path)
@@ -38,8 +51,16 @@ def get_song_preview(song_name, artist_name=""):
         # Set up Chrome options to run in headless mode
         chrome_options = Options()
         chrome_options.add_argument("--headless")  # Run in headless mode
-        chrome_options.add_argument("--no-sandbox")  # Required for certain environments like Docker or Render
+        chrome_options.add_argument("--no-sandbox")  # Required for certain environments like Docker
         chrome_options.add_argument("--disable-dev-shm-usage")  # To overcome some issues in containers
+        chrome_options.add_argument("--disable-background-networking")
+        chrome_options.add_argument("--disable-default-apps")
+        chrome_options.add_argument("--disable-gpu")
+        chrome_options.add_argument("--disable-extensions")
+        chrome_options.add_argument("--disable-sync")
+        chrome_options.add_argument("--no-first-run")
+        chrome_options.add_argument("--disable-software-rasterizer")
+        chrome_options.add_argument("--single-process")
 
         # Initialize the WebDriver with the options
         driver = webdriver.Chrome(service=service, options=chrome_options)
@@ -78,64 +99,19 @@ def get_song_preview(song_name, artist_name=""):
         return audio_src
 
     except Exception as e:
+        logging.error(f"Error in get_song_preview: {e}")
         return None
     finally:
         driver.quit()
 
-def fetch_preview_url_with_retries(song_name, artist_name, retries=2):
-    """
-    Try fetching the preview URL with the original and fallback strategies.
-    Retries the process twice before setting URL to None.
-    """
-    for attempt in range(retries + 1):
-        query_name = f"{song_name} by {artist_name}" if attempt == 0 else song_name
-        preview_url = get_song_preview(song_name, artist_name if attempt == 0 else "")
-        if preview_url:
-            return preview_url
-    return None
-
-def update_playlist_with_previews(input_file, output_file):
-    """
-    Update a playlist JSON file with preview URLs.
-    """
-    try:
-        with open(input_file, "r") as file:
-            playlist_tracks = json.load(file)
-
-        updated_tracks = []
-        for track in playlist_tracks:
-            song_name = sanitize_input(track.get("name", ""))
-            artist_name = sanitize_input(track.get("artist", ""))
-            preview_url = fetch_preview_url_with_retries(song_name, artist_name)
-            track["preview_url"] = preview_url
-            updated_tracks.append(track)
-
-        os.makedirs(os.path.dirname(output_file), exist_ok=True)
-        with open(output_file, "w", encoding="utf-8") as file:
-            json.dump(updated_tracks, file, ensure_ascii=False, indent=4)
-
-    except Exception as e:
-        print(f"An error occurred: {e}")
-
-# API Models
-class TrackRequest(BaseModel):
-    name: str
-    artist: str
-    playlistsIncluded: str  # Assuming this is already a comma-separated string
-    album_cover: str        # Added the album_cover field
-
-class TracksRequest(BaseModel):
-    tracks: list[TrackRequest]
-
-
-
 @app.post("/fetch_preview_url")
 async def fetch_preview_url(request: Request):
     try:
+        log_resource_usage()
         body = await request.json()
         song_name = sanitize_input(body["name"])
         artist_name = sanitize_input(body["artist"])
-        preview_url = fetch_preview_url_with_retries(song_name, artist_name)
+        preview_url = get_song_preview(song_name, artist_name)
 
         enriched_track = {
             "name": body["name"],
