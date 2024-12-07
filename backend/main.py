@@ -202,6 +202,13 @@ async def saved_playlists(request: Request):
         logging.error(f"Error fetching saved playlists: {str(e)}")
         raise HTTPException(status_code=400, detail="Error fetching saved playlists")
 
+def cleanup_tracks():
+    """
+    Removes tracks from the database where `preview_url` is null.
+    """
+    result = playlists_collection.delete_many({"preview_url": None})
+    logging.info(f"Cleanup completed: Removed {result.deleted_count} tracks with null preview_url.")
+
 @app.post("/extract_playlist")
 async def extract_playlist(request: Request):
     """
@@ -261,7 +268,6 @@ async def extract_playlist(request: Request):
             enriched_track = response.json()
             enriched_tracks.append(enriched_track)
 
-
             # Insert the enriched track into the database
             playlists_collection.insert_one({
                 "name": enriched_track["name"],
@@ -280,6 +286,9 @@ async def extract_playlist(request: Request):
             json.dump(enriched_tracks, file, ensure_ascii=False, indent=4)
 
         logging.info(f"Playlist saved successfully: {output_path}")
+
+        # Perform cleanup of tracks with null preview_url
+        cleanup_tracks()
 
         return {"message": "Playlist processed successfully."}
 
