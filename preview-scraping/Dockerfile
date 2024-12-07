@@ -29,4 +29,6 @@ COPY . .
 EXPOSE 8001
 
 # Run the application with Gunicorn
-CMD ["gunicorn", "scraper:app", "--workers", "1", "--threads", "2", "--bind", "0.0.0.0:8001", "-k", "uvicorn.workers.UvicornWorker", "--timeout", "120"]
+# CMD ["gunicorn", "scraper:app", "--workers", "1", "--threads", "2", "--bind", "0.0.0.0:8001", "-k", "uvicorn.workers.UvicornWorker", "--timeout", "120"] 
+# Use the PORT environment variable (Cloud Run's default is 8080)
+CMD ["gunicorn", "scraper:app", "--workers", "1", "--threads", "2", "--bind", "0.0.0.0:${PORT}", "-k", "uvicorn.workers.UvicornWorker", "--timeout", "120"]

@@ -13,4 +13,4 @@ https://quizzify-frontend-6sp3.onrender.com
 
 https://quizzify-backend-5kpq.onrender.com
 
-https://quizzify-scraper.onrender.com
+https://scraper-image-929406927292.us-central1.run.app
