@@ -63,11 +63,12 @@ async def get_song_preview(song_name, artist_name=""):
             button = play_button.locator("button.play-button")
             await button.click()
 
-            # Wait for the <audio> element to load
-            await page.wait_for_selector("#apple-music-player", timeout=10000)
+            # Wait for the audio element to appear in the DOM
+            audio_player = page.locator("#apple-music-player")
+            await audio_player.wait_for(state="attached", timeout=10000)
 
-            # Retrieve the preview URL
-            audio_src = await page.locator("#apple-music-player").get_attribute("src")
+            # Retrieve the `src` attribute directly
+            audio_src = await audio_player.evaluate("el => el.getAttribute('src')")
             logging.info(f"Retrieved preview URL: {audio_src}")
 
             await browser.close()
@@ -76,6 +77,8 @@ async def get_song_preview(song_name, artist_name=""):
     except Exception as e:
         logging.error(f"Error in get_song_preview: {e}")
         return None
+
+
 
 @app.post("/fetch_preview_url")
 async def fetch_preview_url(request: Request):

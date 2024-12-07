@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import { motion } from "framer-motion";
 import Confetti from "react-confetti";
-import config from "./config";
+import config from "../config";
 
 // Gamemode1.js - Updated function
 const Quiz1 = () => {

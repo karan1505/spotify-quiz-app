@@ -164,7 +164,7 @@ const Dashboard = () => {
               <CardMedia
                 component="img"
                 height="200"
-                image="https://cdn.pixabay.com/photo/2015/05/07/11/02/guitar-756326_1280.jpg"
+                image="https://images.unsplash.com/photo-1571435763834-4d6fbb550bb7?q=80&w=2676&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                 alt="Top 50 Global Song Quiz"
               />
               <CardContent>
@@ -180,7 +180,7 @@ const Dashboard = () => {
 
           <Grid item xs={12} sm={6} md={4}>
             <Card
-              onClick={() => navigate("/gamemode1")}
+              onClick={() => navigate("/erasquiz1")}
               sx={{
                 cursor: "pointer",
                 bgcolor: "#ffffff",
@@ -207,7 +207,7 @@ const Dashboard = () => {
           </Grid>
           <Grid item xs={12} sm={6} md={4}>
             <Card
-              onClick={() => navigate("/gamemode1")}
+              onClick={() => navigate("/erasquiz2")}
               sx={{
                 cursor: "pointer",
                 bgcolor: "#ffffff",
@@ -234,7 +234,7 @@ const Dashboard = () => {
           </Grid>
           <Grid item xs={12} sm={6} md={4}>
             <Card
-              onClick={() => navigate("/gamemode1")}
+              onClick={() => navigate("/artistquiz1")}
               sx={{
                 cursor: "pointer",
                 bgcolor: "#ffffff",
@@ -262,7 +262,7 @@ const Dashboard = () => {
 
           <Grid item xs={12} sm={6} md={4}>
             <Card
-              onClick={() => navigate("/gamemode1")}
+              onClick={() => navigate("/quiz2")}
               sx={{
                 cursor: "pointer",
                 bgcolor: "#ffffff",
@@ -274,7 +274,7 @@ const Dashboard = () => {
               <CardMedia
                 component="img"
                 height="200"
-                image="https://cdn.pixabay.com/photo/2016/03/26/14/04/marshall-1280626_1280.jpg"
+                image="https://preview.redd.it/1tf94ducfz521.jpg?auto=webp&s=b5906f7001d5676399c6d30ad5915814d196a1ac"
                 alt="Rock Classics"
               />
               <CardContent>
