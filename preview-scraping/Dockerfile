@@ -25,10 +25,13 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copy application code to the working directory
 COPY . .
 
-# Expose the application's port
-EXPOSE 8001
+# Expose the application's port (Cloud Run default: 8080)
+EXPOSE 8080
 
 # Run the application with Gunicorn
-# CMD ["gunicorn", "scraper:app", "--workers", "1", "--threads", "2", "--bind", "0.0.0.0:8001", "-k", "uvicorn.workers.UvicornWorker", "--timeout", "120"] 
-# Use the PORT environment variable (Cloud Run's default is 8080)
-CMD ["gunicorn", "scraper:app", "--workers", "1", "--threads", "2", "--bind", "0.0.0.0:${PORT}", "-k", "uvicorn.workers.UvicornWorker", "--timeout", "120"]
+CMD gunicorn scraper:app \
+    --workers 1 \
+    --threads 2 \
+    --bind 0.0.0.0:$PORT \
+    -k uvicorn.workers.UvicornWorker \
+    --timeout 120
