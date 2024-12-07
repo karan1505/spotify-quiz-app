@@ -1,12 +1,12 @@
 FROM python:3.10-slim
 
 # Set environment variables for Chromium
-ENV CHROME_BIN=/usr/bin/chromium-browser
+ENV CHROME_BIN=/usr/bin/chromium
 ENV CHROMEDRIVER_PATH=/usr/bin/chromedriver
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
-    chromium-browser chromium-driver wget unzip fonts-liberation \
+    chromium chromium-driver wget unzip fonts-liberation \
     libnss3 libnspr4 libx11-xcb1 libgbm-dev libxcomposite-dev \
     libxrandr2 libxi6 libatk1.0-0 libpangocairo-1.0-0 \
     libgtk-3-0 libasound2 libxdamage1 libxcursor1 \
