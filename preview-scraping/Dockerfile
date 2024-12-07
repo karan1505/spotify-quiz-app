@@ -1,37 +1,44 @@
-# Use a lightweight base image with Python 3.10
-FROM python:3.10-slim-buster
+# Start with the official Python slim image
+FROM python:3.11-slim
 
-# Set environment variables for Chromium
-ENV CHROME_BIN=/usr/bin/chromium
-ENV CHROMEDRIVER_PATH=/usr/bin/chromedriver
+# Set environment variables for faster installation
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
 
-# Install necessary system packages and dependencies
+# Install system dependencies for Playwright
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    chromium chromium-driver fonts-liberation \
-    libnss3 libnspr4 libx11-xcb1 libgbm1 libxcomposite1 \
-    libxrandr2 libxi6 libatk1.0-0 libpangocairo-1.0-0 \
-    libgtk-3-0 libasound2 libxdamage1 libxcursor1 && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    curl \
+    ca-certificates \
+    libnss3 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libxcomposite1 \
+    libxrandr2 \
+    libxdamage1 \
+    libgbm1 \
+    libasound2 \
+    libpangocairo-1.0-0 \
+    libxshmfence1 \
+    libpangoft2-1.0-0 \
+    fonts-liberation \
+    && rm -rf /var/lib/apt/lists/*
 
-# Set the working directory
-WORKDIR /app
-
-# Copy Python dependencies file and install them
+# Install Playwright and Python dependencies
+RUN pip install --upgrade pip
 COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
-# Copy application code to the working directory
+# Install Chromium browser for Playwright
+RUN playwright install --with-deps chromium
+
+# Copy project files into the container
+WORKDIR /app
 COPY . .
 
-# Expose the application's port (Cloud Run default: 8080)
-EXPOSE 8080
+# Expose the port
+EXPOSE 8000
 
-# Run the application with Gunicorn
-CMD gunicorn scraper:app \
-    --workers 1 \
-    --threads 2 \
-    --bind 0.0.0.0:$PORT \
-    -k uvicorn.workers.UvicornWorker \
-    --timeout 120
+# Run Gunicorn with Uvicorn workers
+CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]

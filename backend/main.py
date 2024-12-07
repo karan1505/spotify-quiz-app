@@ -252,7 +252,7 @@ async def extract_playlist(request: Request):
         enriched_tracks = []
         for track in missing_tracks:
             response = requests.post(
-                "https://scraperimg3-929406927292.us-central1.run.app/fetch_preview_url",
+                "https://quizzify-frontend-6sp3.onrender.com/fetch_preview_url",
                 json=track
             )
             if response.status_code != 200:
@@ -362,7 +362,7 @@ async def process_playlist(sp, playlist_id):
 
         # Call the scraper API and wait for the response synchronously
         response = requests.post(
-            "https://scraperimg3-929406927292.us-central1.run.apps",
+            "https://quizzify-frontend-6sp3.onrender.coms",
             json={"tracks": tracks},
             timeout=None  # No timeout
         )
