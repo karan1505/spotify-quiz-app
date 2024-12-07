@@ -362,7 +362,7 @@ async def process_playlist(sp, playlist_id):
 
         # Call the scraper API and wait for the response synchronously
         response = requests.post(
-            "https://quizzify-frontend-6sp3.onrender.coms",
+            "https://quizzify-frontend-6sp3.onrender.com",
             json={"tracks": tracks},
             timeout=None  # No timeout
         )
