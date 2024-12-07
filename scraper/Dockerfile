@@ -33,8 +33,11 @@ RUN playwright install --with-deps
 # Copy the FastAPI application code into the container
 COPY . /app
 
-# Expose the FastAPI port
-EXPOSE 8000
+# Set the default port to 8080 for Google Cloud
+ENV PORT 8080
+
+# Expose the Google Cloud default port
+EXPOSE 8080
 
 # Command to run the FastAPI application
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]

@@ -1,212 +1,58 @@
 [
     {
-        "name": "Anti-Hero",
-        "artist": "Taylor Swift",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b273bb54dde68cd23e2a268ae0f5",
-        "preview_url": null,
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
-        "name": "Fortnight (feat. Post Malone)",
-        "artist": "Taylor Swift, Post Malone",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b2735076e4160d018e378f488c33",
-        "preview_url": null,
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
-        "name": "Cruel Summer",
-        "artist": "Taylor Swift",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b273e787cffec20aa2a396a61647",
-        "preview_url": null,
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
-        "name": "Blank Space",
-        "artist": "Taylor Swift",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b273b7e976d2b35c767f9012cb72",
-        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/fc/bc/14/fcbc14d7-be62-794b-683f-7f7b92adcdeb/mzaf_16178492597807154867.plus.aac.ep.m4a",
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
-        "name": "Don’t Blame Me",
-        "artist": "Taylor Swift",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b273da5d5aeeabacacc1263c0f4b",
-        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/eb/14/55/eb1455b9-fec7-f6e3-bc65-eb99c8415230/mzaf_10348112022095506535.plus.aac.ep.m4a",
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
-        "name": "august",
-        "artist": "Taylor Swift",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b27395f754318336a07e85ec59bc",
-        "preview_url": null,
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
-        "name": "Lover",
-        "artist": "Taylor Swift",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b273e787cffec20aa2a396a61647",
-        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/4f/fd/c7/4ffdc746-c0de-999b-eb93-2753eaa18978/mzaf_16390726922705145157.plus.aac.ep.m4a",
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
-        "name": "Enchanted",
-        "artist": "Taylor Swift",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b273d0eae3c1661a96570f0ca7bd",
-        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview116/v4/ed/cf/d1/edcfd196-0f68-155f-8ae6-d7b247ac04f3/mzaf_9439334605763697954.plus.aac.ep.m4a",
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
-        "name": "willow",
-        "artist": "Taylor Swift",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b27325751b4b32829d6bbfe6be7f",
-        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview122/v4/a7/c9/d3/a7c9d3d1-04ec-54a5-4345-da3df9a92692/mzaf_10363557884431810999.plus.aac.ep.m4a",
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
-        "name": "I Knew You Were Trouble.",
-        "artist": "Taylor Swift",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b273254c8a09649551438b20f4c0",
-        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview116/v4/2b/75/ec/2b75ec32-49c0-067e-4414-8b1435761a13/mzaf_11993213519191865422.plus.aac.ep.m4a",
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
-        "name": "Love Story",
-        "artist": "Taylor Swift",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b27373b565ab9d713e8d5586aac2",
-        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview126/v4/82/e0/57/82e057be-4633-8f28-c8cc-e4e7706bae61/mzaf_4015995726893785463.plus.aac.ep.m4a",
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
-        "name": "Our Song",
-        "artist": "Taylor Swift",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b273c909d4e47de2ab0636f46d64",
-        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/5c/f3/b9/5cf3b960-a9b0-cba9-33e5-b3131772e824/mzaf_9660998824367280330.plus.aac.ep.m4a",
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
         "name": "Look What You Made Me Do",
         "artist": "Taylor Swift",
         "album_cover": "https://i.scdn.co/image/ab67616d0000b273da5d5aeeabacacc1263c0f4b",
-        "preview_url": null,
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
-        "name": "Style",
-        "artist": "Taylor Swift",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b273b7e976d2b35c767f9012cb72",
-        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/0a/20/a0/0a20a0b1-b71a-a859-6863-55c4523603f2/mzaf_993685090719203239.plus.aac.ep.m4a",
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
-        "name": "cardigan",
-        "artist": "Taylor Swift",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b27395f754318336a07e85ec59bc",
-        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview122/v4/ba/28/58/ba285837-d2ab-6a3d-28ef-1feb552cbef7/mzaf_1335292385039840912.plus.aac.ep.m4a",
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
-        "name": "Back To December",
-        "artist": "Taylor Swift",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b273d0eae3c1661a96570f0ca7bd",
-        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/f2/8a/33/f28a337c-a3c8-bde7-3f47-15bca7e34923/mzaf_11534386168515292633.plus.aac.ep.m4a",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/ec/b9/8e/ecb98e57-bae3-7dc8-287b-79846b95a63f/mzaf_589933329361340913.plus.aac.ep.m4a",
         "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
     },
     {
         "name": "We Are Never Ever Getting Back Together",
         "artist": "Taylor Swift",
         "album_cover": "https://i.scdn.co/image/ab67616d0000b273254c8a09649551438b20f4c0",
-        "preview_url": null,
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview116/v4/dd/17/b0/dd17b0b6-56ca-62d5-c2b7-6b5ece33f9b5/mzaf_9425966857107132169.plus.aac.ep.m4a",
         "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
     },
     {
         "name": "exile (feat. Bon Iver)",
         "artist": "Taylor Swift, Bon Iver",
         "album_cover": "https://i.scdn.co/image/ab67616d0000b27395f754318336a07e85ec59bc",
-        "preview_url": null,
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/70/da/fb/70dafbe5-9c13-ae70-15bc-b185e5d1cd52/mzaf_7626892265467970348.plus.aac.ep.m4a",
         "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
     },
     {
         "name": "Shake It Off",
         "artist": "Taylor Swift",
         "album_cover": "https://i.scdn.co/image/ab67616d0000b273b7e976d2b35c767f9012cb72",
-        "preview_url": null,
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
-        "name": "Gorgeous",
-        "artist": "Taylor Swift",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b273da5d5aeeabacacc1263c0f4b",
-        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/ba/a0/dd/baa0dd5a-70a2-ceb7-0ab4-d2f97ecd58e6/mzaf_9985581988345702686.plus.aac.ep.m4a",
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
-        "name": "Paper Rings",
-        "artist": "Taylor Swift",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b273e787cffec20aa2a396a61647",
-        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/cd/f1/47/cdf1474c-fe9f-3d45-7ca1-c7a8e1aad405/mzaf_11541657180458861656.plus.aac.ep.m4a",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview126/v4/9a/ac/ca/9aacca6e-f862-b201-0e15-34a6bd36cca2/mzaf_10988320725275384728.plus.aac.ep.m4a",
         "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
     },
     {
         "name": "You Belong With Me",
         "artist": "Taylor Swift",
         "album_cover": "https://i.scdn.co/image/ab67616d0000b27373b565ab9d713e8d5586aac2",
-        "preview_url": null,
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/79/42/4c/79424c63-8b3a-61a7-5e20-1cfcd464aae8/mzaf_9972166911135232870.plus.aac.ep.m4a",
         "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
     },
     {
         "name": "22",
         "artist": "Taylor Swift",
         "album_cover": "https://i.scdn.co/image/ab67616d0000b273254c8a09649551438b20f4c0",
-        "preview_url": null,
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview116/v4/ea/fa/9a/eafa9a24-12fb-1cc6-d487-5816b0a9bf2c/mzaf_4175990089597004244.plus.aac.ep.m4a",
         "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
     },
     {
         "name": "the 1",
         "artist": "Taylor Swift",
         "album_cover": "https://i.scdn.co/image/ab67616d0000b27395f754318336a07e85ec59bc",
-        "preview_url": null,
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
-        "name": "The Man",
-        "artist": "Taylor Swift",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b273e787cffec20aa2a396a61647",
-        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/14/68/51/146851f2-0dd5-6432-5ff6-ddab233305b7/mzaf_10144325173700949134.plus.aac.ep.m4a",
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
-        "name": "Wildest Dreams (Taylor's Version)",
-        "artist": "Taylor Swift",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b273eb10050f6fe8e2783a91a4b1",
-        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/92/61/dd/9261dd2c-ccd7-1862-ef13-9aa9ec57c5b3/mzaf_10626358778492140570.plus.aac.ep.m4a",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/a0/0e/a1/a00ea1e2-38c3-e88c-2d91-02dfe0510f9e/mzaf_16493231591090418880.plus.aac.ep.m4a",
         "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
     },
     {
         "name": "Better Than Revenge",
         "artist": "Taylor Swift",
         "album_cover": "https://i.scdn.co/image/ab67616d0000b273e1bc852a04501952c765d5cd",
-        "preview_url": null,
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
-        "name": "Getaway Car",
-        "artist": "Taylor Swift",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b273da5d5aeeabacacc1263c0f4b",
-        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/50/31/99/503199fe-04c7-ae64-d5ac-1269d4c2aa71/mzaf_2897552046563611660.plus.aac.ep.m4a",
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
-        "name": "ME! (feat. Brendon Urie of Panic! At The Disco)",
-        "artist": "Taylor Swift, Brendon Urie, Panic! At The Disco",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b273e787cffec20aa2a396a61647",
-        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/08/b2/a1/08b2a176-be4a-6218-3339-dd1dbf00c443/mzaf_15742930650947864141.plus.aac.ep.m4a",
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
-        "name": "Red (Taylor's Version)",
-        "artist": "Taylor Swift",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b273318443aab3531a0558e79a4d",
-        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview122/v4/ff/3c/55/ff3c55b1-eb2f-98cd-e09d-f84444dd06f8/mzaf_2154353486522721543.plus.aac.ep.m4a",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview116/v4/bd/72/81/bd72814e-e5f5-93a5-efc1-e5cd5d6b3fb4/mzaf_4741864373685313033.plus.aac.ep.m4a",
         "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
     },
     {
@@ -220,168 +66,105 @@
         "name": "You Need To Calm Down",
         "artist": "Taylor Swift",
         "album_cover": "https://i.scdn.co/image/ab67616d0000b273e787cffec20aa2a396a61647",
-        "preview_url": null,
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/85/05/a9/8505a97c-15ff-f665-fec4-f6bf59e5b0fa/mzaf_6461086105480341562.plus.aac.ep.m4a",
         "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
     },
     {
         "name": "Bad Blood",
         "artist": "Taylor Swift",
         "album_cover": "https://i.scdn.co/image/ab67616d0000b273b7e976d2b35c767f9012cb72",
-        "preview_url": null,
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
-        "name": "Mr. Perfectly Fine (Taylor’s Version) (From The Vault)",
-        "artist": "Taylor Swift",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b273a48964b5d9a3d6968ae3e0de",
-        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/05/22/47/052247a7-75c0-6d50-9d79-2156015e6796/mzaf_18131466617262521259.plus.aac.ep.m4a",
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
-        "name": "I Did Something Bad",
-        "artist": "Taylor Swift",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b273da5d5aeeabacacc1263c0f4b",
-        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/ea/40/d4/ea40d452-1b60-5ac8-b04d-fa818f361b12/mzaf_6932756219695687940.plus.aac.ep.m4a",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/80/e6/a8/80e6a803-1117-cd3f-48da-a3e6799eea3c/mzaf_4373883620241885225.plus.aac.ep.m4a",
         "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
     },
     {
         "name": "Afterglow",
         "artist": "Taylor Swift",
         "album_cover": "https://i.scdn.co/image/ab67616d0000b273e787cffec20aa2a396a61647",
-        "preview_url": null,
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
-        "name": "Dear John",
-        "artist": "Taylor Swift",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b273e1bc852a04501952c765d5cd",
-        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview116/v4/69/8f/58/698f5845-307a-d4d7-706b-b911fdf06cbe/mzaf_12296543089172463543.plus.aac.ep.m4a",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/75/51/fb/7551fb10-9914-5368-75f3-0fe700c297b0/mzaf_882931760401970346.plus.aac.ep.m4a",
         "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
     },
     {
         "name": "my tears ricochet",
         "artist": "Taylor Swift",
         "album_cover": "https://i.scdn.co/image/ab67616d0000b27395f754318336a07e85ec59bc",
-        "preview_url": null,
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/15/81/0c/15810c08-9be9-7872-2491-80760f4596b6/mzaf_7467699649340852088.plus.aac.ep.m4a",
         "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
     },
     {
         "name": "State Of Grace (Taylor's Version)",
         "artist": "Taylor Swift",
         "album_cover": "https://i.scdn.co/image/ab67616d0000b273318443aab3531a0558e79a4d",
-        "preview_url": null,
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview122/v4/ff/3c/55/ff3c55b1-eb2f-98cd-e09d-f84444dd06f8/mzaf_2154353486522721543.plus.aac.ep.m4a",
         "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
     },
     {
         "name": "I Forgot That You Existed",
         "artist": "Taylor Swift",
         "album_cover": "https://i.scdn.co/image/ab67616d0000b273e787cffec20aa2a396a61647",
-        "preview_url": null,
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/47/0e/44/470e44f6-b7f6-d9b6-2808-0c0396351fd2/mzaf_14816616140146766590.plus.aac.ep.m4a",
         "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
     },
     {
         "name": "Out Of The Woods",
         "artist": "Taylor Swift",
         "album_cover": "https://i.scdn.co/image/ab67616d0000b27352b2a3824413eefe9e33817a",
-        "preview_url": null,
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/54/96/8f/54968f8d-85c9-169e-0ba3-c160e8b617e8/mzaf_10159057345580987416.plus.aac.ep.m4a",
         "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
     },
     {
         "name": "Teardrops on My Guitar - Pop Version",
         "artist": "Taylor Swift",
         "album_cover": "https://i.scdn.co/image/ab67616d0000b273c909d4e47de2ab0636f46d64",
-        "preview_url": null,
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/de/6d/5c/de6d5c19-23ea-edf0-cd7b-955e6ca2fe6a/mzaf_8970398602502466931.plus.aac.ep.m4a",
         "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
     },
     {
         "name": "Delicate",
         "artist": "Taylor Swift",
         "album_cover": "https://i.scdn.co/image/ab67616d0000b273da5d5aeeabacacc1263c0f4b",
-        "preview_url": null,
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/68/b8/d1/68b8d1f1-78b7-7d64-53ad-37cfa52cdb25/mzaf_535342674095055360.plus.aac.ep.m4a",
         "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
     },
     {
         "name": "The Archer",
         "artist": "Taylor Swift",
         "album_cover": "https://i.scdn.co/image/ab67616d0000b273e787cffec20aa2a396a61647",
-        "preview_url": null,
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
-        "name": "this is me trying",
-        "artist": "Taylor Swift",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b27395f754318336a07e85ec59bc",
-        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/1d/51/5b/1d515bf3-5ad8-fbc7-4f1a-076feccc74b5/mzaf_17065297388027592594.plus.aac.ep.m4a",
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
-        "name": "The Way I Loved You (Taylor’s Version)",
-        "artist": "Taylor Swift",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b273a48964b5d9a3d6968ae3e0de",
-        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview122/v4/54/30/39/5430392a-c104-ba2e-c9eb-5f2b8e16a33d/mzaf_16028686720879582115.plus.aac.ep.m4a",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/d6/72/ff/d672ffa9-9504-10b0-d3e6-bcf888b7ef00/mzaf_9119259860544011119.plus.aac.ep.m4a",
         "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
     },
     {
         "name": "champagne problems",
         "artist": "Taylor Swift",
         "album_cover": "https://i.scdn.co/image/ab67616d0000b27325751b4b32829d6bbfe6be7f",
-        "preview_url": null,
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/c3/b0/70/c3b07091-1849-67be-6333-6dc1c7334ce6/mzaf_17260417349802499370.plus.aac.ep.m4a",
         "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
     },
     {
         "name": "New Romantics",
         "artist": "Taylor Swift",
         "album_cover": "https://i.scdn.co/image/ab67616d0000b27352b2a3824413eefe9e33817a",
-        "preview_url": null,
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/3f/87/ad/3f87ad56-64c0-4b85-ae26-72fa9096e71f/mzaf_13350749420248485203.plus.aac.ep.m4a",
         "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
     },
     {
         "name": "The Joker And The Queen (feat. Taylor Swift)",
         "artist": "Ed Sheeran, Taylor Swift",
         "album_cover": "https://i.scdn.co/image/ab67616d0000b27389aff4625958eac8d16535c7",
-        "preview_url": null,
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview122/v4/34/3d/37/343d37ea-149c-521c-d818-50bd56f51c14/mzaf_13601759636808884241.plus.aac.ep.m4a",
         "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
     },
     {
         "name": "I Don’t Wanna Live Forever (Fifty Shades Darker)",
         "artist": "ZAYN, Taylor Swift",
         "album_cover": "https://i.scdn.co/image/ab67616d0000b2735997605214d568d73fd365c2",
-        "preview_url": null,
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
-        "name": "All Too Well (10 Minute Version) (Taylor's Version) (From The Vault)",
-        "artist": "Taylor Swift",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b273563151cc3a0528d8228998c8",
-        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/47/ba/7e/47ba7e57-3e42-0b8e-63fa-0a3187f7c074/mzaf_5351429145359662559.plus.aac.ep.m4a",
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
-        "name": "I Knew You Were Trouble (Taylor's Version)",
-        "artist": "Taylor Swift",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b273318443aab3531a0558e79a4d",
-        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/79/a5/c1/79a5c16d-e8b2-01ef-28f0-b25df0bc3cde/mzaf_2146648444105008575.plus.aac.ep.m4a",
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
-        "name": "All Too Well (Taylor's Version)",
-        "artist": "Taylor Swift",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b273318443aab3531a0558e79a4d",
-        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/47/ba/7e/47ba7e57-3e42-0b8e-63fa-0a3187f7c074/mzaf_5351429145359662559.plus.aac.ep.m4a",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview116/v4/84/98/8c/84988cf3-332a-c2e8-a2f0-c7cecb39ede8/mzaf_2977065413047488088.plus.aac.ep.m4a",
         "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
     },
     {
         "name": "We Are Never Ever Getting Back Together (Taylor's Version)",
         "artist": "Taylor Swift",
         "album_cover": "https://i.scdn.co/image/ab67616d0000b273318443aab3531a0558e79a4d",
-        "preview_url": null,
-        "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
-    },
-    {
-        "name": "22 (Taylor's Version)",
-        "artist": "Taylor Swift",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b273318443aab3531a0558e79a4d",
-        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/18/7a/b1/187ab114-392c-1439-e00d-4f6e623ac3cf/mzaf_17255029260572481493.plus.aac.ep.m4a",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/80/f0/ed/80f0ed2c-5a32-3d04-65c7-b715a8e3e622/mzaf_8395242578686770403.plus.aac.ep.m4a",
         "playlistsIncluded": "5DyMJs4ZF7pVTq6hr5rGsv"
     }
 ]
