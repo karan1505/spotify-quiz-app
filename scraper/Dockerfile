@@ -17,12 +17,18 @@ RUN apt-get update \
         libxrandr2 \
         libxss1 \
         libasound2 \
+        wget \
+        unzip \
+        curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
 COPY requirements.txt /app/requirements.txt
 WORKDIR /app
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Install Playwright dependencies and browsers
+RUN playwright install --with-deps
 
 # Copy the FastAPI application code into the container
 COPY . /app
@@ -31,4 +37,4 @@ COPY . /app
 EXPOSE 8000
 
 # Command to run the FastAPI application
-CMD ["uvicorn", "scraper:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
