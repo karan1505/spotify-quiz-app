@@ -32,51 +32,101 @@ def sanitize_input(text):
 
 async def get_song_preview(song_name, artist_name=""):
     """
-    Scrape Apple Music for a song preview URL using Playwright's async API.
+    Scrape Apple Music for a song preview URL using Playwright's async API with detailed logging.
     """
-    log_resource_usage()
+    log_resource_usage()  # Log resource usage before starting the function
+    logging.info("Starting 'get_song_preview' function.")
     try:
         async with async_playwright() as p:
-            # Launch the browser in headless mode
+            logging.info("Launching browser...")
             browser = await p.chromium.launch(headless=True)
             context = await browser.new_context()
             page = await context.new_page()
+            logging.info("Browser launched successfully.")
 
             # Encode the query for the URL
             query = song_name.strip()
             if artist_name.strip():
-                query += " " + artist_name.strip()
+                query += f" {artist_name.strip()}"
             encoded_query = urllib.parse.quote(query)
             url = f"https://music.apple.com/us/search?term={encoded_query}"
 
             logging.info(f"Navigating to search URL: {url}")
-            await page.goto(url, timeout=30000)
+            try:
+                await page.goto(url, timeout=30000)
+                logging.info("Page navigation successful.")
+            except Exception as e:
+                logging.error(f"Failed to navigate to the page: {e}")
+                await browser.close()
+                return None
+
+            # Check page content
+            page_content = await page.content()
+            logging.debug(f"Page content (truncated): {page_content[:500]}")  # Log first 500 characters of page content
 
             # Wait for the top result to load
-            await page.wait_for_selector(".top-search-lockup", timeout=15000)
+            try:
+                logging.info("Waiting for '.top-search-lockup' selector to appear...")
+                await page.wait_for_selector(".top-search-lockup", timeout=15000)
+                logging.info("Selector '.top-search-lockup' found.")
+            except Exception as e:
+                logging.error(f"Selector '.top-search-lockup' not found: {e}")
+                await browser.close()
+                return None
 
             # Hover over the top result element
-            play_button = page.locator(".top-search-lockup").nth(0)  # First result
-            await play_button.hover()
+            try:
+                logging.info("Hovering over the top search result...")
+                play_button = page.locator(".top-search-lockup").nth(0)
+                await play_button.hover()
+                logging.info("Hovered over the top search result.")
+            except Exception as e:
+                logging.error(f"Failed to hover over the search result: {e}")
+                await browser.close()
+                return None
 
             # Click the play button
-            button = play_button.locator("button.play-button")
-            await button.click()
+            try:
+                logging.info("Attempting to click the play button...")
+                button = play_button.locator("button.play-button")
+                await button.click()
+                logging.info("Play button clicked.")
+            except Exception as e:
+                logging.error(f"Failed to click the play button: {e}")
+                await browser.close()
+                return None
 
             # Wait for the audio element to appear in the DOM
-            audio_player = page.locator("#apple-music-player")
-            await audio_player.wait_for(state="attached", timeout=10000)
+            try:
+                logging.info("Waiting for the audio player to load...")
+                audio_player = page.locator("#apple-music-player")
+                await audio_player.wait_for(state="attached", timeout=10000)
+                logging.info("Audio player loaded.")
+            except Exception as e:
+                logging.error(f"Audio player did not load: {e}")
+                await browser.close()
+                return None
 
             # Retrieve the `src` attribute directly
-            audio_src = await audio_player.evaluate("el => el.getAttribute('src')")
-            logging.info(f"Retrieved preview URL: {audio_src}")
+            try:
+                logging.info("Retrieving the audio source URL...")
+                audio_src = await audio_player.evaluate("el => el.getAttribute('src')")
+                if audio_src:
+                    logging.info(f"Audio source URL retrieved: {audio_src}")
+                else:
+                    logging.warning("Audio source URL is None.")
+            except Exception as e:
+                logging.error(f"Failed to retrieve the audio source URL: {e}")
+                audio_src = None
 
             await browser.close()
+            logging.info("Browser closed successfully.")
             return audio_src
 
     except Exception as e:
-        logging.error(f"Error in get_song_preview: {e}")
+        logging.error(f"An unexpected error occurred in 'get_song_preview': {e}")
         return None
+
 
 
 
