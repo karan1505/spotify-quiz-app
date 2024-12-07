@@ -1,26 +1,32 @@
-FROM python:3.10-slim
+# Use a lightweight base image with Python 3.10
+FROM python:3.10-slim-buster
 
 # Set environment variables for Chromium
 ENV CHROME_BIN=/usr/bin/chromium
 ENV CHROMEDRIVER_PATH=/usr/bin/chromedriver
 
-# Install dependencies
-RUN apt-get update && apt-get install -y \
-    chromium chromium-driver wget unzip fonts-liberation \
-    libnss3 libnspr4 libx11-xcb1 libgbm-dev libxcomposite-dev \
+# Install necessary system packages and dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    chromium chromium-driver fonts-liberation \
+    libnss3 libnspr4 libx11-xcb1 libgbm1 libxcomposite1 \
     libxrandr2 libxi6 libatk1.0-0 libpangocairo-1.0-0 \
-    libgtk-3-0 libasound2 libxdamage1 libxcursor1 \
-    --no-install-recommends && rm -rf /var/lib/apt/lists/*
+    libgtk-3-0 libasound2 libxdamage1 libxcursor1 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies
+# Set the working directory
+WORKDIR /app
+
+# Copy Python dependencies file and install them
 COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
+# Copy application code to the working directory
 COPY . .
 
-# Expose port for FastAPI
+# Expose the application's port
 EXPOSE 8001
 
-# Command to run the FastAPI service
-CMD ["gunicorn", "scraper:app", "--workers", "2", "--bind", "0.0.0.0:8001", "-k", "uvicorn.workers.UvicornWorker", "--timeout", "120"]
+# Run the application with Gunicorn
+CMD ["gunicorn", "scraper:app", "--workers", "1", "--threads", "2", "--bind", "0.0.0.0:8001", "-k", "uvicorn.workers.UvicornWorker", "--timeout", "120"]
