@@ -1,51 +1,45 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
 import {
   Box,
-  AppBar,
-  Toolbar,
   Typography,
   Card,
   CardContent,
   Grid,
   CardMedia,
-  CardActionArea,
   Button,
-  Slider,
   Container,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Link,
 } from "@mui/material";
 import { motion } from "framer-motion";
 import Confetti from "react-confetti";
 import config from "../config";
 
-// Gamemode1.js - Updated function
-const ArtistQuiz1 = () => {
+const Quiz1 = () => {
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [showResults, setShowResults] = useState(false);
   const [quizStarted, setQuizStarted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [volume, setVolume] = useState(0.5);
   const [timeLeft, setTimeLeft] = useState(30);
   const [selectedOptionFeedback, setSelectedOptionFeedback] = useState(null);
+  const [showNextQuestionDialog, setShowNextQuestionDialog] = useState(false);
   const timerRef = useRef(null);
   const audioRef = useRef(null);
-  const [difficulty, setDifficulty] = useState(null); // Default difficulty
+  const [difficulty, setDifficulty] = useState(null);
+  const [playlistID] = useState("5DyMJs4ZF7pVTq6hr5rGsv");
 
-  // New state for playlistID
-  const [playlistID, setPlaylistID] = useState("5DyMJs4ZF7pVTq6hr5rGsv"); // Default playlist ID
-
-  // Fetch questions from the backend
   useEffect(() => {
     const fetchGamemode1 = async () => {
       try {
         axios.defaults.withCredentials = true;
         const response = await axios.post(
           `${config.BASE_URL}/fetch_gamemode1`,
-          {
-            playlistID,
-          }
+          { playlistID }
         );
         setQuestions(response.data.questions);
       } catch (error) {
@@ -55,42 +49,127 @@ const ArtistQuiz1 = () => {
     fetchGamemode1();
   }, [playlistID]);
 
-  // Rest of the component remains unchanged
-
-  // Timer management
-  useEffect(() => {
-    if (quizStarted && !showResults) {
-      resetTimer();
-    }
-    return () => clearInterval(timerRef.current); // Cleanup timer
-  }, [quizStarted, currentQuestionIndex, showResults]);
-
-  const resetTimer = () => {
+  const resetTimer = useCallback(() => {
     clearInterval(timerRef.current);
     const initialTime =
       difficulty === "Easy" ? 30 : difficulty === "Medium" ? 15 : 5;
-    setTimeLeft(initialTime); // Set timer based on selected difficulty
+    setTimeLeft(initialTime);
+
     timerRef.current = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
+      setTimeLeft((prevTime) => {
+        if (prevTime <= 1) {
           clearInterval(timerRef.current);
           handleTimeout();
           return 0;
         }
-        return prev - 1;
+        return prevTime - 1;
       });
     }, 1000);
-  };
+  }, [difficulty]);
 
-  const handleTimeout = () => {
-    const nextQuestionIndex = currentQuestionIndex + 1;
-    if (nextQuestionIndex < questions.length) {
-      setCurrentQuestionIndex(nextQuestionIndex);
-    } else {
-      setShowResults(true);
+  const pendingTimeouts = useRef(0);
+
+  const handleTimeout = useCallback(() => {
+    // Increment the number of pending timeouts
+    pendingTimeouts.current += 1;
+
+    if (pendingTimeouts.current > 1) {
+      // If there's already a pending timeout being handled, return
+      return;
     }
-    setSelectedOptionFeedback(null); // Reset feedback
-    setIsLoading(false);
+
+    const processTimeout = () => {
+      clearInterval(timerRef.current);
+
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+
+      setCurrentQuestionIndex((prevIndex) => {
+        const nextQuestionIndex = prevIndex + 1;
+
+        if (nextQuestionIndex < questions.length) {
+          setShowNextQuestionDialog(true);
+
+          setTimeout(() => {
+            setShowNextQuestionDialog(false);
+            resetTimer();
+
+            // Decrement the number of pending timeouts and process the next if any
+            pendingTimeouts.current -= 1;
+            if (pendingTimeouts.current > 0) {
+              processTimeout();
+            }
+          }, 1500);
+        } else {
+          setShowResults(true);
+          pendingTimeouts.current = 0; // Clear any remaining timeouts
+        }
+
+        return nextQuestionIndex; // Ensure the state progresses sequentially
+      });
+    };
+
+    processTimeout();
+  }, [questions.length, resetTimer]);
+
+  useEffect(() => {
+    if (quizStarted && currentQuestionIndex < questions.length) {
+      const audioUrl = questions[currentQuestionIndex]?.audio_preview_url;
+
+      if (audioRef.current && audioUrl) {
+        audioRef.current.src = audioUrl;
+        audioRef.current
+          .play()
+          .catch((error) => console.error("Audio play failed:", error));
+      }
+      resetTimer();
+    }
+
+    return () => {
+      clearInterval(timerRef.current);
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+    };
+  }, [quizStarted, currentQuestionIndex, questions, resetTimer]);
+
+  const handleAnswerClick = async (option) => {
+    if (isLoading) return;
+    setIsLoading(true);
+    clearInterval(timerRef.current);
+
+    const currentQuestion = questions[currentQuestionIndex];
+    try {
+      const response = await axios.post(`${config.BASE_URL}/validate_answer`, {
+        question_id: currentQuestion.question_id,
+        selected_option: option,
+      });
+
+      const { is_correct } = response.data;
+      setSelectedOptionFeedback({ option, isCorrect: is_correct });
+      if (is_correct) setScore((prev) => prev + 1);
+
+      const nextQuestionIndex = currentQuestionIndex + 1;
+      setTimeout(() => {
+        setShowNextQuestionDialog(true);
+        setTimeout(() => {
+          setShowNextQuestionDialog(false);
+          if (nextQuestionIndex < questions.length) {
+            setCurrentQuestionIndex(nextQuestionIndex);
+          } else {
+            setShowResults(true);
+          }
+        }, 2000);
+        setSelectedOptionFeedback(null);
+        setIsLoading(false);
+      }, 2000);
+    } catch (error) {
+      console.error("Error validating answer:", error);
+      setIsLoading(false);
+    }
   };
 
   const handleStartQuiz = () => {
@@ -101,72 +180,11 @@ const ArtistQuiz1 = () => {
     setQuizStarted(true);
   };
 
-  const handleAnswerClick = async (option) => {
-    if (isLoading) return; // Prevent multiple clicks
-    setIsLoading(true);
-    clearInterval(timerRef.current); // Stop timer
+  const renderConfetti = () =>
+    selectedOptionFeedback?.isCorrect && (
+      <Confetti width={window.innerWidth} height={window.innerHeight} />
+    );
 
-    const currentQuestion = questions[currentQuestionIndex];
-
-    try {
-      const response = await axios.post(`${config.BASE_URL}/validate_answer`, {
-        question_id: currentQuestion.question_id,
-        selected_option: option,
-      });
-
-      const { is_correct } = response.data;
-
-      setSelectedOptionFeedback({
-        option,
-        isCorrect: is_correct,
-      });
-
-      if (is_correct) {
-        setScore((prev) => prev + 1); // Increment score
-      }
-
-      const nextQuestionIndex = currentQuestionIndex + 1;
-      setTimeout(() => {
-        if (nextQuestionIndex < questions.length) {
-          setCurrentQuestionIndex(nextQuestionIndex);
-        } else {
-          setShowResults(true);
-        }
-        setSelectedOptionFeedback(null); // Reset feedback
-        setIsLoading(false);
-      }, 2000);
-    } catch (error) {
-      console.error("Error validating answer:", error);
-      setIsLoading(false);
-    }
-  };
-
-  const renderConfetti = () => {
-    if (selectedOptionFeedback?.isCorrect) {
-      return <Confetti width={window.innerWidth} height={window.innerHeight} />;
-    }
-  };
-
-  const BackToDashboardButton = () => (
-    <Button
-      variant="contained"
-      color="primary"
-      onClick={() => (window.location.href = "/dashboard")}
-      style={{
-        position: "absolute",
-        top: "10px",
-        left: "10px",
-        backgroundColor: "#007BFF",
-        color: "#FFF",
-        textTransform: "none",
-      }}
-      startIcon={<span>&larr;</span>}
-    >
-      Back
-    </Button>
-  );
-
-  // Ensure questions are loaded
   if (!questions.length) {
     return (
       <Box textAlign="center" mt={4}>
@@ -175,149 +193,237 @@ const ArtistQuiz1 = () => {
     );
   }
 
-  // Quiz start screen
   if (!quizStarted) {
     return (
-      <Box textAlign="center" mt={4}>
-        <Grid
-          container
-          spacing={2}
-          justifyContent="center"
-          alignItems="center"
-          style={{ marginTop: "20px" }}
-        >
-          <Grid item xs={12} sm={6} md={4}>
-            <Card
-              sx={{
-                cursor: "pointer",
-                bgcolor: "#ffffff",
-                boxShadow: 3,
-                transition: "transform 0.3s",
-                "&:hover": { transform: "scale(1.05)" },
-              }}
-            >
-              <CardContent>
-                <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                  Top 50 Global Song Quiz
-                </Typography>
-                <Typography variant="body2" sx={{ color: "#4a5568" }}>
-                  Choose one of the difficulties and select Start Quiz to begin!
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-
-        <Grid
-          container
-          spacing={2}
-          justifyContent="center"
-          alignItems="center"
-          style={{ marginTop: "20px" }}
-        >
-          <Grid item xs={12} sm={4}>
-            <Card
-              onClick={() => {
-                setDifficulty("Easy");
-                setTimeLeft(30);
-              }}
-              sx={{
-                cursor: "pointer",
-                backgroundColor: difficulty === "Easy" ? "#4caf50" : "#ffffff",
-                "&:hover": { backgroundColor: "#e0f7fa" },
-                padding: "10px",
-                textAlign: "center",
-                "&:hover": { transform: "scale(1.05)" },
-              }}
-            >
-              <CardContent>
-                <Typography variant="h6" fontWeight={600}>
-                  Easy
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  Timer: 30 seconds
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} sm={4}>
-            <Card
-              onClick={() => {
-                setDifficulty("Medium");
-                setTimeLeft(15);
-              }}
-              sx={{
-                cursor: "pointer",
-                backgroundColor:
-                  difficulty === "Medium" ? "#4caf50" : "#ffffff",
-                "&:hover": { backgroundColor: "#e0f7fa" },
-                padding: "10px",
-                textAlign: "center",
-                "&:hover": { transform: "scale(1.05)" },
-              }}
-            >
-              <CardContent>
-                <Typography variant="h6" fontWeight={600}>
-                  Medium
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  Timer: 15 seconds
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} sm={4}>
-            <Card
-              onClick={() => {
-                setDifficulty("Hard");
-                setTimeLeft(5);
-              }}
-              sx={{
-                cursor: "pointer",
-                backgroundColor: difficulty === "Hard" ? "#4caf50" : "#ffffff",
-                "&:hover": { backgroundColor: "#e0f7fa" },
-                padding: "10px",
-                textAlign: "center",
-                "&:hover": { transform: "scale(1.05)" },
-              }}
-            >
-              <CardContent>
-                <Typography variant="h6" fontWeight={600}>
-                  Hard
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  Timer: 5 seconds
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-
-        <motion.div whileHover={{ scale: 1.1 }}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleStartQuiz}
-            style={{ marginTop: "16px" }}
+      <Box
+        sx={{
+          position: "relative",
+          minHeight: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          overflow: "hidden",
+        }}
+      >
+        {/* Background image with blur */}
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundImage: `url('https://i.pinimg.com/736x/1e/6c/b2/1e6cb21c9ad8fd5d1b135662e34984b3.jpg')`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            filter: "blur(2px)",
+            zIndex: -1,
+          }}
+        />
+        {/* Semi-transparent overlay for better contrast */}
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.4)", // Dark overlay
+            zIndex: -1,
+          }}
+        />
+        {/* Content */}
+        <Container>
+          <Typography
+            variant="h3"
+            gutterBottom
+            textAlign="center"
+            sx={{
+              fontWeight: "bold",
+              color: "#fff",
+              textShadow: "0 4px 6px rgba(0, 0, 0, 0.6)",
+            }}
           >
-            Start Quiz
-          </Button>
-        </motion.div>
+            The Taylor Swift Quiz
+          </Typography>
+          <Grid container spacing={4} justifyContent="center">
+            {[
+              "How well do you know Taylor's Top Hits?",
+              "You get a limited amount of time to guess the track",
+              <Link
+                href="https://www.tiktok.com/@ally.mauck/video/7166742767438204202"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Think you'll ace this? You have stiff competiton
+              </Link>,
+            ].map((content, idx) => (
+              <Grid item xs={12} md={4} key={idx}>
+                <Card
+                  sx={{
+                    textAlign: "center",
+                    padding: "20px",
+                    backgroundColor: "rgba(255, 255, 255, 0.9)",
+                    borderRadius: "12px",
+                    boxShadow: "0 6px 15px rgba(0, 0, 0, 0.3)",
+                  }}
+                >
+                  <CardContent>
+                    <Typography
+                      variant="h6"
+                      sx={{ fontWeight: 500, color: "#333" }}
+                    >
+                      {content}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+          <Box textAlign="center" mt={4}>
+            <Typography
+              variant="h5"
+              mb={2}
+              sx={{
+                fontWeight: "bold",
+                color: "#fff",
+                textShadow: "0 2px 4px rgba(0, 0, 0, 0.6)",
+              }}
+            >
+              Select Difficulty Level
+            </Typography>
+            <Grid container spacing={2} justifyContent="center">
+              {["Easy", "Medium", "Hard"].map((level, index) => (
+                <Grid item key={index}>
+                  <Card
+                    onClick={() => setDifficulty(level)}
+                    sx={{
+                      cursor: "pointer",
+                      backgroundColor:
+                        difficulty === level
+                          ? "#4caf50"
+                          : "rgba(255, 255, 255, 0.9)",
+                      color: difficulty === level ? "#fff" : "#333",
+                      "&:hover": {
+                        transform: "scale(1.05)",
+                        boxShadow: "0 8px 20px rgba(0, 0, 0, 0.4)",
+                      },
+                      padding: "10px",
+                      textAlign: "center",
+                      borderRadius: "12px",
+                    }}
+                  >
+                    <CardContent>
+                      <Typography variant="h6" sx={{ fontWeight: 500 }}>
+                        {level}
+                      </Typography>
+                      <Typography>
+                        Timer:{" "}
+                        {level === "Easy"
+                          ? "30s"
+                          : level === "Medium"
+                          ? "15s"
+                          : "5s"}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+            <motion.div whileHover={{ scale: 1.1 }}>
+              <Button
+                variant="contained"
+                onClick={handleStartQuiz}
+                sx={{
+                  mt: 3,
+                  backgroundColor: "#4caf50",
+                  color: "#fff",
+                  fontWeight: "bold",
+                  borderRadius: "8px",
+                  padding: "10px 20px",
+                  boxShadow: "0 6px 15px rgba(0, 0, 0, 0.3)",
+                  "&:hover": { backgroundColor: "#43a047" },
+                }}
+              >
+                Start Quiz
+              </Button>
+            </motion.div>
+          </Box>
+        </Container>
       </Box>
     );
   }
 
-  // Quiz results screen
   if (showResults) {
     return (
-      <Box textAlign="center" mt={4}>
-        <BackToDashboardButton />
-        <Typography variant="h4">Quiz Completed!</Typography>
-        <Typography variant="h5">
-          Your Score: {score} / {questions.length}
-        </Typography>
+      <Box
+        sx={{
+          position: "relative",
+          minHeight: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          overflow: "hidden",
+        }}
+      >
+        {/* Background image with blur */}
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundImage: `url('https://i.pinimg.com/736x/1e/6c/b2/1e6cb21c9ad8fd5d1b135662e34984b3.jpg')`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            filter: "blur(2px)",
+            zIndex: -1,
+          }}
+        />
+        {/* Semi-transparent overlay */}
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.5)", // Darker overlay
+            zIndex: -1,
+          }}
+        />
+        {/* Result Card */}
+        <Card
+          sx={{
+            padding: "40px",
+            textAlign: "center",
+            backgroundColor: "rgba(255, 255, 255, 0.9)",
+            borderRadius: "12px",
+            boxShadow: "0 6px 15px rgba(0, 0, 0, 0.4)",
+          }}
+        >
+          <Typography
+            variant="h4"
+            sx={{
+              fontWeight: "bold",
+              color: "#333",
+              textShadow: "0 4px 6px rgba(0, 0, 0, 0.2)",
+            }}
+          >
+            Quiz Completed!
+          </Typography>
+          <Typography
+            variant="h5"
+            mt={2}
+            sx={{
+              color: "#4caf50", // Highlighted score
+              fontWeight: "bold",
+            }}
+          >
+            Your Score: {score} / {questions.length}
+          </Typography>
+        </Card>
       </Box>
     );
   }
@@ -326,127 +432,111 @@ const ArtistQuiz1 = () => {
 
   return (
     <Box
-      minHeight="100vh"
       sx={{
-        backgroundImage: `url(https://images.unsplash.com/photo-1460355976672-71c3f0a4bdac?q=80&w=2669&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        py: 5,
+        position: "relative",
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        overflow: "hidden",
       }}
     >
+      {/* Background image with blur */}
+      <Box
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundImage: `url('https://i.pinimg.com/736x/1e/6c/b2/1e6cb21c9ad8fd5d1b135662e34984b3.jpg')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          filter: "blur(2px)",
+          zIndex: -1,
+        }}
+      />
+      {/* Semi-transparent overlay */}
+      <Box
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundColor: "rgba(0, 0, 0, 0.5)", // Darker overlay
+          zIndex: -1,
+        }}
+      />
       <Container maxWidth="lg">
-        <BackToDashboardButton />
-
-        {/* Question Tracker */}
-        <Box textAlign="center" mb={4}>
-          <Typography
-            variant="h4"
-            sx={{
-              color: "#ffffff",
-              fontWeight: 200,
-              textAlign: "center",
-            }}
-          >
-            Question {currentQuestionIndex + 1} of {questions.length} - Time
-            Left: {timeLeft}s
-          </Typography>
-        </Box>
-
-        {/* Question Card */}
         <Card
           sx={{
-            mb: 4,
-            backgroundColor: "#ffffff",
-            boxShadow: 3,
-            p: 3,
-            display: "none",
+            padding: "20px",
+            marginBottom: "20px",
+            textAlign: "center",
+            backgroundColor: "rgba(255, 255, 255, 0.9)",
+            borderRadius: "12px",
+            boxShadow: "0 6px 15px rgba(0, 0, 0, 0.4)",
           }}
         >
           <Typography
-            variant="h5"
+            variant="h4"
             sx={{
-              fontWeight: 600,
-              textAlign: "center",
+              fontWeight: "bold",
+              color: "#333",
+              textShadow: "0 4px 6px rgba(0, 0, 0, 0.2)",
             }}
           >
-            {currentQuestion.question}
+            Track {currentQuestionIndex + 1} / {questions.length}
           </Typography>
-          <audio
-            ref={audioRef}
-            src={currentQuestion.audio_preview_url}
-            autoPlay
-            onLoadedMetadata={() => {
-              if (audioRef.current) audioRef.current.volume = volume;
+          <Typography
+            variant="h6"
+            sx={{
+              color: "#4caf50",
+              fontWeight: "bold",
             }}
-            style={{
-              position: "absolute",
-              width: 0,
-              height: 0,
-              overflow: "hidden",
-              visibility: "hidden",
-              display: "none",
-            }}
-          />
+          >
+            Time Left: {timeLeft}s
+          </Typography>
         </Card>
-
-        {/* Options */}
-        <Grid
-          container
-          spacing={2} // Adjust spacing as needed
-          justifyContent="center"
-          alignItems="stretch"
-        >
+        <audio
+          ref={audioRef}
+          preload="auto"
+          controls
+          style={{ display: "none" }}
+        />
+        <Grid container spacing={2} justifyContent="center">
           {currentQuestion.options.map((option, index) => (
-            <Grid
-              item
-              xs={12} // 4x1 on small screens
-              sm={6} // 2x2 on medium screens
-              md={3} // Always 2x2 on larger screens
-              key={index}
-            >
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
+            <Grid item xs={12} sm={6} md={3} key={index}>
+              <motion.div whileHover={{ scale: 1.05 }}>
                 <Card
-                  onClick={() => {
-                    if (!isLoading) handleAnswerClick(option); // Ensure click only works if not loading
-                  }}
+                  onClick={() => handleAnswerClick(option)}
                   sx={{
                     cursor: "pointer",
-                    bgcolor:
+                    backgroundColor:
                       selectedOptionFeedback?.option === option
                         ? selectedOptionFeedback.isCorrect
                           ? "#4caf50"
                           : "#f44336"
-                        : "#ffffff",
-                    boxShadow: 3,
-                    transformOrigin: "center",
-                    transform: "scale(1)",
-                    transition: "transform 0.3s, background-color 0.3s",
-                    "&:hover": { transform: "scale(0.85)" },
-                    height: "100%", // Ensures consistent height for all cards
+                        : "rgba(255, 255, 255, 0.9)",
+                    "&:hover": {
+                      boxShadow: "0 8px 20px rgba(0, 0, 0, 0.4)",
+                    },
                   }}
                 >
                   <CardMedia
                     component="img"
-                    height="200"
+                    height="250"
                     image={option.album_cover}
                     alt={option.name}
-                    sx={{
-                      objectFit: "cover",
-                    }}
                   />
                   <CardContent>
                     <Typography
                       variant="h6"
                       sx={{
-                        fontWeight: 600,
-                        textAlign: "center",
-                        color:
-                          selectedOptionFeedback?.option === option
-                            ? "#ffffff"
-                            : "#000000",
+                        fontWeight: 500,
+                        fontSize: "15px",
+                        color: "#333",
                       }}
                     >
                       {option.name}
@@ -454,12 +544,7 @@ const ArtistQuiz1 = () => {
                     <Typography
                       variant="body2"
                       sx={{
-                        display: "block",
-                        textAlign: "center",
-                        color:
-                          selectedOptionFeedback?.option === option
-                            ? "#e0e0e0"
-                            : "#4a5568",
+                        color: "#555",
                       }}
                     >
                       {option.artist}
@@ -470,68 +555,41 @@ const ArtistQuiz1 = () => {
             </Grid>
           ))}
         </Grid>
-
         {renderConfetti()}
-
-        {isLoading && (
-          <Box
-            mt={4}
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            sx={{
-              position: "relative",
-              flexDirection: "column",
-            }}
+      </Container>
+      <Dialog
+        open={showNextQuestionDialog}
+        PaperProps={{ style: { borderRadius: "15px" } }}
+      >
+        <DialogTitle
+          style={{
+            textAlign: "center",
+            fontWeight: "bold",
+            color: "#333",
+          }}
+        >
+          Next Song!
+        </DialogTitle>
+        <DialogContent style={{ textAlign: "center" }}>
+          <motion.div
+            initial={{ scale: 1 }}
+            animate={{ scale: [1, 1.1, 1] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
           >
-            {/* Animated Text */}
-            <motion.div
-              initial={{ scale: 1, opacity: 0.5 }}
-              animate={{
-                scale: [1, 1.2, 1],
-                opacity: [0.5, 1, 0.5],
-              }}
-              transition={{
-                duration: 1.5,
-                repeat: Infinity,
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: "bold",
+                color: "#4caf50",
               }}
             >
-              <Typography
-                variant="h4"
-                sx={{
-                  color: "#ffffff",
-                  fontWeight: 700,
-                  textAlign: "center",
-                }}
-              >
-                Next question coming up!
-              </Typography>
-            </motion.div>
-
-            {/* Pulsing Circle Animation */}
-            <motion.div
-              initial={{ scale: 1, opacity: 0.8 }}
-              animate={{
-                scale: [1, 1.5, 1],
-                opacity: [0.8, 0.4, 0.8],
-              }}
-              transition={{
-                duration: 1.2,
-                repeat: Infinity,
-              }}
-              style={{
-                width: "60px",
-                height: "60px",
-                marginTop: "20px",
-                borderRadius: "50%",
-                background: "linear-gradient(45deg, #f44336, #4caf50)",
-              }}
-            ></motion.div>
-          </Box>
-        )}
-      </Container>
+              Loading..
+            </Typography>
+          </motion.div>
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 };
 
-export default ArtistQuiz1;
+export default Quiz1;

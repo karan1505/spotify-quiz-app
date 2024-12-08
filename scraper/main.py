@@ -13,6 +13,10 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 # FastAPI instance
 app = FastAPI()
 
+# Semaphore to limit concurrency to 1 (prevent resource overload)
+SEMAPHORE = asyncio.Semaphore(1)
+
+
 def log_resource_usage():
     """
     Logs the current process's memory and CPU usage.
@@ -20,6 +24,7 @@ def log_resource_usage():
     process = psutil.Process(os.getpid())
     logging.info(f"Memory usage: {process.memory_info().rss / 1e6:.2f} MB")
     logging.info(f"CPU usage: {process.cpu_percent(interval=None):.2f}%")
+
 
 # Utility functions
 def sanitize_input(text):
@@ -31,83 +36,90 @@ def sanitize_input(text):
     sanitized = re.sub(r"\s+", " ", sanitized).strip()  # Replace multiple spaces with a single space
     return sanitized
 
-async def get_song_preview(song_name, artist_name="", max_retries=3):
+
+async def get_song_preview(song_name, artist_name=""):
     """
     Scrape Apple Music for a song preview URL using Playwright's async API.
+    Optimized to reduce memory usage by using browser.new_page() directly.
     """
     log_resource_usage()
     try:
-        async with async_playwright() as p:
-            browser = await p.chromium.launch(headless=True)
-            try:
-                context = await browser.new_context()
-                page = await context.new_page()
+        async with SEMAPHORE:  # Limit concurrency
+            async with async_playwright() as p:
+                # Launch the browser with optimized flags to reduce memory usage
+                browser = await p.chromium.launch(
+                    headless=True,
+                    args=[
+                        "--no-sandbox",
+                        "--disable-gpu",
+                        "--disable-dev-shm-usage",
+                        "--disable-extensions",  # Disable unnecessary extensions
+                        "--disable-background-networking",
+                        "--disable-sync",
+                        "--disable-default-apps",
+                        "--disable-popup-blocking",
+                        "--no-first-run",
+                    ]
+                )
+                page = None
+                try:
+                    # Create a new page directly in the default browser context
+                    page = await browser.new_page()
 
-                # Encode the query for the URL
-                query = song_name.strip()
-                if artist_name.strip():
-                    query += " " + artist_name.strip()
-                encoded_query = urllib.parse.quote(query)
-                url = f"https://music.apple.com/us/search?term={encoded_query}"
+                    # Construct the search URL
+                    query = f"{song_name} {artist_name}".strip()
+                    encoded_query = urllib.parse.quote(query)
+                    url = f"https://music.apple.com/us/search?term={encoded_query}"
+                    logging.info(f"Navigating to search URL: {url}")
 
-                logging.info(f"Navigating to search URL: {url}")
+                    # Navigate to the URL with a shorter timeout
+                    await page.goto(url, timeout=15000)
 
-                for attempt in range(max_retries):
-                    try:
-                        # Navigate to the page and wait for network idle
-                        await page.goto(url, timeout=30000)  # Reduce timeout
-                        await page.wait_for_load_state("networkidle")
+                    # Wait for the top search result container to appear
+                    play_button = page.locator(".top-search-lockup").first
+                    if not await play_button.is_visible():
+                        logging.warning("Top search lockup element not found.")
+                        return None
 
-                        # Check if the search results container is available
-                        if not await page.locator(".top-search-lockup").first.is_visible():
-                            logging.warning("Top search lockup element is not visible.")
-                            continue
+                    # Hover over the top search result to reveal the play button
+                    await play_button.hover()
+                    button = play_button.locator("button.play-button")
+                    if not await button.is_visible():
+                        logging.warning("Play button not visible.")
+                        return None
 
-                        logging.info("Search results loaded. Locating top result.")
+                    # Click the play button
+                    await button.click()
+                    logging.info("Clicked play button. Waiting for audio player to load.")
 
-                        # Get the top search result element
-                        play_button = page.locator(".top-search-lockup").nth(0)
-                        if not await play_button.is_visible():
-                            logging.warning("Top result element is not visible.")
-                            continue
+                    # Wait for the audio player to appear and extract the 'src' attribute
+                    audio_player = page.locator("#apple-music-player")
+                    await audio_player.wait_for(state="attached", timeout=7000)
+                    audio_src = await audio_player.evaluate("el => el.getAttribute('src')")
 
-                        # Hover over the top result element to reveal play button
-                        await play_button.hover()
+                    if audio_src:
+                        logging.info(f"Retrieved preview URL: {audio_src}")
+                        return audio_src
+                    else:
+                        logging.warning("Audio source not found.")
+                        return None
 
-                        # Ensure the play button is available and interactable
-                        button = play_button.locator("button.play-button")
-                        if not await button.is_visible():
-                            logging.warning("Play button is not visible.")
-                            continue
-                        await button.click()
-
-                        # Wait for the audio player to load
-                        logging.info("Clicked play button. Waiting for audio player to load.")
-                        audio_player = page.locator("#apple-music-player")
-                        await audio_player.wait_for(state="attached", timeout=10000)
-
-                        # Retrieve the `src` attribute directly
-                        audio_src = await audio_player.evaluate("el => el.getAttribute('src')")
-                        if audio_src:
-                            logging.info(f"Retrieved preview URL: {audio_src}")
-                            return audio_src
-                        else:
-                            logging.warning("Audio player loaded, but no 'src' attribute found.")
-
-                    except PlaywrightTimeoutError:
-                        logging.warning(f"Attempt {attempt + 1} timed out. Retrying...")
-                    except Exception as e:
-                        logging.error(f"Error in attempt {attempt + 1}: {e}")
-
-                logging.error("Max retries reached. Unable to retrieve the preview URL.")
-                return None
-
-            finally:
-                await browser.close()  # Ensure browser is always closed
+                except PlaywrightTimeoutError:
+                    logging.error("Page load or selector timeout occurred.")
+                    return None
+                except Exception as e:
+                    logging.error(f"Error in get_song_preview: {e}")
+                    return None
+                finally:
+                    # Clean up the page and browser to release memory
+                    if page:
+                        await page.close()
+                    await browser.close()
 
     except Exception as e:
-        logging.error(f"Error in get_song_preview: {e}")
+        logging.error(f"Unhandled exception in get_song_preview: {e}")
         return None
+
 
 @app.post("/fetch_preview_url")
 async def fetch_preview_url(request: Request):
@@ -119,7 +131,7 @@ async def fetch_preview_url(request: Request):
         body = await request.json()
         song_name = sanitize_input(body.get("name", ""))
         artist_name = sanitize_input(body.get("artist", ""))
-        
+
         if not song_name:
             raise ValueError("Song name is required.")
 

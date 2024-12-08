@@ -9,26 +9,28 @@ uvicorn scraper:app --port 8001  --reload
 
 URLs
 
-http://localhost:3000
+https://quizzify-frontend-6sp3.onrender.com
 
 https://quizzify-frontend-6sp3.onrender.com
 
-http://localhost:8000
+https://quizzify-backend-5kpq.onrender.com
 
 https://quizzify-backend-5kpq.onrender.com
 
-http://localhost:3000
+https://quizzify-frontend-6sp3.onrender.com
 
-http://localhost:3000
+https://quizzify-frontend-6sp3.onrender.com
 
-http://localhost:8000
+https://quizzify-backend-5kpq.onrender.com
 
-http://localhost:3000
+https://quizzify-frontend-6sp3.onrender.com
 
-http://localhost:8001
+https://scraperimg7-929406927292.us-central1.run.app
 
 https://quizzify-scraper.onrender.com
 
 https://scraperimg5-929406927292.us-central1.run.app
 
-https://scraperimg6-929406927292.us-central1.run.app
+https://scraperimg7-929406927292.us-central1.run.app
+
+https://scraperimg7-929406927292.us-central1.run.app

@@ -140,13 +140,14 @@ const Dashboard = () => {
           gutterBottom
           sx={{
             color: "#fff", // Shortened color code for better readability
+            fontFamily: "sans-serif",
             textShadow: "0px 1px 2px rgba(0, 0, 0, 0.5)", // Adds a subtle shadow for better contrast
             fontWeight: 500, // Enhances readability by adding weight
             fontSmoothing: "antialiased", // Ensures text rendering is smooth
             mb: 3,
           }}
         >
-          Curated Playlist Quizzes
+          Curated Quizzes
         </Typography>
 
         <Grid container spacing={4} justifyContent="center">
@@ -165,11 +166,11 @@ const Dashboard = () => {
                 component="img"
                 height="200"
                 image="https://images.unsplash.com/photo-1571435763834-4d6fbb550bb7?q=80&w=2676&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                alt="Top 50 Global Song Quiz"
+                alt="Top 50 Global"
               />
               <CardContent>
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                  Top 50 Global Song Quiz
+                  Top 50 Global
                 </Typography>
                 <Typography variant="body2" sx={{ color: "#4a5568" }}>
                   Can you guess this week's top hits?
@@ -197,10 +198,10 @@ const Dashboard = () => {
               />
               <CardContent>
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                  80's Quiz
+                  80s Mix
                 </Typography>
                 <Typography variant="body2" sx={{ color: "#4a5568" }}>
-                  How well do you know your 80's music?
+                  How well do you know your 80s music?
                 </Typography>
               </CardContent>
             </Card>
@@ -251,10 +252,10 @@ const Dashboard = () => {
               />
               <CardContent>
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                  The "Written by Taylor Swift" Quiz
+                  Taylor Swift's Best
                 </Typography>
                 <Typography variant="body2" sx={{ color: "#4a5568" }}>
-                  Consider yourself a Swiftie?! Prove yourself!
+                  Consider yourself a Swiftie? Prove yourself!
                 </Typography>
               </CardContent>
             </Card>
