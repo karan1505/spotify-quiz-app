@@ -18,7 +18,7 @@ import { motion } from "framer-motion";
 import Confetti from "react-confetti";
 import config from "../config";
 
-const Quiz1 = () => {
+const ArtistQuiz1 = () => {
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -30,6 +30,7 @@ const Quiz1 = () => {
   const [showNextQuestionDialog, setShowNextQuestionDialog] = useState(false);
   const timerRef = useRef(null);
   const audioRef = useRef(null);
+  const pendingTimeouts = useRef(0); // Declare at the top level
   const [difficulty, setDifficulty] = useState(null);
   const [playlistID] = useState("5DyMJs4ZF7pVTq6hr5rGsv");
 
@@ -49,32 +50,10 @@ const Quiz1 = () => {
     fetchGamemode1();
   }, [playlistID]);
 
-  const resetTimer = useCallback(() => {
-    clearInterval(timerRef.current);
-    const initialTime =
-      difficulty === "Easy" ? 30 : difficulty === "Medium" ? 15 : 5;
-    setTimeLeft(initialTime);
-
-    timerRef.current = setInterval(() => {
-      setTimeLeft((prevTime) => {
-        if (prevTime <= 1) {
-          clearInterval(timerRef.current);
-          handleTimeout();
-          return 0;
-        }
-        return prevTime - 1;
-      });
-    }, 1000);
-  }, [difficulty]);
-
-  const pendingTimeouts = useRef(0);
-
   const handleTimeout = useCallback(() => {
-    // Increment the number of pending timeouts
-    pendingTimeouts.current += 1;
+    pendingTimeouts.current += 1; // Increment the number of pending timeouts
 
     if (pendingTimeouts.current > 1) {
-      // If there's already a pending timeout being handled, return
       return;
     }
 
@@ -96,7 +75,6 @@ const Quiz1 = () => {
             setShowNextQuestionDialog(false);
             resetTimer();
 
-            // Decrement the number of pending timeouts and process the next if any
             pendingTimeouts.current -= 1;
             if (pendingTimeouts.current > 0) {
               processTimeout();
@@ -104,15 +82,33 @@ const Quiz1 = () => {
           }, 1500);
         } else {
           setShowResults(true);
-          pendingTimeouts.current = 0; // Clear any remaining timeouts
+          pendingTimeouts.current = 0;
         }
 
-        return nextQuestionIndex; // Ensure the state progresses sequentially
+        return nextQuestionIndex;
       });
     };
 
     processTimeout();
-  }, [questions.length, resetTimer]);
+  }, [questions.length]);
+
+  const resetTimer = useCallback(() => {
+    clearInterval(timerRef.current);
+    const initialTime =
+      difficulty === "Easy" ? 30 : difficulty === "Medium" ? 15 : 5;
+    setTimeLeft(initialTime);
+
+    timerRef.current = setInterval(() => {
+      setTimeLeft((prevTime) => {
+        if (prevTime <= 1) {
+          clearInterval(timerRef.current);
+          handleTimeout();
+          return 0;
+        }
+        return prevTime - 1;
+      });
+    }, 1000);
+  }, [difficulty, handleTimeout]);
 
   useEffect(() => {
     if (quizStarted && currentQuestionIndex < questions.length) {
@@ -129,9 +125,10 @@ const Quiz1 = () => {
 
     return () => {
       clearInterval(timerRef.current);
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
+      const currentAudioRef = audioRef.current;
+      if (currentAudioRef) {
+        currentAudioRef.pause();
+        currentAudioRef.currentTime = 0;
       }
     };
   }, [quizStarted, currentQuestionIndex, questions, resetTimer]);
@@ -213,7 +210,9 @@ const Quiz1 = () => {
             left: 0,
             width: "100%",
             height: "100%",
-            backgroundImage: `url('https://i.pinimg.com/736x/1e/6c/b2/1e6cb21c9ad8fd5d1b135662e34984b3.jpg')`,
+            backgroundImage: `url(
+              "https://i.pinimg.com/736x/1e/6c/b2/1e6cb21c9ad8fd5d1b135662e34984b3.jpg"
+            )`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             filter: "blur(2px)",
@@ -374,7 +373,9 @@ const Quiz1 = () => {
             left: 0,
             width: "100%",
             height: "100%",
-            backgroundImage: `url('https://i.pinimg.com/736x/1e/6c/b2/1e6cb21c9ad8fd5d1b135662e34984b3.jpg')`,
+            backgroundImage: `url(
+              "https://i.pinimg.com/736x/1e/6c/b2/1e6cb21c9ad8fd5d1b135662e34984b3.jpg"
+            )`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             filter: "blur(2px)",
@@ -449,7 +450,9 @@ const Quiz1 = () => {
           left: 0,
           width: "100%",
           height: "100%",
-          backgroundImage: `url('https://i.pinimg.com/736x/1e/6c/b2/1e6cb21c9ad8fd5d1b135662e34984b3.jpg')`,
+          backgroundImage: `url(
+            "https://i.pinimg.com/736x/1e/6c/b2/1e6cb21c9ad8fd5d1b135662e34984b3.jpg"
+          )`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           filter: "blur(2px)",
@@ -592,4 +595,4 @@ const Quiz1 = () => {
   );
 };
 
-export default Quiz1;
+export default ArtistQuiz1;

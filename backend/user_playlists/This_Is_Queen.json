@@ -1,1 +1,37 @@
-[]
+[
+    {
+        "name": "Bicycle Race - Remastered 2011",
+        "artist": "Queen",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b2737c39dd133836c2c1c87e34d6",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/43/fe/4b/43fe4b46-d8a7-bc74-67c2-356985649641/mzaf_3932536018511719051.plus.aac.ep.m4a",
+        "playlistsIncluded": "4TzXhSlf3vy4XZCepQkx99"
+    },
+    {
+        "name": "Breakthru - Remastered 2011",
+        "artist": "Queen",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b27327fda1adf296f242416b4230",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview126/v4/81/a3/ba/81a3baae-33e0-f229-1401-484190b9d2e7/mzaf_17983061750164735556.plus.aac.ep.m4a",
+        "playlistsIncluded": "4TzXhSlf3vy4XZCepQkx99"
+    },
+    {
+        "name": "It's A Hard Life - Remastered 2011",
+        "artist": "Queen",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b2735be5f807f6f0549e198a44b4",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/81/3c/a1/813ca13f-856a-9d3e-e7eb-d9b8e28a8426/mzaf_14197743018079446198.plus.aac.ep.m4a",
+        "playlistsIncluded": "4TzXhSlf3vy4XZCepQkx99"
+    },
+    {
+        "name": "Lazing On A Sunday Afternoon - Remastered 2011",
+        "artist": "Queen",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b273733cfd7114c704785e4f8da0",
+        "preview_url": null,
+        "playlistsIncluded": "4TzXhSlf3vy4XZCepQkx99"
+    },
+    {
+        "name": "Death On Two Legs (Dedicated To...) - Remastered 2011",
+        "artist": "Queen",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b273733cfd7114c704785e4f8da0",
+        "preview_url": null,
+        "playlistsIncluded": "4TzXhSlf3vy4XZCepQkx99"
+    }
+]

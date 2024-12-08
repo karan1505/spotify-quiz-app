@@ -16,7 +16,7 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-import config from "./config";
+import config from "../config";
 
 const RemovePlaylist = () => {
   const [playlists, setPlaylists] = useState([]);

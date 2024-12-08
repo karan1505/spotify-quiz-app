@@ -1,1 +1,317 @@
-[]
+[
+    {
+        "name": "Paint It, Black",
+        "artist": "The Rolling Stones",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b273bad7062c3fd2f2d037989694",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/6e/aa/9b/6eaa9b92-f0eb-3f1b-c2a2-bb6426e4461f/mzaf_59354833443441242.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Fortunate Son",
+        "artist": "Creedence Clearwater Revival",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b2739f39192f9f8ca1c90847b3e5",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/cf/7d/3e/cf7d3efd-8778-0811-3312-322881064541/mzaf_17554128918534037556.plus.aac.p.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "More Than a Feeling",
+        "artist": "Boston",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b2738c1fadcc997a65384f34d694",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/a9/8a/47/a98a4799-aab6-5c88-f7fe-16177ef1dbee/mzaf_6523425225890294175.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Hold the Line",
+        "artist": "TOTO",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b273f903e62767a0e22e33b7af83",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/05/f7/46/05f746f7-fed4-3973-5c73-55a76e38ae22/mzaf_17824068536793425326.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Livin' On A Prayer",
+        "artist": "Bon Jovi",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b2731336b31b6a1799f0de5807ac",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/18/d6/ef/18d6ef00-4c05-1ef1-9477-d75d2c2d8cc2/mzaf_15209370542067657131.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Whole Lotta Love - 1990 Remaster",
+        "artist": "Led Zeppelin",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b273fc4f17340773c6c3579fea0d",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/19/76/cf/1976cf63-83e6-bc9e-1b9d-c8e0e7a5eac7/mzaf_18294046092449946018.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Carry on Wayward Son",
+        "artist": "Kansas",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b2731be40e44db112e123e5e8b51",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/a9/53/1f/a9531f42-9e61-e9e7-f4aa-9aa8f790df1a/mzaf_793737724568868864.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Old Time Rock & Roll",
+        "artist": "Bob Seger",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b273ef063cb80508c55eb443a671",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/14/84/7b/14847b2a-8afb-1df9-4110-d44fe6738acf/mzaf_6839427256364640416.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "The Joker",
+        "artist": "Steve Miller Band",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b273375445cc7a2aedff11361b51",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/c7/79/09/c77909f2-609b-ac2e-8d17-1012fed7f93b/mzaf_2557402553408676093.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Start Me Up - Remastered 2009",
+        "artist": "The Rolling Stones",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b27308fc42e575043a753f60d675",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/b8/45/95/b845954d-3184-06ca-4693-28782eaec2a5/mzaf_14834597765294738010.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Bad Moon Rising",
+        "artist": "Creedence Clearwater Revival",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b2733efcd243aaa5638f55318f91",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/c5/1a/c9/c51ac904-8ed5-9915-15c8-e89ddc72a52b/mzaf_11851919257040385797.plus.aac.p.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "One of These Nights - 2013 Remaster",
+        "artist": "Eagles",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b2735d0a8e54aba5181c79593b94",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/a5/5f/97/a55f97ca-ed67-7296-115c-8ebce522d75a/mzaf_10893222497147334820.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Rhiannon",
+        "artist": "Fleetwood Mac",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b2734fb043195e8d07e72edc7226",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/a3/e9/2f/a3e92f3e-7411-397a-5e29-f96bb356ca18/mzaf_15738740840522197969.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Roadhouse Blues",
+        "artist": "The Doors",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b273f12a8a7e0b2cbe16d2bef4dc",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/72/0c/8c/720c8c0d-f788-0902-5752-ea79af99cd4c/mzaf_3764151401031462314.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Wanted Dead Or Alive",
+        "artist": "Bon Jovi",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b2731336b31b6a1799f0de5807ac",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/d4/7b/84/d47b844f-c6f3-0996-e36d-5274a2668615/mzaf_8867511558906588302.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Rebel Yell",
+        "artist": "Billy Idol",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b273ea07dca8b4ca808c1e5b17fb",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview126/v4/a3/77/94/a37794da-3e3f-fecd-10f7-d94666f9c7e3/mzaf_16557798928480979640.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Dust in the Wind",
+        "artist": "Kansas",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b27359f0f56a7cd13526b5b4204c",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/0d/04/24/0d04244f-f09c-1b5c-c6c2-9bd46ac0d730/mzaf_4575601174873013065.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Gimme Shelter",
+        "artist": "The Rolling Stones",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b2732af30c881bb23cfb82a8cf99",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview116/v4/d2/e6/63/d2e66325-dfe7-ea59-32e1-221b53645142/mzaf_11356889708114881291.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Run Through The Jungle",
+        "artist": "Creedence Clearwater Revival",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b2736e186edfb8fe3710fdc1f7c2",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/aa/c5/d6/aac5d6d3-9563-6c31-aaeb-84da3cb79eef/mzaf_4203522937175361385.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "The Logical Song - Remastered 2010",
+        "artist": "Supertramp",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b2735405ef9e393f5f1e53b4b42e",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/83/8f/e5/838fe591-628b-5dfa-41fa-be6fd3008cc9/mzaf_17919474949919046003.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Walk of Life",
+        "artist": "Dire Straits",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b273fb995d2871f084b34afae3b3",
+        "preview_url": null,
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Rock'n Me",
+        "artist": "Steve Miller Band",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b2732fc23e78e87d793054bba090",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/ca/1a/ba/ca1aba65-235b-55f8-a2b8-886e5dad27f9/mzaf_4923783564816010472.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Little Wing",
+        "artist": "Jimi Hendrix",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b27319dcd95d28b63d10164327f2",
+        "preview_url": null,
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Hey You",
+        "artist": "Pink Floyd",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b2735d48e2f56d691f9a4e4b0bdf",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/b9/fd/c8/b9fdc82e-07a0-56b7-40d2-ca30540b1516/mzaf_3460980456213298909.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Peace of Mind",
+        "artist": "Boston",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b2738c1fadcc997a65384f34d694",
+        "preview_url": null,
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Shoot to Thrill",
+        "artist": "AC/DC",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b2730b51f8d91f3a21e8426361ae",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/c8/89/a4/c889a4e7-c64b-fe03-0eea-875717789bbf/mzaf_7973393673736851927.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Paradise City",
+        "artist": "Guns N' Roses",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b27321ebf49b3292c3f0f575f0f5",
+        "preview_url": null,
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Runnin' with the Devil - 2015 Remaster",
+        "artist": "Van Halen",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b27317dd812df38fed44d6d2036e",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/15/b2/27/15b2275a-ff01-1138-a63e-81ff8941311d/mzaf_14720401833835700085.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Green River",
+        "artist": "Creedence Clearwater Revival",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b2733efcd243aaa5638f55318f91",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview116/v4/05/a8/43/05a84373-b75f-2748-e2ac-8d73ee586646/mzaf_8467083803753423569.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Hurts So Good",
+        "artist": "John Mellencamp",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b273b1945b44ce8868740f132f8e",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview122/v4/be/88/b0/be88b0ee-f3d8-056b-1afc-810cbd255a70/mzaf_16305690484592424379.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Just What I Needed",
+        "artist": "The Cars",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b273f725bc7907dcf15aa2c6e7b7",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/b0/94/af/b094af9b-5061-47a2-cfd0-5dfe734d1e7e/mzaf_2423744049282854515.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Night Moves",
+        "artist": "Bob Seger",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b273676a8230a422123e8012557e",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/b1/d1/0b/b1d10bf2-604a-c789-0759-5736f4d31e14/mzaf_4434732320738271943.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Miss You - Remastered",
+        "artist": "The Rolling Stones",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b27305c7aec05eabf142cc33b936",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/ea/67/41/ea6741e7-f3af-af92-42a8-c184c9580253/mzaf_9586539865463717054.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Money",
+        "artist": "Pink Floyd",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b273ea7caaff71dea1051d49b2fe",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview126/v4/22/ac/7c/22ac7cc1-e3ab-60cc-4fc7-d56a45f6b064/mzaf_18388735987113402332.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "In My Life - Remastered 2009",
+        "artist": "The Beatles",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b273ed801e58a9ababdea6ac7ce4",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview116/v4/65/7c/4b/657c4b25-a530-9430-0af0-5f0a8cfbebfd/mzaf_1409458043960066149.plus.aac.p.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Hells Bells",
+        "artist": "AC/DC",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b2730b51f8d91f3a21e8426361ae",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/3b/1d/6f/3b1d6fc6-fe3e-b0a0-ff8c-0e0d357097c5/mzaf_11146985618063724954.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Sultans of Swing",
+        "artist": "Dire Straits",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b27305b07080bdc2dd0e2cf6f008",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/34/32/bd/3432bdb8-1f76-d95f-401b-e93e32cd76c8/mzaf_2407121888790805024.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Lookin' Out My Back Door",
+        "artist": "Creedence Clearwater Revival",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b2736e186edfb8fe3710fdc1f7c2",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/9b/77/71/9b7771ff-3599-8758-cadb-fb859e7cb2ba/mzaf_15377276150201999833.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Jack & Diane",
+        "artist": "John Mellencamp",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b273b1945b44ce8868740f132f8e",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/4d/a2/80/4da2809f-e301-d658-c819-6339dbacd3d9/mzaf_11199936198116847504.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Light My Fire",
+        "artist": "The Doors",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b2735b96a8c5d61be8878452f8f1",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview116/v4/ae/14/21/ae142138-114d-7db4-d0e8-671f96a0688f/mzaf_12503995888086758409.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Mississippi Queen",
+        "artist": "Mountain",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b273411cacfc3518a9f2c4a670f6",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/23/02/eb/2302eb86-dd60-c11e-ed1d-e74b4413e188/mzaf_8538799245270408378.plus.aac.p.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Here I Go Again - 2018 Remaster",
+        "artist": "Whitesnake",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b2732d0b092b97341c9f7f388d62",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview116/v4/85/5e/5c/855e5c3a-82e6-eb18-fd85-584cad8c8277/mzaf_18155189429301467868.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Life in the Fast Lane - 2013 Remaster",
+        "artist": "Eagles",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b2734637341b9f507521afa9a778",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/30/48/f0/3048f0f7-e19b-1412-a8e9-609f99da33ca/mzaf_7395255093617975890.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "You Shook Me All Night Long",
+        "artist": "AC/DC",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b2730b51f8d91f3a21e8426361ae",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/15/98/ff/1598ffb5-b218-805b-4be5-7770b48ff010/mzaf_14664028212710924359.plus.aac.ep.m4a",
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    },
+    {
+        "name": "Rock and Roll - Remaster",
+        "artist": "Led Zeppelin",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b273c8a11e48c91a982d086afc69",
+        "preview_url": null,
+        "playlistsIncluded": "1mewawYZH67IvzttbpgpdP"
+    }
+]

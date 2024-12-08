@@ -10,7 +10,7 @@ import {
   Grid,
   CircularProgress,
 } from "@mui/material";
-import config from "./config";
+import config from "../config";
 
 const ShowSaved = () => {
   const [playlists, setPlaylists] = useState([]);

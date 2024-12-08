@@ -18,7 +18,7 @@ import { motion } from "framer-motion";
 import Confetti from "react-confetti";
 import config from "../config";
 
-const ErasQuiz2 = () => {
+const ArtistQuiz2 = () => {
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -32,7 +32,7 @@ const ErasQuiz2 = () => {
   const audioRef = useRef(null);
   const pendingTimeouts = useRef(0); // Declare at the top level
   const [difficulty, setDifficulty] = useState(null);
-  const [playlistID] = useState("6hoDexBZBJnlltgv91hM6U");
+  const [playlistID] = useState("4TzXhSlf3vy4XZCepQkx99");
 
   useEffect(() => {
     const fetchGamemode1 = async () => {
@@ -211,7 +211,7 @@ const ErasQuiz2 = () => {
             width: "100%",
             height: "100%",
             backgroundImage: `url(
-              "https://i.pinimg.com/736x/a0/46/6f/a0466f5173c5909f9a0d49383456d6cb.jpg"
+              "https://images3.alphacoders.com/151/151767.jpg"
             )`,
             backgroundSize: "cover",
             backgroundPosition: "center",
@@ -243,13 +243,13 @@ const ErasQuiz2 = () => {
               textShadow: "0 4px 6px rgba(0, 0, 0, 0.6)",
             }}
           >
-            70s Mix
+            This is Queen
           </Typography>
           <Grid container spacing={4} justifyContent="center">
             {[
-              "The 1970s saw the rise of new genres like disco and funk.",
-              "You get a limited amount of time to guess the track",
-              "Good Luck!",
+              "Did you know: Queen is one of the world's best-selling music artists, with record sales estimated at 250-300 million",
+              "You get a limited amount of time to guess the track, and the time varies based on difficulty, good luck!",
+              "Queen holds the record for the longest running rock group fan club in the world, how big of a fan are you?",
             ].map((content, idx) => (
               <Grid item xs={12} md={4} key={idx}>
                 <Card
@@ -368,7 +368,7 @@ const ErasQuiz2 = () => {
             width: "100%",
             height: "100%",
             backgroundImage: `url(
-              "https://i.pinimg.com/736x/a0/46/6f/a0466f5173c5909f9a0d49383456d6cb.jpg"
+              "https://images3.alphacoders.com/151/151767.jpg"
             )`,
             backgroundSize: "cover",
             backgroundPosition: "center",
@@ -445,7 +445,7 @@ const ErasQuiz2 = () => {
           width: "100%",
           height: "100%",
           backgroundImage: `url(
-            "https://i.pinimg.com/736x/a0/46/6f/a0466f5173c5909f9a0d49383456d6cb.jpg"
+            "https://images3.alphacoders.com/151/151767.jpg"
           )`,
           backgroundSize: "cover",
           backgroundPosition: "center",
@@ -589,4 +589,4 @@ const ErasQuiz2 = () => {
   );
 };
 
-export default ErasQuiz2;
+export default ArtistQuiz2;

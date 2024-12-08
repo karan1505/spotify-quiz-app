@@ -12,7 +12,7 @@ import {
   Button,
   CircularProgress,
 } from "@mui/material";
-import config from "./config";
+import config from "../config";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
@@ -220,12 +220,12 @@ const Dashboard = () => {
               <CardMedia
                 component="img"
                 height="200"
-                image="https://cdn.pixabay.com/photo/2017/02/22/16/04/guitar-2089802_1280.jpg"
-                alt="70's Quiz"
+                image="https://i.pinimg.com/474x/1f/30/8e/1f308e394d23cd0b512d51c80a10f68d.jpg"
+                alt="70s Mix"
               />
               <CardContent>
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                  70's Quiz
+                  70s Mix
                 </Typography>
                 <Typography variant="body2" sx={{ color: "#4a5568" }}>
                   Let's go back in time, are you ready?
@@ -263,7 +263,7 @@ const Dashboard = () => {
 
           <Grid item xs={12} sm={6} md={4}>
             <Card
-              onClick={() => navigate("/quiz2")}
+              onClick={() => navigate("/artistquiz1")}
               sx={{
                 cursor: "pointer",
                 bgcolor: "#ffffff",
@@ -275,12 +275,68 @@ const Dashboard = () => {
               <CardMedia
                 component="img"
                 height="200"
-                image="https://preview.redd.it/1tf94ducfz521.jpg?auto=webp&s=b5906f7001d5676399c6d30ad5915814d196a1ac"
+                image="https://media-cldnry.s-nbcnews.com/image/upload/t_fit-560w,f_auto,q_auto:best/rockcms/2024-12/241204-taylor-swift-ch-0941-61ea5a.jpg"
+                alt="Taylor Swift"
+              />
+              <CardContent>
+                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                  Artist's Top Tracks
+                </Typography>
+                <Typography variant="body2" sx={{ color: "#4a5568" }}>
+                  Placeholder Artist
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={4}>
+            <Card
+              onClick={() => navigate("/artistquiz2")}
+              sx={{
+                cursor: "pointer",
+                bgcolor: "#ffffff",
+                boxShadow: 3,
+                transition: "transform 0.3s",
+                "&:hover": { transform: "scale(1.05)" },
+              }}
+            >
+              <CardMedia
+                component="img"
+                height="200"
+                image="https://myhotposters.com/cdn/shop/products/mV0449_622d96e0-9841-4b01-b6f9-b5ef0c522c3a_1024x1024.jpg?v=1571444652"
+                alt="Queen Quiz"
+              />
+              <CardContent>
+                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                  This is Queen
+                </Typography>
+                <Typography variant="body2" sx={{ color: "#4a5568" }}>
+                  If you love Queen, you'll wanna play this!
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={4}>
+            <Card
+              onClick={() => navigate("/genrequiz2")}
+              sx={{
+                cursor: "pointer",
+                bgcolor: "#ffffff",
+                boxShadow: 3,
+                transition: "transform 0.3s",
+                "&:hover": { transform: "scale(1.05)" },
+              }}
+            >
+              <CardMedia
+                component="img"
+                height="200"
+                image="https://i.pinimg.com/736x/7e/95/1a/7e951aa942948abe1ba44326edbffaf1.jpg"
                 alt="Rock Classics"
               />
               <CardContent>
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                  Rock Classics Quiz
+                  Rock Classics
                 </Typography>
                 <Typography variant="body2" sx={{ color: "#4a5568" }}>
                   How well do you know the Rock Classics?
@@ -291,7 +347,7 @@ const Dashboard = () => {
 
           <Grid item xs={12} sm={6} md={4}>
             <Card
-              onClick={() => navigate("/quiz3")}
+              onClick={() => navigate("/genrequiz2")}
               sx={{
                 cursor: "pointer",
                 bgcolor: "#ffffff",
@@ -303,15 +359,43 @@ const Dashboard = () => {
               <CardMedia
                 component="img"
                 height="200"
-                image="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Queen_A_Night_At_The_Opera_%281975_Elektra_publicity_photo_02%29.jpg/1200px-Queen_A_Night_At_The_Opera_%281975_Elektra_publicity_photo_02%29.jpg"
-                alt="Queen Quiz"
+                image="https://i.pinimg.com/736x/7e/95/1a/7e951aa942948abe1ba44326edbffaf1.jpg"
+                alt="Rock Classics"
               />
               <CardContent>
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                  Queen Quiz
+                  Rock Classics
                 </Typography>
                 <Typography variant="body2" sx={{ color: "#4a5568" }}>
-                  If you love Queen, you'll wanna play this!
+                  How well do you know the Rock Classics?
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={4}>
+            <Card
+              onClick={() => navigate("/genrequiz1")}
+              sx={{
+                cursor: "pointer",
+                bgcolor: "#ffffff",
+                boxShadow: 3,
+                transition: "transform 0.3s",
+                "&:hover": { transform: "scale(1.05)" },
+              }}
+            >
+              <CardMedia
+                component="img"
+                height="200"
+                image="https://i.pinimg.com/736x/af/23/e0/af23e09682caa41ce16d175f34b1256b.jpg"
+                alt="Hip Hop 2024"
+              />
+              <CardContent>
+                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                  Hip Hop's Best of 2024
+                </Typography>
+                <Typography variant="body2" sx={{ color: "#4a5568" }}>
+                  2024, great year for Hip-Hop, you well versed?
                 </Typography>
               </CardContent>
             </Card>

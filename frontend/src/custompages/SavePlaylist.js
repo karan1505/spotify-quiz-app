@@ -17,7 +17,7 @@ import {
   DialogContentText,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import config from "./config";
+import config from "../config";
 
 const SavePlaylist = () => {
   const [playlists, setPlaylists] = useState([]);
