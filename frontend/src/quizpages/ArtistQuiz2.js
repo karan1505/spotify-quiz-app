@@ -133,6 +133,30 @@ const ArtistQuiz2 = () => {
     };
   }, [quizStarted, currentQuestionIndex, questions, resetTimer]);
 
+  useEffect(() => {
+    if (showResults) {
+      const saveScore = async () => {
+        try {
+          const userInfo = await axios.get(`${config.BASE_URL}/user_info`);
+          const { id: spotifyId, display_name: userName } =
+            userInfo.data.user_info;
+
+          await axios.post(`${config.BASE_URL}/save_score`, {
+            spotify_id: spotifyId,
+            user_name: userName,
+            quiz_name: "This is Queen",
+            score: score,
+          });
+          console.log("Score saved successfully!");
+        } catch (error) {
+          console.error("Error saving score:", error);
+        }
+      };
+
+      saveScore();
+    }
+  }, [showResults, score]);
+
   const handleAnswerClick = async (option) => {
     if (isLoading) return;
     setIsLoading(true);
@@ -247,9 +271,9 @@ const ArtistQuiz2 = () => {
           </Typography>
           <Grid container spacing={4} justifyContent="center">
             {[
-              "Did you know: Queen is one of the world's best-selling music artists, with record sales estimated at 250-300 million",
-              "You get a limited amount of time to guess the track, and the time varies based on difficulty, good luck!",
-              "Queen holds the record for the longest running rock group fan club in the world, how big of a fan are you?",
+              "Did you know: Queen have sold an estimated total of 250-300 million records worldwide",
+              "You get a limited amount of time to guess the track, select a difficulty to get started",
+              "Queen's peak popularity was primarily during the late 1970s and early 1980s.",
             ].map((content, idx) => (
               <Grid item xs={12} md={4} key={idx}>
                 <Card

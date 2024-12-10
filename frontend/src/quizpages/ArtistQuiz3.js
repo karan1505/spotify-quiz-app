@@ -18,7 +18,7 @@ import { motion } from "framer-motion";
 import Confetti from "react-confetti";
 import config from "../config";
 
-const ErasQuiz2 = () => {
+const ArtistQuiz3 = () => {
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -32,7 +32,7 @@ const ErasQuiz2 = () => {
   const audioRef = useRef(null);
   const pendingTimeouts = useRef(0); // Declare at the top level
   const [difficulty, setDifficulty] = useState(null);
-  const [playlistID] = useState("6hoDexBZBJnlltgv91hM6U");
+  const [playlistID] = useState("19Bv1Xkk7tRZ45QYp0BHdw");
 
   useEffect(() => {
     const fetchGamemode1 = async () => {
@@ -144,7 +144,7 @@ const ErasQuiz2 = () => {
           await axios.post(`${config.BASE_URL}/save_score`, {
             spotify_id: spotifyId,
             user_name: userName,
-            quiz_name: "70s Mix",
+            quiz_name: "Michael Jackson's Top Hits",
             score: score,
           });
           console.log("Score saved successfully!");
@@ -235,7 +235,7 @@ const ErasQuiz2 = () => {
             width: "100%",
             height: "100%",
             backgroundImage: `url(
-              "https://i.pinimg.com/736x/a0/46/6f/a0466f5173c5909f9a0d49383456d6cb.jpg"
+              "https://i.pinimg.com/736x/e8/93/5a/e8935a2ad3f83ee09ce6965a65960235.jpg"
             )`,
             backgroundSize: "cover",
             backgroundPosition: "center",
@@ -267,13 +267,13 @@ const ErasQuiz2 = () => {
               textShadow: "0 4px 6px rgba(0, 0, 0, 0.6)",
             }}
           >
-            70s Mix
+            Michael Jackson's Top Hits
           </Typography>
           <Grid container spacing={4} justifyContent="center">
             {[
-              "The 1970s was a decade of incredible musical diversity that pushed boundaries and influenced future generations",
+              "Michael Jackson is one of the best-selling music artists of all time, with sales of over 500 million records worldwide",
               "You get a limited amount of time to guess the track, select a difficulty to get started",
-              "Music festivals like Woodstock and Glastonbury became iconic events, bringing together massive crowds",
+              "Jackson's music videos revolutionized the music industry and popularized the music video format",
             ].map((content, idx) => (
               <Grid item xs={12} md={4} key={idx}>
                 <Card
@@ -392,7 +392,7 @@ const ErasQuiz2 = () => {
             width: "100%",
             height: "100%",
             backgroundImage: `url(
-              "https://i.pinimg.com/736x/a0/46/6f/a0466f5173c5909f9a0d49383456d6cb.jpg"
+              "https://i.pinimg.com/736x/1e/6c/b2/1e6cb21c9ad8fd5d1b135662e34984b3.jpg"
             )`,
             backgroundSize: "cover",
             backgroundPosition: "center",
@@ -469,7 +469,7 @@ const ErasQuiz2 = () => {
           width: "100%",
           height: "100%",
           backgroundImage: `url(
-            "https://i.pinimg.com/736x/a0/46/6f/a0466f5173c5909f9a0d49383456d6cb.jpg"
+            "https://i.pinimg.com/736x/1e/6c/b2/1e6cb21c9ad8fd5d1b135662e34984b3.jpg"
           )`,
           backgroundSize: "cover",
           backgroundPosition: "center",
@@ -613,4 +613,4 @@ const ErasQuiz2 = () => {
   );
 };
 
-export default ErasQuiz2;
+export default ArtistQuiz3;

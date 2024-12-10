@@ -1,1 +1,51 @@
-[]
+[
+    {
+        "name": "Ghostbusters",
+        "artist": "Ray Parker Jr.",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b273ed86c7a97ede8185293c1b8f",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview116/v4/b7/ea/dc/b7eadcad-a9fc-32c6-2b54-6457d12b3fc4/mzaf_4339273960754126629.plus.aac.ep.m4a",
+        "playlistsIncluded": "1gOmmbE7DZKC2rwT8NiZsi"
+    },
+    {
+        "name": "I Want to Know What Love Is - 1999 Remaster",
+        "artist": "Foreigner",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b2733e030a7e606959674643d274",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/ba/38/93/ba389345-e329-be99-6fb5-9184ecb4e11d/mzaf_8666438245399874623.plus.aac.ep.m4a",
+        "playlistsIncluded": "1gOmmbE7DZKC2rwT8NiZsi"
+    },
+    {
+        "name": "I'll Be Over You",
+        "artist": "TOTO",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b273676bab85cf393ff0644e3a5a",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/89/5c/55/895c5523-4426-9048-34d2-3c6cf7fdd07c/mzaf_14112006780685500678.plus.aac.ep.m4a",
+        "playlistsIncluded": "1gOmmbE7DZKC2rwT8NiZsi"
+    },
+    {
+        "name": "Beat It",
+        "artist": "Michael Jackson",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b273de437d960dda1ac0a3586d97",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/88/01/b5/8801b50a-fe2b-8810-91de-05f662d5dc60/mzaf_15042608131031868418.plus.aac.ep.m4a",
+        "playlistsIncluded": "1gOmmbE7DZKC2rwT8NiZsi"
+    },
+    {
+        "name": "Take on Me",
+        "artist": "a-ha",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b273e8dd4db47e7177c63b0b7d53",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview126/v4/75/59/46/755946b7-b806-722a-052a-ac2817b73003/mzaf_2063748022768541289.plus.aac.ep.m4a",
+        "playlistsIncluded": "1gOmmbE7DZKC2rwT8NiZsi"
+    },
+    {
+        "name": "Drive - 2017 Remaster",
+        "artist": "The Cars",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b273f607580794ed5b352884fd47",
+        "preview_url": null,
+        "playlistsIncluded": "1gOmmbE7DZKC2rwT8NiZsi"
+    },
+    {
+        "name": "Hungry Heart",
+        "artist": "Bruce Springsteen",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b2730e987064364e2b62ae1925b4",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/39/8c/4d/398c4dce-16e8-a8d4-4834-b68f6235db32/mzaf_8840768613706450973.plus.aac.ep.m4a",
+        "playlistsIncluded": "1gOmmbE7DZKC2rwT8NiZsi"
+    }
+]

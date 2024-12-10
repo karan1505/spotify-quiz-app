@@ -32,7 +32,7 @@ const GenreQuiz1 = () => {
   const audioRef = useRef(null);
   const pendingTimeouts = useRef(0); // Declare at the top level
   const [difficulty, setDifficulty] = useState(null);
-  const [playlistID] = useState("1F5PyLUtE0Ad7158Yqer1O");
+  const [playlistID] = useState("22U3rmQb3tZ4QTj6Dp51vs");
 
   useEffect(() => {
     const fetchGamemode1 = async () => {
@@ -132,6 +132,30 @@ const GenreQuiz1 = () => {
       }
     };
   }, [quizStarted, currentQuestionIndex, questions, resetTimer]);
+
+  useEffect(() => {
+    if (showResults) {
+      const saveScore = async () => {
+        try {
+          const userInfo = await axios.get(`${config.BASE_URL}/user_info`);
+          const { id: spotifyId, display_name: userName } =
+            userInfo.data.user_info;
+
+          await axios.post(`${config.BASE_URL}/save_score`, {
+            spotify_id: spotifyId,
+            user_name: userName,
+            quiz_name: "Most Streamed Rap Songs",
+            score: score,
+          });
+          console.log("Score saved successfully!");
+        } catch (error) {
+          console.error("Error saving score:", error);
+        }
+      };
+
+      saveScore();
+    }
+  }, [showResults, score]);
 
   const handleAnswerClick = async (option) => {
     if (isLoading) return;
@@ -243,13 +267,13 @@ const GenreQuiz1 = () => {
               textShadow: "0 4px 6px rgba(0, 0, 0, 0.6)",
             }}
           >
-            Hip-Hop's Best of 2024
+            Most Streamed Rap Songs
           </Typography>
           <Grid container spacing={4} justifyContent="center">
             {[
-              "Have you been keeping up with this year's artists?",
-              "You get a limited amount of time to guess the track",
-              "Have fun!",
+              "Rap has become the most popular music genre on streaming platforms like Spotify",
+              "You get a limited amount of time to guess the track, select a difficulty to get started",
+              "The streaming era has disrupted the traditional music industry model, leading to it being the primary income",
             ].map((content, idx) => (
               <Grid item xs={12} md={4} key={idx}>
                 <Card

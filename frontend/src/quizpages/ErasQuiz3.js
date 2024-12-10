@@ -12,12 +12,13 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
+  Link,
 } from "@mui/material";
 import { motion } from "framer-motion";
 import Confetti from "react-confetti";
 import config from "../config";
 
-const Quiz1 = () => {
+const ErasQuiz3 = () => {
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -29,6 +30,7 @@ const Quiz1 = () => {
   const [showNextQuestionDialog, setShowNextQuestionDialog] = useState(false);
   const timerRef = useRef(null);
   const audioRef = useRef(null);
+  const pendingTimeouts = useRef(0); // Declare at the top level
   const [difficulty, setDifficulty] = useState(null);
   const [playlistID] = useState("2eeijnQ6uPptmB9BP9xClO");
 
@@ -48,32 +50,10 @@ const Quiz1 = () => {
     fetchGamemode1();
   }, [playlistID]);
 
-  const resetTimer = useCallback(() => {
-    clearInterval(timerRef.current);
-    const initialTime =
-      difficulty === "Easy" ? 30 : difficulty === "Medium" ? 15 : 5;
-    setTimeLeft(initialTime);
-
-    timerRef.current = setInterval(() => {
-      setTimeLeft((prevTime) => {
-        if (prevTime <= 1) {
-          clearInterval(timerRef.current);
-          handleTimeout();
-          return 0;
-        }
-        return prevTime - 1;
-      });
-    }, 1000);
-  }, [difficulty]);
-
-  const pendingTimeouts = useRef(0);
-
   const handleTimeout = useCallback(() => {
-    // Increment the number of pending timeouts
-    pendingTimeouts.current += 1;
+    pendingTimeouts.current += 1; // Increment the number of pending timeouts
 
     if (pendingTimeouts.current > 1) {
-      // If there's already a pending timeout being handled, return
       return;
     }
 
@@ -95,7 +75,6 @@ const Quiz1 = () => {
             setShowNextQuestionDialog(false);
             resetTimer();
 
-            // Decrement the number of pending timeouts and process the next if any
             pendingTimeouts.current -= 1;
             if (pendingTimeouts.current > 0) {
               processTimeout();
@@ -103,15 +82,33 @@ const Quiz1 = () => {
           }, 1500);
         } else {
           setShowResults(true);
-          pendingTimeouts.current = 0; // Clear any remaining timeouts
+          pendingTimeouts.current = 0;
         }
 
-        return nextQuestionIndex; // Ensure the state progresses sequentially
+        return nextQuestionIndex;
       });
     };
 
     processTimeout();
-  }, [questions.length, resetTimer]);
+  }, [questions.length]);
+
+  const resetTimer = useCallback(() => {
+    clearInterval(timerRef.current);
+    const initialTime =
+      difficulty === "Easy" ? 30 : difficulty === "Medium" ? 15 : 5;
+    setTimeLeft(initialTime);
+
+    timerRef.current = setInterval(() => {
+      setTimeLeft((prevTime) => {
+        if (prevTime <= 1) {
+          clearInterval(timerRef.current);
+          handleTimeout();
+          return 0;
+        }
+        return prevTime - 1;
+      });
+    }, 1000);
+  }, [difficulty, handleTimeout]);
 
   useEffect(() => {
     if (quizStarted && currentQuestionIndex < questions.length) {
@@ -128,12 +125,37 @@ const Quiz1 = () => {
 
     return () => {
       clearInterval(timerRef.current);
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
+      const currentAudioRef = audioRef.current;
+      if (currentAudioRef) {
+        currentAudioRef.pause();
+        currentAudioRef.currentTime = 0;
       }
     };
   }, [quizStarted, currentQuestionIndex, questions, resetTimer]);
+
+  useEffect(() => {
+    if (showResults) {
+      const saveScore = async () => {
+        try {
+          const userInfo = await axios.get(`${config.BASE_URL}/user_info`);
+          const { id: spotifyId, display_name: userName } =
+            userInfo.data.user_info;
+
+          await axios.post(`${config.BASE_URL}/save_score`, {
+            spotify_id: spotifyId,
+            user_name: userName,
+            quiz_name: "Top 50 Global",
+            score: score,
+          });
+          console.log("Score saved successfully!");
+        } catch (error) {
+          console.error("Error saving score:", error);
+        }
+      };
+
+      saveScore();
+    }
+  }, [showResults, score]);
 
   const handleAnswerClick = async (option) => {
     if (isLoading) return;
@@ -212,10 +234,12 @@ const Quiz1 = () => {
             left: 0,
             width: "100%",
             height: "100%",
-            backgroundImage: `url('https://images.unsplash.com/photo-1571435763834-4d6fbb550bb7?q=80&w=2676&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`,
+            backgroundImage: `url(
+              "https://images.unsplash.com/photo-1571435763834-4d6fbb550bb7?q=80&w=2676&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            )`,
             backgroundSize: "cover",
             backgroundPosition: "center",
-            filter: "blur(8px)",
+            filter: "blur(2px)",
             zIndex: -1,
           }}
         />
@@ -243,13 +267,13 @@ const Quiz1 = () => {
               textShadow: "0 4px 6px rgba(0, 0, 0, 0.6)",
             }}
           >
-            Welcome to the Music Quiz
+            Top 50 Global
           </Typography>
           <Grid container spacing={4} justifyContent="center">
             {[
-              "Test your music knowledge with top tracks!",
-              "Choose the right song faster for a high score!",
-              "Select a difficulty and start rocking!",
+              "This week's top hits, can you guess them?",
+              "You get a limited amount of time to guess the track",
+              "This one contains music from different languages, get ready!",
             ].map((content, idx) => (
               <Grid item xs={12} md={4} key={idx}>
                 <Card
@@ -367,10 +391,12 @@ const Quiz1 = () => {
             left: 0,
             width: "100%",
             height: "100%",
-            backgroundImage: `url('https://images.unsplash.com/photo-1571435763834-4d6fbb550bb7?q=80&w=2676&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`,
+            backgroundImage: `url(
+              "https://images.unsplash.com/photo-1571435763834-4d6fbb550bb7?q=80&w=2676&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            )`,
             backgroundSize: "cover",
             backgroundPosition: "center",
-            filter: "blur(8px)",
+            filter: "blur(2px)",
             zIndex: -1,
           }}
         />
@@ -442,10 +468,12 @@ const Quiz1 = () => {
           left: 0,
           width: "100%",
           height: "100%",
-          backgroundImage: `url('https://images.unsplash.com/photo-1571435763834-4d6fbb550bb7?q=80&w=2676&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`,
+          backgroundImage: `url(
+            "https://images.unsplash.com/photo-1571435763834-4d6fbb550bb7?q=80&w=2676&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          )`,
           backgroundSize: "cover",
           backgroundPosition: "center",
-          filter: "blur(8px)",
+          filter: "blur(2px)",
           zIndex: -1,
         }}
       />
@@ -585,4 +613,4 @@ const Quiz1 = () => {
   );
 };
 
-export default Quiz1;
+export default ErasQuiz3;

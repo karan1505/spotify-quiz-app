@@ -1,9 +1,23 @@
 [
     {
+        "name": "A Kind Of Magic - Remastered 2011",
+        "artist": "Queen",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b273e98d08fbea1a2f03229abc20",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/11/f3/a3/11f3a374-cd84-e769-7618-52f685caf0a3/mzaf_16194578667846437291.plus.aac.ep.m4a",
+        "playlistsIncluded": "4TzXhSlf3vy4XZCepQkx99"
+    },
+    {
+        "name": "Who Wants To Live Forever - Remastered 2011",
+        "artist": "Queen",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b273f7c223721f1d860395444dbe",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/cb/63/65/cb63652f-6ec1-799d-3388-d4f95888fcb7/mzaf_11014788131049500907.plus.aac.ep.m4a",
+        "playlistsIncluded": "4TzXhSlf3vy4XZCepQkx99"
+    },
+    {
         "name": "Bicycle Race - Remastered 2011",
         "artist": "Queen",
         "album_cover": "https://i.scdn.co/image/ab67616d0000b2737c39dd133836c2c1c87e34d6",
-        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/43/fe/4b/43fe4b46-d8a7-bc74-67c2-356985649641/mzaf_3932536018511719051.plus.aac.ep.m4a",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/83/d1/9d/83d19d25-1c9a-db3b-1f79-50a31eadb899/mzaf_7328694525020953164.plus.aac.ep.m4a",
         "playlistsIncluded": "4TzXhSlf3vy4XZCepQkx99"
     },
     {
@@ -14,10 +28,10 @@
         "playlistsIncluded": "4TzXhSlf3vy4XZCepQkx99"
     },
     {
-        "name": "It's A Hard Life - Remastered 2011",
+        "name": "Don't Try Suicide - Remastered 2011",
         "artist": "Queen",
-        "album_cover": "https://i.scdn.co/image/ab67616d0000b2735be5f807f6f0549e198a44b4",
-        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/81/3c/a1/813ca13f-856a-9d3e-e7eb-d9b8e28a8426/mzaf_14197743018079446198.plus.aac.ep.m4a",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b273056e90910cbaf5c5b892aeba",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview122/v4/b1/0e/99/b10e99c6-9cf2-59f0-4504-b5524378ec6f/mzaf_12521161434510705899.plus.aac.ep.m4a",
         "playlistsIncluded": "4TzXhSlf3vy4XZCepQkx99"
     },
     {
@@ -25,6 +39,13 @@
         "artist": "Queen",
         "album_cover": "https://i.scdn.co/image/ab67616d0000b273733cfd7114c704785e4f8da0",
         "preview_url": null,
+        "playlistsIncluded": "4TzXhSlf3vy4XZCepQkx99"
+    },
+    {
+        "name": "Keep Yourself Alive - 2024 Mix",
+        "artist": "Queen",
+        "album_cover": "https://i.scdn.co/image/ab67616d0000b2733a7cc585fb449f55ddfad638",
+        "preview_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/73/e6/e5/73e6e5fc-3bcd-0e8b-95e9-6e66b0fbbe4b/mzaf_17954651170989718283.plus.aac.ep.m4a",
         "playlistsIncluded": "4TzXhSlf3vy4XZCepQkx99"
     },
     {

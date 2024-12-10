@@ -133,6 +133,30 @@ const ErasQuiz1 = () => {
     };
   }, [quizStarted, currentQuestionIndex, questions, resetTimer]);
 
+  useEffect(() => {
+    if (showResults) {
+      const saveScore = async () => {
+        try {
+          const userInfo = await axios.get(`${config.BASE_URL}/user_info`);
+          const { id: spotifyId, display_name: userName } =
+            userInfo.data.user_info;
+
+          await axios.post(`${config.BASE_URL}/save_score`, {
+            spotify_id: spotifyId,
+            user_name: userName,
+            quiz_name: "80s Mix",
+            score: score,
+          });
+          console.log("Score saved successfully!");
+        } catch (error) {
+          console.error("Error saving score:", error);
+        }
+      };
+
+      saveScore();
+    }
+  }, [showResults, score]);
+
   const handleAnswerClick = async (option) => {
     if (isLoading) return;
     setIsLoading(true);
@@ -247,9 +271,9 @@ const ErasQuiz1 = () => {
           </Typography>
           <Grid container spacing={4} justifyContent="center">
             {[
-              "The 1980s saw a big increase in the use of digital recording and synthesizers",
-              "You get a limited amount of time to guess the track, the difficulty determines your timer",
-              "Household names like Madonna and Michael Jackson rose in this decade",
+              "The launch of MTV in 1981 revolutionized the music industry, popularizing music videos and creating a new visual language for music",
+              "You get a limited amount of time to guess the track, select a difficulty to get started",
+              "The ubiquitous use of synthesizers created iconic sounds, from the dreamy pads of synth-pop to the aggressive leads of electronic rock",
             ].map((content, idx) => (
               <Grid item xs={12} md={4} key={idx}>
                 <Card

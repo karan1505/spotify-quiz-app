@@ -22,6 +22,7 @@ MONGO_URI = "mongodb+srv://srinathquizzify:Quizzify123@quizzifycluster.i7npc.mon
 client = MongoClient(MONGO_URI)
 db = client["Spotify"]  # Database name
 playlists_collection = db["Playlists"]  # Collection name
+scoreboard_collection = db["Scoreboard"]  # New collection for scores
 
 # Load environment variables
 load_dotenv()
@@ -34,6 +35,12 @@ class SelectedOption(BaseModel):
 class ValidateAnswerRequest(BaseModel):
     question_id: int
     selected_option: SelectedOption
+
+class QuizScore(BaseModel):
+    spotify_id: str
+    user_name: str
+    quiz_name: str
+    score: int
 
 app = FastAPI()
 
@@ -259,7 +266,7 @@ async def extract_playlist(request: Request):
         enriched_tracks = []
         for track in missing_tracks:
             response = requests.post(
-                "https://scraperimg7-929406927292.us-central1.run.app/fetch_preview_url",
+                "https://quizzify-scraper.onrender.com/fetch_preview_url",
                 json=track
             )
             if response.status_code != 200:
@@ -435,3 +442,47 @@ async def validate_answer(payload: ValidateAnswerRequest):
     except Exception as e:
         logging.error(f"Validation error: {e}")
         raise HTTPException(status_code=500, detail="Error validating answer.")
+
+
+@app.post("/save_score")
+async def save_score(score_data: QuizScore):
+    try:
+        score_entry = {
+            "spotify_id": score_data.spotify_id,
+            "user_name": score_data.user_name,
+            "quiz_name": score_data.quiz_name,
+            "score": score_data.score,
+            "timestamp": datetime.utcnow()
+        }
+        scoreboard_collection.insert_one(score_entry)
+        return {"message": "Score saved successfully"}
+    except Exception as e:
+        logging.error(f"Error saving score: {e}")
+        raise HTTPException(status_code=500, detail="Error saving score")
+
+@app.get("/get_scores")
+async def get_scores(request: Request):
+    try:
+        # Fetch user info to get the Spotify ID
+        access_token = request.cookies.get("access_token")
+        if not access_token:
+            raise HTTPException(status_code=401, detail="Unauthorized")
+        
+        sp = get_spotify_client(access_token)
+        user_info = sp.current_user()
+        spotify_id = user_info.get("id")
+
+        if not spotify_id:
+            raise HTTPException(status_code=401, detail="Unauthorized")
+        
+        # Query only the scores for the logged-in user
+        scores = list(scoreboard_collection.find({"spotify_id": spotify_id}).sort("score", -1))
+        for score in scores:
+            score["_id"] = str(score["_id"])  # Convert ObjectId to string
+
+        return {"scores": scores}
+    except Exception as e:
+        logging.error(f"Error fetching scores: {e}")
+        raise HTTPException(status_code=500, detail="Error fetching scores")
+
+

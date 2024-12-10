@@ -153,7 +153,7 @@ const Dashboard = () => {
         <Grid container spacing={4} justifyContent="center">
           <Grid item xs={12} sm={6} md={4}>
             <Card
-              onClick={() => navigate("/quiz1")}
+              onClick={() => navigate("/erasquiz3")}
               sx={{
                 cursor: "pointer",
                 bgcolor: "#ffffff",
@@ -174,6 +174,34 @@ const Dashboard = () => {
                 </Typography>
                 <Typography variant="body2" sx={{ color: "#4a5568" }}>
                   Can you guess this week's top hits?
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={4}>
+            <Card
+              onClick={() => navigate("/erasquiz2")}
+              sx={{
+                cursor: "pointer",
+                bgcolor: "#ffffff",
+                boxShadow: 3,
+                transition: "transform 0.3s",
+                "&:hover": { transform: "scale(1.05)" },
+              }}
+            >
+              <CardMedia
+                component="img"
+                height="200"
+                image="https://i.pinimg.com/474x/1f/30/8e/1f308e394d23cd0b512d51c80a10f68d.jpg"
+                alt="70s Mix"
+              />
+              <CardContent>
+                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                  70s Mix
+                </Typography>
+                <Typography variant="body2" sx={{ color: "#4a5568" }}>
+                  Let's go back in time, are you ready?
                 </Typography>
               </CardContent>
             </Card>
@@ -206,33 +234,7 @@ const Dashboard = () => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} sm={6} md={4}>
-            <Card
-              onClick={() => navigate("/erasquiz2")}
-              sx={{
-                cursor: "pointer",
-                bgcolor: "#ffffff",
-                boxShadow: 3,
-                transition: "transform 0.3s",
-                "&:hover": { transform: "scale(1.05)" },
-              }}
-            >
-              <CardMedia
-                component="img"
-                height="200"
-                image="https://i.pinimg.com/474x/1f/30/8e/1f308e394d23cd0b512d51c80a10f68d.jpg"
-                alt="70s Mix"
-              />
-              <CardContent>
-                <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                  70s Mix
-                </Typography>
-                <Typography variant="body2" sx={{ color: "#4a5568" }}>
-                  Let's go back in time, are you ready?
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
+
           <Grid item xs={12} sm={6} md={4}>
             <Card
               onClick={() => navigate("/artistquiz1")}
@@ -263,7 +265,7 @@ const Dashboard = () => {
 
           <Grid item xs={12} sm={6} md={4}>
             <Card
-              onClick={() => navigate("/artistquiz1")}
+              onClick={() => navigate("/artistquiz3")}
               sx={{
                 cursor: "pointer",
                 bgcolor: "#ffffff",
@@ -275,15 +277,15 @@ const Dashboard = () => {
               <CardMedia
                 component="img"
                 height="200"
-                image="https://media-cldnry.s-nbcnews.com/image/upload/t_fit-560w,f_auto,q_auto:best/rockcms/2024-12/241204-taylor-swift-ch-0941-61ea5a.jpg"
-                alt="Taylor Swift"
+                image="https://i.pinimg.com/736x/52/8a/98/528a98c084b2ee909596e6579f06ee1c.jpg"
+                alt="Michael Jackson"
               />
               <CardContent>
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                  Artist's Top Tracks
+                  Michael Jackson's Top Hits
                 </Typography>
                 <Typography variant="body2" sx={{ color: "#4a5568" }}>
-                  Placeholder Artist
+                  The best of the best
                 </Typography>
               </CardContent>
             </Card>
@@ -347,7 +349,7 @@ const Dashboard = () => {
 
           <Grid item xs={12} sm={6} md={4}>
             <Card
-              onClick={() => navigate("/genrequiz2")}
+              onClick={() => navigate("/genrequiz3")}
               sx={{
                 cursor: "pointer",
                 bgcolor: "#ffffff",
@@ -359,15 +361,15 @@ const Dashboard = () => {
               <CardMedia
                 component="img"
                 height="200"
-                image="https://i.pinimg.com/736x/7e/95/1a/7e951aa942948abe1ba44326edbffaf1.jpg"
-                alt="Rock Classics"
+                image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxnSDF_QM-ZkQwMukaoGL6wcJpRSKif8aggw&s"
+                alt="Soft Pop Music"
               />
               <CardContent>
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                  Rock Classics
+                  Soft Pop Hits
                 </Typography>
                 <Typography variant="body2" sx={{ color: "#4a5568" }}>
-                  How well do you know the Rock Classics?
+                  Well versed with Pop Music?
                 </Typography>
               </CardContent>
             </Card>
@@ -388,11 +390,11 @@ const Dashboard = () => {
                 component="img"
                 height="200"
                 image="https://i.pinimg.com/736x/af/23/e0/af23e09682caa41ce16d175f34b1256b.jpg"
-                alt="Hip Hop 2024"
+                alt="Hip Hop's Best"
               />
               <CardContent>
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                  Hip Hop's Best of 2024
+                  Most Streamed Rap Songs
                 </Typography>
                 <Typography variant="body2" sx={{ color: "#4a5568" }}>
                   2024, great year for Hip-Hop, you well versed?
@@ -408,9 +410,16 @@ const Dashboard = () => {
             variant="h4"
             align="center"
             gutterBottom
-            sx={{ color: "#ffffff", mb: 3 }}
+            sx={{
+              color: "#fff", // Shortened color code for better readability
+              fontFamily: "sans-serif",
+              textShadow: "0px 1px 2px rgba(0, 0, 0, 0.5)", // Adds a subtle shadow for better contrast
+              fontWeight: 500, // Enhances readability by adding weight
+              fontSmoothing: "antialiased", // Ensures text rendering is smooth
+              mb: 3,
+            }}
           >
-            User Playlists
+            Custom Quizzes
           </Typography>
         </Box>
         <Grid container spacing={4}>
@@ -494,6 +503,82 @@ const Dashboard = () => {
                 <Typography variant="body2" sx={{ color: "#4a5568" }}>
                   Delete a saved playlist from our servers, note that we don't
                   store any private playlists or personal data
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+
+        {/* Additional Sections */}
+        <Box mt={5}>
+          <Typography
+            variant="h4"
+            align="center"
+            gutterBottom
+            sx={{
+              color: "#fff", // Shortened color code for better readability
+              fontFamily: "sans-serif",
+              textShadow: "0px 1px 2px rgba(0, 0, 0, 0.5)", // Adds a subtle shadow for better contrast
+              fontWeight: 500, // Enhances readability by adding weight
+              fontSmoothing: "antialiased", // Ensures text rendering is smooth
+              mb: 3,
+            }}
+          >
+            Stats and Other
+          </Typography>
+        </Box>
+        <Grid container spacing={4}>
+          {/* Utility Cards */}
+          <Grid item xs={12} sm={6} md={4}>
+            <Card
+              onClick={() => navigate("/scoreboard")}
+              sx={{
+                cursor: "pointer",
+                bgcolor: "#ffffff",
+                boxShadow: 3,
+                transition: "transform 0.3s",
+                "&:hover": { transform: "scale(1.05)" },
+              }}
+            >
+              <CardMedia
+                component="img"
+                height="200"
+                image="https://images.unsplash.com/photo-1616663395731-d70897355fd8?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                alt="Scoreboard"
+              />
+              <CardContent>
+                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                  Scoreboard
+                </Typography>
+                <Typography variant="body2" sx={{ color: "#4a5568" }}>
+                  Check this out to see how well you are doing!
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <Card
+              onClick={() => navigate("/about")}
+              sx={{
+                cursor: "pointer",
+                bgcolor: "#ffffff",
+                boxShadow: 3,
+                transition: "transform 0.3s",
+                "&:hover": { transform: "scale(1.05)" },
+              }}
+            >
+              <CardMedia
+                component="img"
+                height="200"
+                image="https://images.unsplash.com/photo-1493235431945-90c060301e41?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                alt="About"
+              />
+              <CardContent>
+                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                  About
+                </Typography>
+                <Typography variant="body2" sx={{ color: "#4a5568" }}>
+                  About the website and its creators
                 </Typography>
               </CardContent>
             </Card>

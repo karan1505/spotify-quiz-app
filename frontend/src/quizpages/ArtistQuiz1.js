@@ -133,6 +133,30 @@ const ArtistQuiz1 = () => {
     };
   }, [quizStarted, currentQuestionIndex, questions, resetTimer]);
 
+  useEffect(() => {
+    if (showResults) {
+      const saveScore = async () => {
+        try {
+          const userInfo = await axios.get(`${config.BASE_URL}/user_info`);
+          const { id: spotifyId, display_name: userName } =
+            userInfo.data.user_info;
+
+          await axios.post(`${config.BASE_URL}/save_score`, {
+            spotify_id: spotifyId,
+            user_name: userName,
+            quiz_name: "Taylor Swift's Best",
+            score: score,
+          });
+          console.log("Score saved successfully!");
+        } catch (error) {
+          console.error("Error saving score:", error);
+        }
+      };
+
+      saveScore();
+    }
+  }, [showResults, score]);
+
   const handleAnswerClick = async (option) => {
     if (isLoading) return;
     setIsLoading(true);
@@ -243,7 +267,7 @@ const ArtistQuiz1 = () => {
               textShadow: "0 4px 6px rgba(0, 0, 0, 0.6)",
             }}
           >
-            The Taylor Swift Quiz
+            Taylor Swift's Best
           </Typography>
           <Grid container spacing={4} justifyContent="center">
             {[

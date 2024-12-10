@@ -133,6 +133,30 @@ const GenreQuiz2 = () => {
     };
   }, [quizStarted, currentQuestionIndex, questions, resetTimer]);
 
+  useEffect(() => {
+    if (showResults) {
+      const saveScore = async () => {
+        try {
+          const userInfo = await axios.get(`${config.BASE_URL}/user_info`);
+          const { id: spotifyId, display_name: userName } =
+            userInfo.data.user_info;
+
+          await axios.post(`${config.BASE_URL}/save_score`, {
+            spotify_id: spotifyId,
+            user_name: userName,
+            quiz_name: "Rock Classics",
+            score: score,
+          });
+          console.log("Score saved successfully!");
+        } catch (error) {
+          console.error("Error saving score:", error);
+        }
+      };
+
+      saveScore();
+    }
+  }, [showResults, score]);
+
   const handleAnswerClick = async (option) => {
     if (isLoading) return;
     setIsLoading(true);
@@ -247,15 +271,9 @@ const GenreQuiz2 = () => {
           </Typography>
           <Grid container spacing={4} justifyContent="center">
             {[
-              "How well do you know Taylor's Top Hits?",
-              "You get a limited amount of time to guess the track",
-              <Link
-                href="https://www.tiktok.com/@ally.mauck/video/7166742767438204202"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Think you'll ace this? You have stiff competiton
-              </Link>,
+              "Classic rock continues to be popular today, with many bands still touring and releasing",
+              "You get a limited amount of time to guess the track, select a difficulty to get started",
+              "Its influence can be heard in various modern genres, from alternative rock to metal",
             ].map((content, idx) => (
               <Grid item xs={12} md={4} key={idx}>
                 <Card

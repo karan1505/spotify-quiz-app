@@ -35,14 +35,21 @@ def generate_quiz_questions(tracks):
     Generates quiz questions based on the provided tracks.
     """
     questions = []
-    selected_tracks = random.sample(tracks, 20)
+    # Shuffle tracks initially to ensure randomness
+    random.shuffle(tracks)
+
+    # Use only the first 20 tracks to ensure sufficient options
+    if len(tracks) < 20:
+        raise HTTPException(status_code=400, detail="Not enough unique tracks to generate questions.")
+    
+    selected_tracks = tracks[:20]
 
     for i in range(5):
-        # Select correct track and 3 incorrect options
-        correct_track = random.choice(selected_tracks)
-        selected_tracks.remove(correct_track)
+        # Select correct track
+        correct_track = selected_tracks.pop(0)  # Remove the first track as the correct option
+        
+        # Select 3 incorrect options from the remaining pool
         incorrect_tracks = random.sample(selected_tracks, 3)
-        selected_tracks.append(correct_track)
 
         # Shuffle options
         options = incorrect_tracks + [correct_track]
@@ -70,5 +77,6 @@ def generate_quiz_questions(tracks):
         json.dump(questions, file)
 
     return questions
+
 
 
