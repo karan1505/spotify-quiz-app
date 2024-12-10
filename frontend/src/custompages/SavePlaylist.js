@@ -105,8 +105,20 @@ const SavePlaylist = () => {
               <li>The playlist must be public and part of your library</li>
             </ul>
             <p>
-              Note: If the playlist is over 50 songs, 50 at random will be
-              considered
+              Note:{" "}
+              <a href="https://open.spotify.com/playlist/7uIc9yfi4ShpTpuYU0E6u8?si=bfd099a3710f49a5">
+                The Master Playlist
+              </a>{" "}
+              contains all the songs we currently support, if your playlist is
+              composed of these songs, you can expect it to be ready to play
+              within 30 seconds.
+            </p>
+            <p>
+              Gathering tracks is a resource intensive web process, and it
+              cannot be guaranteed to succeed, it is highly recommended to stick
+              to the tracks in the master playlist while making a playlist to
+              quiz yourself on. If a track you want isn't on there, let us know
+              in the About Us section.
             </p>
           </DialogContent>
           <DialogActions>
@@ -202,7 +214,8 @@ const SavePlaylist = () => {
             <CircularProgress />
             <Typography variant="body1" mt={2}>
               Please wait while your playlist is being processed. Do not
-              navigate away from this page.
+              navigate away from this page. This might take a long time or fail
+              if too many songs are out of the master playlist.
             </Typography>
           </Box>
         </DialogContent>

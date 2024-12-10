@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
   Container,
@@ -11,10 +12,10 @@ import {
   CircularProgress,
 } from "@mui/material";
 import config from "../config";
-
 const ShowSaved = () => {
   const [playlists, setPlaylists] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios.defaults.withCredentials = true;
@@ -87,9 +88,7 @@ const ShowSaved = () => {
                   transition: "transform 0.3s",
                   "&:hover": { transform: "scale(1.05)" },
                 }}
-                onClick={() =>
-                  window.open(playlist.external_urls.spotify, "_blank")
-                }
+                onClick={() => navigate(`/custom-quiz/${playlist.id}`)}
               >
                 <CardMedia
                   component="img"

@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -32,7 +33,7 @@ const CustomQuiz = () => {
   const audioRef = useRef(null);
   const pendingTimeouts = useRef(0); // Declare at the top level
   const [difficulty, setDifficulty] = useState(null);
-  const [playlistID] = useState("6hoDexBZBJnlltgv91hM6U");
+  const { playlistID } = useParams();
 
   useEffect(() => {
     const fetchGamemode1 = async () => {
@@ -211,7 +212,7 @@ const CustomQuiz = () => {
             width: "100%",
             height: "100%",
             backgroundImage: `url(
-              "https://i.pinimg.com/736x/a0/46/6f/a0466f5173c5909f9a0d49383456d6cb.jpg"
+              "https://i.pinimg.com/736x/f5/8b/f2/f58bf2768a6d836a1a77c27ad450cbe4.jpg"
             )`,
             backgroundSize: "cover",
             backgroundPosition: "center",
@@ -243,13 +244,13 @@ const CustomQuiz = () => {
               textShadow: "0 4px 6px rgba(0, 0, 0, 0.6)",
             }}
           >
-            70s Mix
+            Custom Quiz
           </Typography>
           <Grid container spacing={4} justifyContent="center">
             {[
-              "The 1970s saw the rise of new genres like disco and funk.",
+              "This is a custom quiz based off of your playlist.",
               "You get a limited amount of time to guess the track",
-              "Good Luck!",
+              "We hope you have fun!",
             ].map((content, idx) => (
               <Grid item xs={12} md={4} key={idx}>
                 <Card
@@ -368,7 +369,7 @@ const CustomQuiz = () => {
             width: "100%",
             height: "100%",
             backgroundImage: `url(
-              "https://i.pinimg.com/736x/a0/46/6f/a0466f5173c5909f9a0d49383456d6cb.jpg"
+              "https://i.pinimg.com/736x/f5/8b/f2/f58bf2768a6d836a1a77c27ad450cbe4.jpg"
             )`,
             backgroundSize: "cover",
             backgroundPosition: "center",
@@ -445,7 +446,7 @@ const CustomQuiz = () => {
           width: "100%",
           height: "100%",
           backgroundImage: `url(
-            "https://i.pinimg.com/736x/a0/46/6f/a0466f5173c5909f9a0d49383456d6cb.jpg"
+            "https://i.pinimg.com/736x/f5/8b/f2/f58bf2768a6d836a1a77c27ad450cbe4.jpg"
           )`,
           backgroundSize: "cover",
           backgroundPosition: "center",

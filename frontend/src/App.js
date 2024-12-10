@@ -17,6 +17,7 @@ import ErasQuiz3 from "./quizpages/ErasQuiz3"; // Top Songs Global
 import GenreQuiz1 from "quizpages/GenreQuiz1"; //Hip Hop 2024
 import GenreQuiz2 from "quizpages/GenreQuiz2";
 import GenreQuiz3 from "quizpages/GenreQuiz3";
+import CustomQuiz from "quizpages/CustomQuiz";
 
 function App() {
   return (
@@ -45,6 +46,8 @@ function App() {
         <Route path="/removeplaylist" element={<RemovePlaylist />} />
 
         <Route path="/scoreboard" element={<Scoreboard />} />
+
+        <Route path="/custom-quiz/:playlistID" element={<CustomQuiz />} />
       </Routes>
     </Router>
   );
