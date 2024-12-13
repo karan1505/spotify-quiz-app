@@ -49,7 +49,7 @@ const Troubleshooting = () => {
           }}
         >
           <iframe
-            src="path-to-your-pdf-file.pdf"
+            src="../documents/Instructions and Troubleshooting to use Quizzify.pdf"
             title="Troubleshooting Guide PDF"
             width="100%"
             height="100%"
