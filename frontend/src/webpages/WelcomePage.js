@@ -23,6 +23,7 @@ const WelcomePage = () => {
   };
 
   return (
+/*
     <Box
       minHeight="100vh"
       sx={{
@@ -33,7 +34,7 @@ const WelcomePage = () => {
         py: 5,
       }}
     >
-      {/* Header Section */}
+      {/* Header Section }
       <Container maxWidth="lg" sx={{ textAlign: "center", mb: 5 }}>
         <Typography
           variant="h3"
@@ -117,7 +118,112 @@ const WelcomePage = () => {
         </Box>
       </Container>
 
-      {/* Features Section */}
+      {/* Features Section }*/
+    <Box
+      minHeight="100vh"
+      sx={{
+        backgroundImage: `url(https://images.unsplash.com/photo-1476136236990-838240be4859?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        color: "#ffffff",
+        py: 5,
+        display: "flex", // Add flex display
+        flexDirection: "column", // Arrange items in a column
+        alignItems: "center", // Center items horizontally
+        justifyContent: "center", // Center items vertically
+      }}
+    >
+      {/* Header Section */}
+      <Container maxWidth="lg" sx={{ textAlign: "center", mb: 5 }}>
+        <Typography
+          variant="h3"
+          gutterBottom
+          sx={{
+            fontWeight: 700,
+            textShadow: "0px 2px 4px rgba(0, 0, 0, 0.7)",
+          }}
+        >
+          Quizzify
+        </Typography>
+        <Typography
+          variant="subtitle1"
+          sx={{
+            color: "#e2e8f0",
+            textShadow: "0px 1px 3px rgba(0, 0, 0, 0.5)",
+            maxWidth: "600px",
+            mx: "auto",
+            mb: 3,
+          }}
+        >
+          Test yourself with curated & user generated quizzes based on Spotify
+          playlists, challenge yourself and your friends to see how well you
+          know music!
+        </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column", // Arrange buttons in a column
+            gap: 2, // Maintain spacing between buttons
+            alignItems: "center", // Center-align buttons
+          }}
+        >
+          <Button
+            onClick={() => navigate("/troubleshooting")}
+            variant="contained"
+            sx={{
+              bgcolor: "#2b6cb0",
+              color: "#ffffff",
+              "&:hover": {
+                bgcolor: "#3182ce",
+              },
+              px: 4,
+              py: 1.5,
+              borderRadius: "20px",
+              fontWeight: 600,
+              boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.3)",
+            }}
+          >
+            Instructions and Troubleshooting
+          </Button>
+          <Button
+            variant="contained"
+            sx={{
+              bgcolor: "#3182ce",
+              color: "#ffffff",
+              "&:hover": {
+                bgcolor: "#2b6cb0",
+              },
+              px: 4,
+              py: 1.5,
+              borderRadius: "20px",
+              fontWeight: 600,
+              boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.3)",
+            }}
+            onClick={handleSignIn}
+          >
+            Sign In
+          </Button>
+          <Button
+            variant="contained"
+            sx={{
+              bgcolor: "#3182ce",
+              color: "#ffffff",
+              "&:hover": {
+                bgcolor: "#2d3748",
+              },
+              px: 4,
+              py: 1.5,
+              borderRadius: "20px",
+              fontWeight: 600,
+              boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.3)",
+            }}
+            onClick={() => navigate("/deliverables")}
+          >
+            Deliverables
+          </Button>
+        </Box>
+      </Container>
+
       <Container maxWidth="lg">
         <Typography
           variant="h4"
