@@ -130,6 +130,7 @@ const Scoreboard = () => {
                         Overall Performance: {overallPercentage}%
                       </Typography>
                       {scores.map((score, index) => {
+                        /*
                         const localTime = new Intl.DateTimeFormat(
                           navigator.language,
                           {
@@ -141,6 +142,18 @@ const Scoreboard = () => {
                             second: "numeric",
                           }
                         ).format(new Date(score.timestamp));
+                        */
+                        const localTime = `${new Intl.DateTimeFormat(
+                          navigator.language,
+                          {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                            hour: "numeric",
+                            minute: "numeric",
+                            second: "numeric",
+                          }
+                        ).format(new Date(score.timestamp))} GMT`;                        
                         return (
                           <Box key={index} sx={{ marginBottom: 1 }}>
                             <Typography

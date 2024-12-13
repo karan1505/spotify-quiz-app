@@ -112,10 +112,12 @@ async def callback(request: Request):
         user_info = sp.current_user()
 
         # Save user login info to the database
+        login_time = datetime.utcnow() - timedelta(hours=6)
+
         user_login_data = {
             "username": user_info.get("display_name", "Unknown"),
             "spotify_id": user_info.get("id"),
-            "login_time": datetime.utcnow(),
+            "login_time": login_time,
         }
         user_collection.insert_one(user_login_data)
         logging.info(f"User {user_login_data['username']} logged in at {user_login_data['login_time']}")
