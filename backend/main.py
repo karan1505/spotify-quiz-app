@@ -14,6 +14,8 @@ from pydantic import BaseModel
 from gamemode1_logic import load_playlist_data, validate_playlist, generate_quiz_questions
 # from dynamic_scraper import update_playlist_with_previews
 import asyncio
+from datetime import datetime
+from pytz import timezone
 
 from config import Config  # Import Config from config.py
 from pymongo import MongoClient
@@ -112,13 +114,15 @@ async def callback(request: Request):
         user_info = sp.current_user()
 
         # Save user login info to the database
-        login_time = datetime.utcnow() - timedelta(hours=6)
+        chicago_tz = timezone("America/Chicago")
+        login_time = datetime.now(chicago_tz)
 
         user_login_data = {
             "username": user_info.get("display_name", "Unknown"),
             "spotify_id": user_info.get("id"),
             "login_time": login_time,
         }
+
         user_collection.insert_one(user_login_data)
         logging.info(f"User {user_login_data['username']} logged in at {user_login_data['login_time']}")
 
