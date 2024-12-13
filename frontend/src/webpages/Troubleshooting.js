@@ -1,5 +1,6 @@
 import React from "react";
 import { Container, Typography, Box } from "@mui/material";
+import pdfFile from "../documents/Instructions and Troubleshooting to use Quizzify.pdf";
 
 const Troubleshooting = () => {
   return (
@@ -49,7 +50,7 @@ const Troubleshooting = () => {
           }}
         >
           <iframe
-            src="../documents/Instructions and Troubleshooting to use Quizzify.pdf"
+            src={pdfFile}
             title="Troubleshooting Guide PDF"
             width="100%"
             height="100%"
