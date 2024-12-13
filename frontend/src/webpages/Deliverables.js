@@ -76,7 +76,7 @@ const Deliverables = () => {
     <Box
       minHeight="100vh"
       sx={{
-        backgroundColor: "#edf2f7", // Light background for Deliverables
+        backgroundColor: "#1a202c", // Dark background
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -88,7 +88,7 @@ const Deliverables = () => {
           sx={{
             mb: 3,
             fontWeight: 700,
-            color: "#2c5282", // Dark blue text for heading
+            color: "#edf2f7", // Light text for better contrast
           }}
         >
           Project Deliverables
@@ -97,14 +97,13 @@ const Deliverables = () => {
           variant="body1"
           sx={{
             mb: 2,
-            color: "#4a5568", // Dark grey for body text
+            color: "#cbd5e0", // Slightly muted light text
           }}
         >
           This page outlines the deliverables for the project.
-        </Typography>
-        <Typography variant="body2" sx={{ mb: 4, color: "#718096" }}>
-          This page includes a detailed deliverables list including screenshots
-          to show their working.
+          </Typography>
+        <Typography variant="body2" sx={{ mb: 4, color: "#a0aec0" }}>
+        This page includes a detailed deliverables list including screenshots to show their working.
         </Typography>
 
         {/* Embedding the PDF */}
@@ -112,20 +111,20 @@ const Deliverables = () => {
           sx={{
             width: "100%",
             height: "70vh", // Adjust the height as needed
-            border: "1px solid #cbd5e0", // Light grey border for styling
+            border: "1px solid #2d3748", // Border for styling
             borderRadius: "8px",
             overflow: "hidden",
             boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
           }}
         >
           <iframe
-            src={pdfFile} // Reference to Deliverables PDF
-            title="Project Deliverables PDF"
+            src={pdfFile}
+            title="Troubleshooting Guide PDF"
             width="100%"
             height="100%"
             style={{
               border: "none",
-              backgroundColor: "#edf2f7", // Match light background
+              backgroundColor: "#1a202c", // Match dark background
             }}
           />
         </Box>
@@ -135,3 +134,4 @@ const Deliverables = () => {
 };
 
 export default Deliverables;
+
