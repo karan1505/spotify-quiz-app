@@ -45,12 +45,16 @@ class QuizScore(BaseModel):
 app = FastAPI()
 
 @app.middleware("http")
-async def no_cache_middleware(request: Request, call_next):
-    response = await call_next(request)
-    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, private"
-    response.headers["Pragma"] = "no-cache"
-    response.headers["Expires"] = "0"
+async def clear_cookie_on_sign_out(request: Request, call_next):
+    response: Response = await call_next(request)
+    if request.url.path == "/logout" and response.status_code == 200:
+        # Clear cookies and prevent caching
+        response.delete_cookie("session")
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
     return response
+
 
 # Enable logging
 logging.basicConfig(level=logging.INFO)
