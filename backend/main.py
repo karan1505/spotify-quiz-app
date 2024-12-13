@@ -152,7 +152,7 @@ async def logout():
     )
 
     response = RedirectResponse(url="https://quizzify-frontend-6sp3.onrender.com", status_code=303)
-    response.delete_cookie("access_token")
+    response.delete_cookie("access_token",domain="quizzify-frontend-6sp3.onrender.com", path="/")
     response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
