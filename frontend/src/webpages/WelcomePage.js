@@ -162,9 +162,10 @@ const WelcomePage = () => {
         <Box
           sx={{
             display: "flex",
-            flexDirection: "column", // Arrange buttons in a column
+            flexDirection: "row", // Arrange buttons in a row
             gap: 2, // Maintain spacing between buttons
-            alignItems: "center", // Center-align buttons
+            alignItems: "center", // Center-align buttons vertically (if needed)
+            justifyContent: "center", // Center-align buttons horizontally
           }}
         >
           <Button
