@@ -110,7 +110,7 @@ const WelcomePage = () => {
               fontWeight: 600,
               boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.3)",
             }}
-            onClick={() => navigate("/troubleshooting")}
+            onClick={() => navigate("/deliverables")}
           >
             Deliverables
           </Button>

@@ -1,5 +1,6 @@
 import React from "react";
 import { Container, Typography, Box } from "@mui/material";
+import pdfFile from "../documents/Project Deliverables for Quizzify.pdf";
 
 const Deliverables = () => {
   return (
@@ -9,7 +10,7 @@ const Deliverables = () => {
         backgroundColor: "#edf2f7",
         display: "flex",
         alignItems: "center",
-        justifyContent: "center",
+        justifyContent: "center", 
       }}
     >
       <Container maxWidth="md" sx={{ textAlign: "center", p: 3 }}>
@@ -30,13 +31,33 @@ const Deliverables = () => {
             color: "#4a5568",
           }}
         >
-          This page outlines the deliverables for the project. Here you can find
-          reports, presentations, and other related documents.
+          This page outlines the deliverables for the project.
         </Typography>
         <Typography variant="body2" sx={{ color: "#718096" }}>
-          This page is a placeholder. Add links or detailed information about
-          the deliverables here.
+          This page includes a detailed deliverables list including screenshots to show their working.
         </Typography>
+                {/* Embedding the PDF */}
+                <Box
+          sx={{
+            width: "100%",
+            height: "70vh", // Adjust the height as needed
+            border: "1px solid #cbd5e0", // Border for styling
+            borderRadius: "8px",
+            overflow: "hidden",
+            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <iframe
+            src={pdfFile} // Use the same imported PDF
+            title="Deliverables Guide PDF"
+            width="100%"
+            height="100%"
+            style={{
+              border: "none",
+              backgroundColor: "#edf2f7", // Match light background
+            }}
+          />
+        </Box>
       </Container>
     </Box>
   );
