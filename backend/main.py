@@ -23,6 +23,7 @@ client = MongoClient(MONGO_URI)
 db = client["Spotify"]  # Database name
 playlists_collection = db["Playlists"]  # Collection name
 scoreboard_collection = db["Scoreboard"]  # New collection for scores
+user_collection = db["UserLogin"] # New collection to save login users
 
 # Load environment variables
 load_dotenv()
@@ -105,6 +106,20 @@ async def callback(request: Request):
         if not access_token:
             logging.error("Failed to retrieve access token.")
             raise HTTPException(status_code=400, detail="Failed to retrieve access token.")
+
+        # Fetch user info using the access token
+        sp = Spotify(auth=access_token)
+        user_info = sp.current_user()
+
+        # Save user login info to the database
+        user_login_data = {
+            "username": user_info.get("display_name", "Unknown"),
+            "spotify_id": user_info.get("id"),
+            "login_time": datetime.utcnow(),
+        }
+        user_collection.insert_one(user_login_data)
+        logging.info(f"User {user_login_data['username']} logged in at {user_login_data['login_time']}")
+
         
         response = RedirectResponse("https://quizzify-frontend-6sp3.onrender.com/dashboard")
         response.set_cookie(
