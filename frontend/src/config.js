@@ -1,5 +1,5 @@
 const config = {
-  BASE_URL: "https://quizzify-backend-5kpq.onrender.com", // Backend URL on localhost
+  BASE_URL: "http://127.0.0.1:8000", // Backend URL — must match cookie host (127.0.0.1, not localhost)
   LOGIN_URL: "/login",
   DASHBOARD_URL: "/dashboard",
   ENDPOINTS: {

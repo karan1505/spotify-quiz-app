@@ -26,3 +26,16 @@ yarn-error.log*
 
 # Claude Code
 CLAUDE.md
+
+# Environment secrets
+.env
+backend/.env
+
+# Spotipy token cache (contains real OAuth tokens)
+backend/.cache
+token_cache.json
+
+# Python bytecode
+backend/__pycache__/
+**/__pycache__/
+*.pyc

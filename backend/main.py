@@ -19,9 +19,8 @@ from pytz import timezone
 
 from config import Config  # Import Config from config.py
 from pymongo import MongoClient
-MONGO_URI = "mongodb+srv://srinathquizzify:Quizzify123@quizzifycluster.i7npc.mongodb.net/Spotify?retryWrites=true&w=majority"
 
-client = MongoClient(MONGO_URI)
+client = MongoClient(Config.MONGO_URI)
 db = client["Spotify"]  # Database name
 playlists_collection = db["Playlists"]  # Collection name
 scoreboard_collection = db["Scoreboard"]  # New collection for scores
@@ -52,7 +51,7 @@ async def clear_cookie_on_sign_out(request: Request, call_next):
     response: Response = await call_next(request)
     if request.url.path == "/logout" and response.status_code == 200:
         # Clear cookies and prevent caching
-        response.delete_cookie("access_token",domain="quizzify-frontend-6sp3.onrender.com", path="/")
+        response.delete_cookie("access_token", path="/")
         response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
         response.headers["Pragma"] = "no-cache"
         response.headers["Expires"] = "0"
@@ -65,7 +64,7 @@ logging.basicConfig(level=logging.INFO)
 # Allow requests from localhost frontend with CORS settings
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://quizzify-frontend-6sp3.onrender.com"],  # Frontend origin
+    allow_origins=[Config.FRONTEND_ORIGIN],  # Frontend origin
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -75,7 +74,7 @@ app.add_middleware(
 sp_oauth = SpotifyOAuth(
     client_id=Config.SPOTIFY_CLIENT_ID,
     client_secret=Config.SPOTIFY_CLIENT_SECRET,
-    redirect_uri="https://quizzify-backend-5kpq.onrender.com/callback",
+    redirect_uri=Config.SPOTIFY_REDIRECT_URI,
     scope=Config.SCOPE,
 )
 
@@ -123,17 +122,21 @@ async def callback(request: Request):
             "login_time": login_time,
         }
 
-        user_collection.insert_one(user_login_data)
-        logging.info(f"User {user_login_data['username']} logged in at {user_login_data['login_time']}")
+        try:
+            user_collection.insert_one(user_login_data)
+            logging.info(f"User {user_login_data['username']} logged in at {user_login_data['login_time']}")
+        except Exception as db_err:
+            logging.warning(f"Failed to log user login to MongoDB: {db_err}")
 
         
-        response = RedirectResponse("https://quizzify-frontend-6sp3.onrender.com/dashboard")
+        response = RedirectResponse(Config.FRONTEND_DASHBOARD_URL)
+        is_dev = Config.ENV == "development"
         response.set_cookie(
             key="access_token",
             value=access_token,
             httponly=True,
-            secure=True,
-            samesite="None",
+            secure=not is_dev,
+            samesite="Lax" if is_dev else "None",
             max_age=3600
         )
 
@@ -179,13 +182,13 @@ async def logout():
     sp_oauth = SpotifyOAuth(
         client_id=Config.SPOTIFY_CLIENT_ID,
         client_secret=Config.SPOTIFY_CLIENT_SECRET,
-        redirect_uri="https://quizzify-backend-5kpq.onrender.com/callback",
+        redirect_uri=Config.SPOTIFY_REDIRECT_URI,
         scope=Config.SCOPE,
         cache_path=str(Config.CACHE_PATH)
     )
 
-    response = RedirectResponse(url="https://quizzify-frontend-6sp3.onrender.com", status_code=303)
-    response.delete_cookie("access_token",domain="quizzify-frontend-6sp3.onrender.com", path="/")
+    response = RedirectResponse(url=Config.FRONTEND_ORIGIN, status_code=303)
+    response.delete_cookie("access_token", path="/")
     response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"

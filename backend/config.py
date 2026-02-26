@@ -27,6 +27,9 @@ class Config:
     FRONTEND_ORIGIN = os.getenv("FRONTEND_ORIGIN")  # Now loads from .env
     FRONTEND_DASHBOARD_URL = os.getenv("FRONTEND_DASHBOARD_URL")  # Now loads from .env
     
+    # MongoDB
+    MONGO_URI = os.getenv("MONGO_URI")
+
     # Other configurations
     MAX_PLAYLISTS = 10
     TRACK_PREVIEW_LIMIT = 10
