@@ -35,6 +35,10 @@ backend/.env
 backend/.cache
 token_cache.json
 
+# Quiz state (legacy)
+quiz_questions.json
+backend/quiz_questions.json
+
 # Python bytecode
 backend/__pycache__/
 **/__pycache__/

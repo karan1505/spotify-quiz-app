@@ -153,7 +153,7 @@ const Dashboard = () => {
         <Grid container spacing={4} justifyContent="center">
           <Grid item xs={12} sm={6} md={4}>
             <Card
-              onClick={() => navigate("/erasquiz3")}
+              onClick={() => navigate("/quiz/top-50-global")}
               sx={{
                 cursor: "pointer",
                 bgcolor: "#ffffff",
@@ -181,7 +181,7 @@ const Dashboard = () => {
 
           <Grid item xs={12} sm={6} md={4}>
             <Card
-              onClick={() => navigate("/erasquiz2")}
+              onClick={() => navigate("/quiz/70s-mix")}
               sx={{
                 cursor: "pointer",
                 bgcolor: "#ffffff",
@@ -209,7 +209,7 @@ const Dashboard = () => {
 
           <Grid item xs={12} sm={6} md={4}>
             <Card
-              onClick={() => navigate("/erasquiz1")}
+              onClick={() => navigate("/quiz/80s-mix")}
               sx={{
                 cursor: "pointer",
                 bgcolor: "#ffffff",
@@ -237,7 +237,7 @@ const Dashboard = () => {
 
           <Grid item xs={12} sm={6} md={4}>
             <Card
-              onClick={() => navigate("/artistquiz1")}
+              onClick={() => navigate("/quiz/taylor-swift")}
               sx={{
                 cursor: "pointer",
                 bgcolor: "#ffffff",
@@ -265,7 +265,7 @@ const Dashboard = () => {
 
           <Grid item xs={12} sm={6} md={4}>
             <Card
-              onClick={() => navigate("/artistquiz3")}
+              onClick={() => navigate("/quiz/michael-jackson")}
               sx={{
                 cursor: "pointer",
                 bgcolor: "#ffffff",
@@ -293,7 +293,7 @@ const Dashboard = () => {
 
           <Grid item xs={12} sm={6} md={4}>
             <Card
-              onClick={() => navigate("/artistquiz2")}
+              onClick={() => navigate("/quiz/queen")}
               sx={{
                 cursor: "pointer",
                 bgcolor: "#ffffff",
@@ -321,7 +321,7 @@ const Dashboard = () => {
 
           <Grid item xs={12} sm={6} md={4}>
             <Card
-              onClick={() => navigate("/genrequiz2")}
+              onClick={() => navigate("/quiz/rock-classics")}
               sx={{
                 cursor: "pointer",
                 bgcolor: "#ffffff",
@@ -349,7 +349,7 @@ const Dashboard = () => {
 
           <Grid item xs={12} sm={6} md={4}>
             <Card
-              onClick={() => navigate("/genrequiz3")}
+              onClick={() => navigate("/quiz/soft-pop")}
               sx={{
                 cursor: "pointer",
                 bgcolor: "#ffffff",
@@ -377,7 +377,7 @@ const Dashboard = () => {
 
           <Grid item xs={12} sm={6} md={4}>
             <Card
-              onClick={() => navigate("/genrequiz1")}
+              onClick={() => navigate("/quiz/rap-hits")}
               sx={{
                 cursor: "pointer",
                 bgcolor: "#ffffff",

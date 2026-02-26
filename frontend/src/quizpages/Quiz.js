@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -12,13 +13,33 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-  Link,
 } from "@mui/material";
 import { motion } from "framer-motion";
 import Confetti from "react-confetti";
 import config from "../config";
+import { CURATED_QUIZZES } from "./quizConfig";
 
-const ErasQuiz3 = () => {
+const DEFAULT_BACKGROUND =
+  "https://i.pinimg.com/736x/f5/8b/f2/f58bf2768a6d836a1a77c27ad450cbe4.jpg";
+
+const Quiz = () => {
+  const { quizId } = useParams();
+  const curatedConfig = CURATED_QUIZZES[quizId];
+
+  const playlistID = curatedConfig ? curatedConfig.playlistID : quizId;
+  const title = curatedConfig ? curatedConfig.title : "Custom Quiz";
+  const scoreboardName = curatedConfig ? curatedConfig.scoreboardName : "Custom Quiz";
+  const backgroundImage = curatedConfig
+    ? curatedConfig.backgroundImage
+    : DEFAULT_BACKGROUND;
+  const descriptionCards = curatedConfig
+    ? curatedConfig.descriptionCards
+    : [
+        "This is a custom quiz based off of your playlist.",
+        "You get a limited amount of time to guess the track",
+        "We hope you have fun!",
+      ];
+
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -30,9 +51,8 @@ const ErasQuiz3 = () => {
   const [showNextQuestionDialog, setShowNextQuestionDialog] = useState(false);
   const timerRef = useRef(null);
   const audioRef = useRef(null);
-  const pendingTimeouts = useRef(0); // Declare at the top level
+  const pendingTimeouts = useRef(0);
   const [difficulty, setDifficulty] = useState(null);
-  const [playlistID] = useState("2eeijnQ6uPptmB9BP9xClO");
 
   useEffect(() => {
     const fetchGamemode1 = async () => {
@@ -51,7 +71,7 @@ const ErasQuiz3 = () => {
   }, [playlistID]);
 
   const handleTimeout = useCallback(() => {
-    pendingTimeouts.current += 1; // Increment the number of pending timeouts
+    pendingTimeouts.current += 1;
 
     if (pendingTimeouts.current > 1) {
       return;
@@ -144,7 +164,7 @@ const ErasQuiz3 = () => {
           await axios.post(`${config.BASE_URL}/save_score`, {
             spotify_id: spotifyId,
             user_name: userName,
-            quiz_name: "Top 50 Global",
+            quiz_name: scoreboardName,
             score: score,
           });
           console.log("Score saved successfully!");
@@ -155,42 +175,33 @@ const ErasQuiz3 = () => {
 
       saveScore();
     }
-  }, [showResults, score]);
+  }, [showResults, score, scoreboardName]);
 
-  const handleAnswerClick = async (option) => {
+  const handleAnswerClick = (option) => {
     if (isLoading) return;
     setIsLoading(true);
     clearInterval(timerRef.current);
 
     const currentQuestion = questions[currentQuestionIndex];
-    try {
-      const response = await axios.post(`${config.BASE_URL}/validate_answer`, {
-        question_id: currentQuestion.question_id,
-        selected_option: option,
-      });
+    const is_correct = currentQuestion.correct_option.name === option.name;
 
-      const { is_correct } = response.data;
-      setSelectedOptionFeedback({ option, isCorrect: is_correct });
-      if (is_correct) setScore((prev) => prev + 1);
+    setSelectedOptionFeedback({ option, isCorrect: is_correct });
+    if (is_correct) setScore((prev) => prev + 1);
 
-      const nextQuestionIndex = currentQuestionIndex + 1;
+    const nextQuestionIndex = currentQuestionIndex + 1;
+    setTimeout(() => {
+      setShowNextQuestionDialog(true);
       setTimeout(() => {
-        setShowNextQuestionDialog(true);
-        setTimeout(() => {
-          setShowNextQuestionDialog(false);
-          if (nextQuestionIndex < questions.length) {
-            setCurrentQuestionIndex(nextQuestionIndex);
-          } else {
-            setShowResults(true);
-          }
-        }, 2000);
-        setSelectedOptionFeedback(null);
-        setIsLoading(false);
+        setShowNextQuestionDialog(false);
+        if (nextQuestionIndex < questions.length) {
+          setCurrentQuestionIndex(nextQuestionIndex);
+        } else {
+          setShowResults(true);
+        }
       }, 2000);
-    } catch (error) {
-      console.error("Error validating answer:", error);
+      setSelectedOptionFeedback(null);
       setIsLoading(false);
-    }
+    }, 2000);
   };
 
   const handleStartQuiz = () => {
@@ -226,7 +237,6 @@ const ErasQuiz3 = () => {
           overflow: "hidden",
         }}
       >
-        {/* Background image with blur */}
         <Box
           sx={{
             position: "absolute",
@@ -234,16 +244,13 @@ const ErasQuiz3 = () => {
             left: 0,
             width: "100%",
             height: "100%",
-            backgroundImage: `url(
-              "https://images.unsplash.com/photo-1571435763834-4d6fbb550bb7?q=80&w=2676&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            )`,
+            backgroundImage: `url("${backgroundImage}")`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             filter: "blur(2px)",
             zIndex: -1,
           }}
         />
-        {/* Semi-transparent overlay for better contrast */}
         <Box
           sx={{
             position: "absolute",
@@ -251,11 +258,10 @@ const ErasQuiz3 = () => {
             left: 0,
             width: "100%",
             height: "100%",
-            backgroundColor: "rgba(0, 0, 0, 0.4)", // Dark overlay
+            backgroundColor: "rgba(0, 0, 0, 0.4)",
             zIndex: -1,
           }}
         />
-        {/* Content */}
         <Container>
           <Typography
             variant="h3"
@@ -267,14 +273,10 @@ const ErasQuiz3 = () => {
               textShadow: "0 4px 6px rgba(0, 0, 0, 0.6)",
             }}
           >
-            Top 50 Global
+            {title}
           </Typography>
           <Grid container spacing={4} justifyContent="center">
-            {[
-              "This week's top hits, can you guess them?",
-              "You get a limited amount of time to guess the track",
-              "This one contains music from different languages, get ready!",
-            ].map((content, idx) => (
+            {descriptionCards.map((content, idx) => (
               <Grid item xs={12} md={4} key={idx}>
                 <Card
                   sx={{
@@ -383,7 +385,6 @@ const ErasQuiz3 = () => {
           overflow: "hidden",
         }}
       >
-        {/* Background image with blur */}
         <Box
           sx={{
             position: "absolute",
@@ -391,16 +392,13 @@ const ErasQuiz3 = () => {
             left: 0,
             width: "100%",
             height: "100%",
-            backgroundImage: `url(
-              "https://images.unsplash.com/photo-1571435763834-4d6fbb550bb7?q=80&w=2676&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            )`,
+            backgroundImage: `url("${backgroundImage}")`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             filter: "blur(2px)",
             zIndex: -1,
           }}
         />
-        {/* Semi-transparent overlay */}
         <Box
           sx={{
             position: "absolute",
@@ -408,11 +406,10 @@ const ErasQuiz3 = () => {
             left: 0,
             width: "100%",
             height: "100%",
-            backgroundColor: "rgba(0, 0, 0, 0.5)", // Darker overlay
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
             zIndex: -1,
           }}
         />
-        {/* Result Card */}
         <Card
           sx={{
             padding: "40px",
@@ -436,7 +433,7 @@ const ErasQuiz3 = () => {
             variant="h5"
             mt={2}
             sx={{
-              color: "#4caf50", // Highlighted score
+              color: "#4caf50",
               fontWeight: "bold",
             }}
           >
@@ -460,7 +457,6 @@ const ErasQuiz3 = () => {
         overflow: "hidden",
       }}
     >
-      {/* Background image with blur */}
       <Box
         sx={{
           position: "absolute",
@@ -468,16 +464,13 @@ const ErasQuiz3 = () => {
           left: 0,
           width: "100%",
           height: "100%",
-          backgroundImage: `url(
-            "https://images.unsplash.com/photo-1571435763834-4d6fbb550bb7?q=80&w=2676&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          )`,
+          backgroundImage: `url("${backgroundImage}")`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           filter: "blur(2px)",
           zIndex: -1,
         }}
       />
-      {/* Semi-transparent overlay */}
       <Box
         sx={{
           position: "absolute",
@@ -485,7 +478,7 @@ const ErasQuiz3 = () => {
           left: 0,
           width: "100%",
           height: "100%",
-          backgroundColor: "rgba(0, 0, 0, 0.5)", // Darker overlay
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
           zIndex: -1,
         }}
       />
@@ -613,4 +606,4 @@ const ErasQuiz3 = () => {
   );
 };
 
-export default ErasQuiz3;
+export default Quiz;

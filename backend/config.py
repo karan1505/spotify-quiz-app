@@ -30,6 +30,9 @@ class Config:
     # MongoDB
     MONGO_URI = os.getenv("MONGO_URI")
 
+    # Scraper service
+    SCRAPER_API_URL = os.getenv("SCRAPER_API_URL", "https://quizzify-scraper.onrender.com")
+
     # Other configurations
     MAX_PLAYLISTS = 10
     TRACK_PREVIEW_LIMIT = 10

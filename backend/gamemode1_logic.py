@@ -1,6 +1,6 @@
 import random
-from fastapi import HTTPException
 import json
+from fastapi import HTTPException
 import logging
 
 # Path to the game mode playlist file
@@ -71,10 +71,6 @@ def generate_quiz_questions(tracks):
                 "album_cover": correct_track["album_cover"]
             }
         })
-
-    # Save questions to a file
-    with open("quiz_questions.json", "w") as file:
-        json.dump(questions, file)
 
     return questions
 

@@ -88,7 +88,7 @@ const ShowSaved = () => {
                   transition: "transform 0.3s",
                   "&:hover": { transform: "scale(1.05)" },
                 }}
-                onClick={() => navigate(`/custom-quiz/${playlist.id}`)}
+                onClick={() => navigate(`/quiz/${playlist.id}`)}
               >
                 <CardMedia
                   component="img"

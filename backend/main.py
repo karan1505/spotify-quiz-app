@@ -29,15 +29,6 @@ user_collection = db["UserLogin"] # New collection to save login users
 # Load environment variables
 load_dotenv()
 
-class SelectedOption(BaseModel):
-    name: str
-    artist: str
-    album_cover: str
-
-class ValidateAnswerRequest(BaseModel):
-    question_id: int
-    selected_option: SelectedOption
-
 class QuizScore(BaseModel):
     spotify_id: str
     user_name: str
@@ -302,7 +293,7 @@ async def extract_playlist(request: Request):
         enriched_tracks = []
         for track in missing_tracks:
             response = requests.post(
-                "https://quizzify-scraper.onrender.com/fetch_preview_url",
+                f"{Config.SCRAPER_API_URL}/fetch_preview_url",
                 json=track
             )
             if response.status_code != 200:
@@ -393,48 +384,6 @@ async def remove_playlist(request: Request):
         raise HTTPException(status_code=400, detail="Error removing playlist ID")
 
 
-async def process_playlist(sp, playlist_id):
-    """
-    Processes the playlist and retrieves preview URLs using an external API.
-    """
-    try:
-        playlist = sp.playlist(playlist_id)
-        playlist_name = playlist['name']
-        sanitized_playlist_name = "".join([c if c.isalnum() else "_" for c in playlist_name])
-
-        tracks = []
-        for item in playlist['tracks']['items']:
-            track = item['track']
-            tracks.append({
-                "name": track['name'],
-                "artist": ", ".join([artist['name'] for artist in track['artists']]),
-                "album_cover": track['album']['images'][0]['url'],  # Ensure the album cover is included
-                "playlistsIncluded": playlist_id,
-            })
-
-        # Call the scraper API and wait for the response synchronously
-        response = requests.post(
-            "https://quizzify-frontend-6sp3.onrender.com",
-            json={"tracks": tracks},
-            timeout=None  # No timeout
-        )
-
-        if response.status_code != 200:
-            raise Exception(f"Scraper API failed: {response.json()}")
-
-        enriched_tracks = response.json()["tracks"]
-
-        # Save enriched tracks to a JSON file
-        final_file_path = Path(f"./user_playlists/{sanitized_playlist_name}.json")
-        final_file_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(final_file_path, "w", encoding="utf-8") as file:
-            json.dump(enriched_tracks, file, ensure_ascii=False, indent=4)
-
-        return {"tracks": enriched_tracks, "message": "Playlist processed successfully."}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Error processing playlist: {str(e)}")
-
-
 @app.post("/fetch_gamemode1")
 async def fetch_gamemode1(payload: dict = Body(...)):
     playlist_id = payload.get("playlistID")
@@ -457,28 +406,6 @@ async def fetch_gamemode1(payload: dict = Body(...)):
     except Exception as e:
         logging.error(f"Error in fetch_gamemode1: {str(e)}")
         raise HTTPException(status_code=500, detail="Error processing gamemode1.")
-
-@app.post("/validate_answer")
-async def validate_answer(payload: ValidateAnswerRequest):
-    try:
-        # Simulating fetching the correct question for validation
-        with open("quiz_questions.json", "r") as file:
-            questions = json.load(file)
-
-        question_data = next(
-            (q for q in questions if q["question_id"] == payload.question_id), None
-        )
-
-        if not question_data:
-            raise HTTPException(status_code=404, detail="Question not found.")
-
-        is_correct = question_data["correct_option"]["name"] == payload.selected_option.name
-        return {"is_correct": is_correct}
-
-    except Exception as e:
-        logging.error(f"Validation error: {e}")
-        raise HTTPException(status_code=500, detail="Error validating answer.")
-
 
 @app.post("/save_score")
 async def save_score(score_data: QuizScore):

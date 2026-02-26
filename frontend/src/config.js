@@ -1,5 +1,5 @@
 const config = {
-  BASE_URL: "http://127.0.0.1:8000", // Backend URL — must match cookie host (127.0.0.1, not localhost)
+  BASE_URL: process.env.REACT_APP_API_URL || "http://127.0.0.1:8000",
   LOGIN_URL: "/login",
   DASHBOARD_URL: "/dashboard",
   ENDPOINTS: {
