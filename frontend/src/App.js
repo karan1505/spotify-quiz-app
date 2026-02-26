@@ -2,7 +2,6 @@ import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import WelcomePage from "./webpages/WelcomePage";
 import Troubleshooting from "./webpages/Troubleshooting";
-import Deliverables from "webpages/Deliverables";
 import Scoreboard from "webpages/Scoreboard";
 import Dashboard from "./webpages/Dashboard";
 import ShowSaved from "./custompages/ShowSaved";
@@ -16,8 +15,6 @@ function App() {
       <Routes>
         <Route path="/" element={<WelcomePage />} />
         <Route path="/troubleshooting" element={<Troubleshooting />} />
-        <Route path="/deliverables" element={<Deliverables />} />
-
         <Route path="/dashboard" element={<Dashboard />} />
 
         <Route path="/quiz/:quizId" element={<Quiz />} />
