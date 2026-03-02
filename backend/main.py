@@ -37,6 +37,10 @@ class QuizScore(BaseModel):
 
 app = FastAPI()
 
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
+
 @app.middleware("http")
 async def clear_cookie_on_sign_out(request: Request, call_next):
     response: Response = await call_next(request)
@@ -128,7 +132,8 @@ async def callback(request: Request):
             httponly=True,
             secure=not is_dev,
             samesite="Lax" if is_dev else "None",
-            max_age=3600
+            max_age=3600,
+            domain=Config.COOKIE_DOMAIN,
         )
 
         logging.info(f"Access token set, expires at {datetime.fromtimestamp(expires_at)}")
@@ -179,7 +184,7 @@ async def logout():
     )
 
     response = RedirectResponse(url=Config.FRONTEND_ORIGIN, status_code=303)
-    response.delete_cookie("access_token", path="/")
+    response.delete_cookie("access_token", path="/", domain=Config.COOKIE_DOMAIN)
     response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"

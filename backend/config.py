@@ -30,6 +30,9 @@ class Config:
     # MongoDB
     MONGO_URI = os.getenv("MONGO_URI")
 
+    # Cookie domain for cross-subdomain auth (e.g. ".quizzify.space")
+    COOKIE_DOMAIN = os.getenv("COOKIE_DOMAIN", None)
+
     # Scraper service
     SCRAPER_API_URL = os.getenv("SCRAPER_API_URL", "https://quizzify-scraper.onrender.com")
 
