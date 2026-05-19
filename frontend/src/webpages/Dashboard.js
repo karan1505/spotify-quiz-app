@@ -10,43 +10,28 @@ import {
   Box,
   Grid,
   Button,
-  CircularProgress,
+  Skeleton,
 } from "@mui/material";
 import config from "../config";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const [userInfo, setUserInfo] = useState(null);
-  // const [playlists, setPlaylists] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.defaults.withCredentials = true;
-
     const fetchUserInfo = async () => {
       try {
         const response = await axios.get(
           `${config.BASE_URL}${config.ENDPOINTS.USER_INFO}`
         );
         setUserInfo(response.data.user_info);
-      } catch (error) {
-        console.error("Failed to fetch user info:", error);
+      } catch {
+        // ProtectedRoute handles auth redirect
       }
     };
 
-    // const fetchUserPlaylists = async () => {
-    //   try {
-    //     const response = await axios.get(
-    //       `${config.BASE_URL}${config.ENDPOINTS.USER_PLAYLISTS}`
-    //     );
-    //     setPlaylists(response.data.items);
-    //   } catch (error) {
-    //     console.error("Failed to fetch user playlists:", error);
-    //   }
-    // };
-
     fetchUserInfo();
-    // fetchUserPlaylists();
   }, []);
 
   const signOut = async () => {
@@ -63,15 +48,45 @@ const Dashboard = () => {
         }
       }, 500);
       navigate("/");
-    } catch (error) {
-      console.error("Error during sign out:", error);
+    } catch {
+      // Sign out failed silently
     }
   };
 
   if (!userInfo) {
     return (
-      <Box textAlign="center" mt={5}>
-        <CircularProgress />
+      <Box
+        minHeight="100vh"
+        sx={{
+          backgroundImage: `url(https://images.pexels.com/photos/3721941/pexels-photo-3721941.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2)`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          py: 5,
+        }}
+      >
+        <Container maxWidth="lg">
+          <Box display="flex" alignItems="center" mb={5}>
+            <Skeleton variant="circular" width={100} height={100} sx={{ mr: 3 }} />
+            <Box>
+              <Skeleton variant="text" width={250} height={50} />
+              <Skeleton variant="rounded" width={120} height={45} sx={{ borderRadius: "20px" }} />
+            </Box>
+          </Box>
+          <Skeleton variant="text" width={200} height={45} sx={{ mx: "auto", mb: 3 }} />
+          <Grid container spacing={4} justifyContent="center">
+            {[...Array(9)].map((_, i) => (
+              <Grid item xs={12} sm={6} md={4} key={i}>
+                <Card>
+                  <Skeleton variant="rectangular" height={200} />
+                  <CardContent>
+                    <Skeleton variant="text" width="60%" />
+                    <Skeleton variant="text" width="80%" />
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
       </Box>
     );
   }
@@ -96,7 +111,8 @@ const Dashboard = () => {
               width: 100,
               height: 100,
               marginRight: 3,
-              border: "3px solid #1e88e5",
+              border: "3px solid",
+              borderColor: "secondary.main",
             }}
           />
           <Box>
@@ -105,10 +121,9 @@ const Dashboard = () => {
               component="h1"
               gutterBottom
               sx={{
-                color: "#fff", // Shortened color code for better readability
-                textShadow: "0px 1px 2px rgba(0, 0, 0, 0.5)", // Adds a subtle shadow for better contrast
-                fontWeight: 600, // Enhances readability by adding weight
-                fontSmoothing: "antialiased", // Ensures text rendering is smooth
+                color: "#fff",
+                textShadow: "0px 1px 2px rgba(0, 0, 0, 0.5)",
+                fontWeight: 600,
               }}
             >
               Welcome, {userInfo.display_name}!
@@ -116,12 +131,8 @@ const Dashboard = () => {
 
             <Button
               variant="contained"
+              color="secondary"
               sx={{
-                bgcolor: "#3182ce",
-                color: "#ffffff",
-                "&:hover": {
-                  bgcolor: "#2b6cb0",
-                },
                 px: 4,
                 py: 1.5,
                 borderRadius: "20px",
@@ -139,11 +150,10 @@ const Dashboard = () => {
           align="center"
           gutterBottom
           sx={{
-            color: "#fff", // Shortened color code for better readability
+            color: "#fff",
             fontFamily: "sans-serif",
-            textShadow: "0px 1px 2px rgba(0, 0, 0, 0.5)", // Adds a subtle shadow for better contrast
-            fontWeight: 500, // Enhances readability by adding weight
-            fontSmoothing: "antialiased", // Ensures text rendering is smooth
+            textShadow: "0px 1px 2px rgba(0, 0, 0, 0.5)",
+            fontWeight: 500,
             mb: 3,
           }}
         >
@@ -156,7 +166,6 @@ const Dashboard = () => {
               onClick={() => navigate("/quiz/top-50-global")}
               sx={{
                 cursor: "pointer",
-                bgcolor: "#ffffff",
                 boxShadow: 3,
                 transition: "transform 0.3s",
                 "&:hover": { transform: "scale(1.05)" },
@@ -172,7 +181,7 @@ const Dashboard = () => {
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
                   Top 50 Global
                 </Typography>
-                <Typography variant="body2" sx={{ color: "#4a5568" }}>
+                <Typography variant="body2" color="text.secondary">
                   Can you guess this week's top hits?
                 </Typography>
               </CardContent>
@@ -184,7 +193,6 @@ const Dashboard = () => {
               onClick={() => navigate("/quiz/70s-mix")}
               sx={{
                 cursor: "pointer",
-                bgcolor: "#ffffff",
                 boxShadow: 3,
                 transition: "transform 0.3s",
                 "&:hover": { transform: "scale(1.05)" },
@@ -200,7 +208,7 @@ const Dashboard = () => {
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
                   70s Mix
                 </Typography>
-                <Typography variant="body2" sx={{ color: "#4a5568" }}>
+                <Typography variant="body2" color="text.secondary">
                   Let's go back in time, are you ready?
                 </Typography>
               </CardContent>
@@ -212,7 +220,6 @@ const Dashboard = () => {
               onClick={() => navigate("/quiz/80s-mix")}
               sx={{
                 cursor: "pointer",
-                bgcolor: "#ffffff",
                 boxShadow: 3,
                 transition: "transform 0.3s",
                 "&:hover": { transform: "scale(1.05)" },
@@ -228,7 +235,7 @@ const Dashboard = () => {
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
                   80s Mix
                 </Typography>
-                <Typography variant="body2" sx={{ color: "#4a5568" }}>
+                <Typography variant="body2" color="text.secondary">
                   How well do you know your 80s music?
                 </Typography>
               </CardContent>
@@ -240,7 +247,6 @@ const Dashboard = () => {
               onClick={() => navigate("/quiz/taylor-swift")}
               sx={{
                 cursor: "pointer",
-                bgcolor: "#ffffff",
                 boxShadow: 3,
                 transition: "transform 0.3s",
                 "&:hover": { transform: "scale(1.05)" },
@@ -256,7 +262,7 @@ const Dashboard = () => {
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
                   Taylor Swift's Best
                 </Typography>
-                <Typography variant="body2" sx={{ color: "#4a5568" }}>
+                <Typography variant="body2" color="text.secondary">
                   Consider yourself a Swiftie? Prove yourself!
                 </Typography>
               </CardContent>
@@ -268,7 +274,6 @@ const Dashboard = () => {
               onClick={() => navigate("/quiz/michael-jackson")}
               sx={{
                 cursor: "pointer",
-                bgcolor: "#ffffff",
                 boxShadow: 3,
                 transition: "transform 0.3s",
                 "&:hover": { transform: "scale(1.05)" },
@@ -284,7 +289,7 @@ const Dashboard = () => {
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
                   Michael Jackson's Top Hits
                 </Typography>
-                <Typography variant="body2" sx={{ color: "#4a5568" }}>
+                <Typography variant="body2" color="text.secondary">
                   The best of the best
                 </Typography>
               </CardContent>
@@ -296,7 +301,6 @@ const Dashboard = () => {
               onClick={() => navigate("/quiz/queen")}
               sx={{
                 cursor: "pointer",
-                bgcolor: "#ffffff",
                 boxShadow: 3,
                 transition: "transform 0.3s",
                 "&:hover": { transform: "scale(1.05)" },
@@ -312,7 +316,7 @@ const Dashboard = () => {
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
                   This is Queen
                 </Typography>
-                <Typography variant="body2" sx={{ color: "#4a5568" }}>
+                <Typography variant="body2" color="text.secondary">
                   If you love Queen, you'll wanna play this!
                 </Typography>
               </CardContent>
@@ -324,7 +328,6 @@ const Dashboard = () => {
               onClick={() => navigate("/quiz/rock-classics")}
               sx={{
                 cursor: "pointer",
-                bgcolor: "#ffffff",
                 boxShadow: 3,
                 transition: "transform 0.3s",
                 "&:hover": { transform: "scale(1.05)" },
@@ -340,7 +343,7 @@ const Dashboard = () => {
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
                   Rock Classics
                 </Typography>
-                <Typography variant="body2" sx={{ color: "#4a5568" }}>
+                <Typography variant="body2" color="text.secondary">
                   How well do you know the Rock Classics?
                 </Typography>
               </CardContent>
@@ -352,7 +355,6 @@ const Dashboard = () => {
               onClick={() => navigate("/quiz/soft-pop")}
               sx={{
                 cursor: "pointer",
-                bgcolor: "#ffffff",
                 boxShadow: 3,
                 transition: "transform 0.3s",
                 "&:hover": { transform: "scale(1.05)" },
@@ -368,7 +370,7 @@ const Dashboard = () => {
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
                   Soft Pop Hits
                 </Typography>
-                <Typography variant="body2" sx={{ color: "#4a5568" }}>
+                <Typography variant="body2" color="text.secondary">
                   Well versed with Pop Music?
                 </Typography>
               </CardContent>
@@ -380,7 +382,6 @@ const Dashboard = () => {
               onClick={() => navigate("/quiz/rap-hits")}
               sx={{
                 cursor: "pointer",
-                bgcolor: "#ffffff",
                 boxShadow: 3,
                 transition: "transform 0.3s",
                 "&:hover": { transform: "scale(1.05)" },
@@ -396,7 +397,7 @@ const Dashboard = () => {
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
                   Most Streamed Rap Songs
                 </Typography>
-                <Typography variant="body2" sx={{ color: "#4a5568" }}>
+                <Typography variant="body2" color="text.secondary">
                   2024, great year for Hip-Hop, you well versed?
                 </Typography>
               </CardContent>
@@ -404,18 +405,17 @@ const Dashboard = () => {
           </Grid>
         </Grid>
 
-        {/* Additional Sections */}
+        {/* Custom Quizzes */}
         <Box mt={5}>
           <Typography
             variant="h4"
             align="center"
             gutterBottom
             sx={{
-              color: "#fff", // Shortened color code for better readability
+              color: "#fff",
               fontFamily: "sans-serif",
-              textShadow: "0px 1px 2px rgba(0, 0, 0, 0.5)", // Adds a subtle shadow for better contrast
-              fontWeight: 500, // Enhances readability by adding weight
-              fontSmoothing: "antialiased", // Ensures text rendering is smooth
+              textShadow: "0px 1px 2px rgba(0, 0, 0, 0.5)",
+              fontWeight: 500,
               mb: 3,
             }}
           >
@@ -423,13 +423,11 @@ const Dashboard = () => {
           </Typography>
         </Box>
         <Grid container spacing={4}>
-          {/* Utility Cards */}
           <Grid item xs={12} sm={6} md={4}>
             <Card
               onClick={() => navigate("/showsaved")}
               sx={{
                 cursor: "pointer",
-                bgcolor: "#ffffff",
                 boxShadow: 3,
                 transition: "transform 0.3s",
                 "&:hover": { transform: "scale(1.05)" },
@@ -445,7 +443,7 @@ const Dashboard = () => {
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
                   Play Your Saved Playlists
                 </Typography>
-                <Typography variant="body2" sx={{ color: "#4a5568" }}>
+                <Typography variant="body2" color="text.secondary">
                   Play one of your saved playlists and test how well you know
                   your own playlists!
                 </Typography>
@@ -457,7 +455,6 @@ const Dashboard = () => {
               onClick={() => navigate("/saveplaylist")}
               sx={{
                 cursor: "pointer",
-                bgcolor: "#ffffff",
                 boxShadow: 3,
                 transition: "transform 0.3s",
                 "&:hover": { transform: "scale(1.05)" },
@@ -473,7 +470,7 @@ const Dashboard = () => {
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
                   Save a Playlist
                 </Typography>
-                <Typography variant="body2" sx={{ color: "#4a5568" }}>
+                <Typography variant="body2" color="text.secondary">
                   Create to play with custom playlists from your library!
                 </Typography>
               </CardContent>
@@ -484,7 +481,6 @@ const Dashboard = () => {
               onClick={() => navigate("/removeplaylist")}
               sx={{
                 cursor: "pointer",
-                bgcolor: "#ffffff",
                 boxShadow: 3,
                 transition: "transform 0.3s",
                 "&:hover": { transform: "scale(1.05)" },
@@ -500,7 +496,7 @@ const Dashboard = () => {
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
                   Delete Playlist
                 </Typography>
-                <Typography variant="body2" sx={{ color: "#4a5568" }}>
+                <Typography variant="body2" color="text.secondary">
                   Delete a saved playlist from our servers, note that we don't
                   store any private playlists or personal data
                 </Typography>
@@ -509,32 +505,29 @@ const Dashboard = () => {
           </Grid>
         </Grid>
 
-        {/* Additional Sections */}
+        {/* Stats */}
         <Box mt={5}>
           <Typography
             variant="h4"
             align="center"
             gutterBottom
             sx={{
-              color: "#fff", // Shortened color code for better readability
+              color: "#fff",
               fontFamily: "sans-serif",
-              textShadow: "0px 1px 2px rgba(0, 0, 0, 0.5)", // Adds a subtle shadow for better contrast
-              fontWeight: 500, // Enhances readability by adding weight
-              fontSmoothing: "antialiased", // Ensures text rendering is smooth
+              textShadow: "0px 1px 2px rgba(0, 0, 0, 0.5)",
+              fontWeight: 500,
               mb: 3,
             }}
           >
-            Stats and Other
+            Stats
           </Typography>
         </Box>
         <Grid container spacing={4}>
-          {/* Utility Cards */}
           <Grid item xs={12} sm={6} md={4}>
             <Card
               onClick={() => navigate("/scoreboard")}
               sx={{
                 cursor: "pointer",
-                bgcolor: "#ffffff",
                 boxShadow: 3,
                 transition: "transform 0.3s",
                 "&:hover": { transform: "scale(1.05)" },
@@ -550,35 +543,8 @@ const Dashboard = () => {
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
                   Scoreboard
                 </Typography>
-                <Typography variant="body2" sx={{ color: "#4a5568" }}>
+                <Typography variant="body2" color="text.secondary">
                   Check this out to see how well you are doing!
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={4}>
-            <Card
-              onClick={() => navigate("/about")}
-              sx={{
-                cursor: "pointer",
-                bgcolor: "#ffffff",
-                boxShadow: 3,
-                transition: "transform 0.3s",
-                "&:hover": { transform: "scale(1.05)" },
-              }}
-            >
-              <CardMedia
-                component="img"
-                height="200"
-                image="https://images.unsplash.com/photo-1493235431945-90c060301e41?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                alt="About"
-              />
-              <CardContent>
-                <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                  About
-                </Typography>
-                <Typography variant="body2" sx={{ color: "#4a5568" }}>
-                  About the website and its creators
                 </Typography>
               </CardContent>
             </Card>

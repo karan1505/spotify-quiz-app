@@ -12,6 +12,7 @@ import {
   DialogTitle,
   DialogContent,
   IconButton,
+  Chip,
 } from "@mui/material";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
@@ -287,6 +288,40 @@ const WelcomePage = () => {
             </Grid>
           ))}
         </Grid>
+      </Container>
+
+      {/* Built With */}
+      <Container maxWidth="md" sx={{ mt: 6, textAlign: "center" }}>
+        <Typography
+          variant="h5"
+          gutterBottom
+          sx={{
+            fontWeight: 600,
+            color: "#ffffff",
+            textShadow: "0px 2px 4px rgba(0, 0, 0, 0.7)",
+            mb: 2,
+          }}
+        >
+          Built With
+        </Typography>
+        <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 1.5 }}>
+          {["React", "FastAPI", "MongoDB", "Spotify API", "Material UI", "Playwright", "Framer Motion"].map(
+            (tech) => (
+              <Chip
+                key={tech}
+                label={tech}
+                sx={{
+                  bgcolor: "rgba(255,255,255,0.15)",
+                  color: "#fff",
+                  fontWeight: 500,
+                  fontSize: "0.85rem",
+                  backdropFilter: "blur(4px)",
+                  border: "1px solid rgba(255,255,255,0.2)",
+                }}
+              />
+            )
+          )}
+        </Box>
       </Container>
 
       {/* Footer */}

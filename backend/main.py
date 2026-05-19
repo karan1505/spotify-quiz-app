@@ -1,6 +1,6 @@
 import os
 import json
-from fastapi import FastAPI, Request, HTTPException, Body
+from fastapi import FastAPI, Request, HTTPException, Body, Response
 from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from spotipy import Spotify
@@ -57,9 +57,10 @@ async def clear_cookie_on_sign_out(request: Request, call_next):
 logging.basicConfig(level=logging.INFO)
 
 # Allow requests from localhost frontend with CORS settings
+dev_origins = ["http://localhost:3000"] if Config.ENV == "development" else []
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[Config.FRONTEND_ORIGIN],  # Frontend origin
+    allow_origins=[Config.FRONTEND_ORIGIN] + dev_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -133,7 +134,7 @@ async def callback(request: Request):
             secure=not is_dev,
             samesite="Lax" if is_dev else "None",
             max_age=3600,
-            domain=Config.COOKIE_DOMAIN,
+            domain=None if is_dev else Config.COOKIE_DOMAIN,
         )
 
         logging.info(f"Access token set, expires at {datetime.fromtimestamp(expires_at)}")

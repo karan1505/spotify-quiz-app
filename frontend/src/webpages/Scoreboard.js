@@ -10,9 +10,9 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { styled } from "@mui/system";
-import config from "config";
+import config from "../config";
+import BackButton from "../components/BackButton";
 
-// Styled components (no changes needed)
 const Root = styled(Box)(({ theme }) => ({
   minHeight: "100vh",
   background: `url(https://images.unsplash.com/photo-1590310182704-037fe3509ada?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D) no-repeat center center fixed`,
@@ -53,8 +53,8 @@ const Scoreboard = () => {
       try {
         const response = await axios.get(`${config.BASE_URL}/get_scores`);
         setScores(response.data.scores || []);
-      } catch (error) {
-        console.error("Error fetching scores:", error);
+      } catch {
+        // handled by ProtectedRoute
       } finally {
         setLoading(false);
       }
@@ -74,6 +74,7 @@ const Scoreboard = () => {
   if (scores.length === 0) {
     return (
       <Box textAlign="center" mt={5}>
+        <BackButton />
         <Typography variant="h6" color="textSecondary">
           No scores found. Go play some quizzes!
         </Typography>
@@ -81,7 +82,6 @@ const Scoreboard = () => {
     );
   }
 
-  // Group scores by quiz name and calculate overall performance
   const quizzes = scores.reduce((acc, score) => {
     const { quiz_name, score: userScore } = score;
     if (!acc[quiz_name]) {
@@ -89,12 +89,13 @@ const Scoreboard = () => {
     }
     acc[quiz_name].scores.push(score);
     acc[quiz_name].totalScore += userScore;
-    acc[quiz_name].maxScore += 5; // Assuming 5 points per question
+    acc[quiz_name].maxScore += 5;
     return acc;
   }, {});
 
   return (
     <Root>
+      <BackButton />
       <Container maxWidth="lg">
         <Header variant="h3">Your Quiz Scoreboard</Header>
         <Overlay>
@@ -113,7 +114,7 @@ const Scoreboard = () => {
                         variant="h5"
                         sx={{
                           fontWeight: "bold",
-                          color: "#333",
+                          color: "text.primary",
                           marginBottom: 2,
                         }}
                       >
@@ -124,25 +125,12 @@ const Scoreboard = () => {
                         sx={{
                           fontWeight: "bold",
                           marginBottom: 2,
-                          color: "green",
+                          color: "success.main",
                         }}
                       >
                         Overall Performance: {overallPercentage}%
                       </Typography>
                       {scores.map((score, index) => {
-                        /*
-                        const localTime = new Intl.DateTimeFormat(
-                          navigator.language,
-                          {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                            hour: "numeric",
-                            minute: "numeric",
-                            second: "numeric",
-                          }
-                        ).format(new Date(score.timestamp));
-                        */
                         const localTime = `${new Intl.DateTimeFormat(
                           navigator.language,
                           {
@@ -153,7 +141,7 @@ const Scoreboard = () => {
                             minute: "numeric",
                             second: "numeric",
                           }
-                        ).format(new Date(score.timestamp))} GMT`;                        
+                        ).format(new Date(score.timestamp))} GMT`;
                         return (
                           <Box key={index} sx={{ marginBottom: 1 }}>
                             <Typography

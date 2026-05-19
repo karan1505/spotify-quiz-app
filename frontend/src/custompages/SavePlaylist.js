@@ -15,9 +15,27 @@ import {
   DialogActions,
   Container,
   DialogContentText,
+  Snackbar,
+  Alert,
 } from "@mui/material";
+import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import { useNavigate } from "react-router-dom";
 import config from "../config";
+import BackButton from "../components/BackButton";
+
+const PlaylistImageFallback = () => (
+  <Box
+    sx={{
+      height: 200,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      bgcolor: "#e0e0e0",
+    }}
+  >
+    <MusicNoteIcon sx={{ fontSize: 64, color: "#9e9e9e" }} />
+  </Box>
+);
 
 const SavePlaylist = () => {
   const [playlists, setPlaylists] = useState([]);
@@ -26,6 +44,7 @@ const SavePlaylist = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [loadingDialogOpen, setLoadingDialogOpen] = useState(false);
   const [showConditions, setShowConditions] = useState(true);
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
 
   const navigate = useNavigate();
 
@@ -36,8 +55,8 @@ const SavePlaylist = () => {
           `${config.BASE_URL}/filtered_playlists`
         );
         setPlaylists(response.data.filtered_playlists || []);
-      } catch (error) {
-        console.error("Failed to fetch filtered playlists:", error);
+      } catch {
+        setSnackbar({ open: true, message: "Failed to load playlists.", severity: "error" });
       }
     };
 
@@ -63,13 +82,18 @@ const SavePlaylist = () => {
         playlistName: selectedPlaylist.name,
       });
 
-      alert(
-        "Your playlist has been processed! Go to the saved playlists section on the dashboard to test yourself!"
-      );
-      navigate("/dashboard");
-    } catch (error) {
-      console.error("Error processing playlist:", error);
-      alert("There was an error submitting your playlist. Please try again.");
+      setSnackbar({
+        open: true,
+        message: "Your playlist has been processed! Go to saved playlists to test yourself.",
+        severity: "success",
+      });
+      setTimeout(() => navigate("/dashboard"), 2000);
+    } catch {
+      setSnackbar({
+        open: true,
+        message: "There was an error submitting your playlist. Please try again.",
+        severity: "error",
+      });
     } finally {
       setIsProcessing(false);
       setLoadingDialogOpen(false);
@@ -86,6 +110,7 @@ const SavePlaylist = () => {
         py: 5,
       }}
     >
+      <BackButton />
       <Container maxWidth="lg">
         <Dialog
           open={showConditions}
@@ -127,7 +152,6 @@ const SavePlaylist = () => {
             </Button>
           </DialogActions>
         </Dialog>
-        ;
         <Typography
           variant="h4"
           align="center"
@@ -147,22 +171,22 @@ const SavePlaylist = () => {
               <Card
                 sx={{
                   cursor: isProcessing ? "not-allowed" : "pointer",
-                  bgcolor: "#ffffff",
                   boxShadow: 3,
                   transition: "transform 0.3s",
                   "&:hover": { transform: "scale(1.05)" },
                 }}
                 onClick={() => handleCardClick(playlist)}
               >
-                <CardMedia
-                  component="img"
-                  height="200"
-                  image={
-                    playlist.images?.[0]?.url ||
-                    "https://via.placeholder.com/200x200?text=No+Image"
-                  }
-                  alt={playlist.name}
-                />
+                {playlist.images?.[0]?.url ? (
+                  <CardMedia
+                    component="img"
+                    height="200"
+                    image={playlist.images[0].url}
+                    alt={playlist.name}
+                  />
+                ) : (
+                  <PlaylistImageFallback />
+                )}
                 <CardContent>
                   <Typography
                     variant="h6"
@@ -172,7 +196,8 @@ const SavePlaylist = () => {
                   </Typography>
                   <Typography
                     variant="body2"
-                    sx={{ textAlign: "center", color: "#4a5568" }}
+                    sx={{ textAlign: "center" }}
+                    color="text.secondary"
                   >
                     {playlist.description || "No description available"}
                   </Typography>
@@ -220,6 +245,17 @@ const SavePlaylist = () => {
           </Box>
         </DialogContent>
       </Dialog>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert severity={snackbar.severity} onClose={() => setSnackbar((s) => ({ ...s, open: false }))}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

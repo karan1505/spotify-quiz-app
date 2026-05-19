@@ -15,24 +15,41 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Snackbar,
+  Alert,
 } from "@mui/material";
+import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import config from "../config";
+import BackButton from "../components/BackButton";
+
+const PlaylistImageFallback = () => (
+  <Box
+    sx={{
+      height: 200,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      bgcolor: "#e0e0e0",
+    }}
+  >
+    <MusicNoteIcon sx={{ fontSize: 64, color: "#9e9e9e" }} />
+  </Box>
+);
 
 const RemovePlaylist = () => {
   const [playlists, setPlaylists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedPlaylist, setSelectedPlaylist] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
 
   useEffect(() => {
-    axios.defaults.withCredentials = true;
-
     const fetchSavedPlaylists = async () => {
       try {
         const response = await axios.get(`${config.BASE_URL}/saved_playlists`);
-        setPlaylists(response.data.saved_playlists); // Adjust to match the endpoint response structure
-      } catch (error) {
-        console.error("Failed to fetch saved playlists:", error);
+        setPlaylists(response.data.saved_playlists);
+      } catch {
+        setSnackbar({ open: true, message: "Failed to load playlists.", severity: "error" });
       } finally {
         setLoading(false);
       }
@@ -43,20 +60,16 @@ const RemovePlaylist = () => {
 
   const handleRemovePlaylist = async () => {
     try {
-      const response = await axios.delete(
-        `${config.BASE_URL}/remove_playlist`,
-        {
-          data: { playlistId: selectedPlaylist.id },
-        }
-      );
-      console.log(response.data.message);
+      await axios.delete(`${config.BASE_URL}/remove_playlist`, {
+        data: { playlistId: selectedPlaylist.id },
+      });
 
-      // Update the playlists state to remove the deleted playlist
       setPlaylists(
         playlists.filter((playlist) => playlist.id !== selectedPlaylist.id)
       );
-    } catch (error) {
-      console.error("Error removing playlist:", error);
+      setSnackbar({ open: true, message: "Playlist removed successfully.", severity: "success" });
+    } catch {
+      setSnackbar({ open: true, message: "Failed to remove playlist. Please try again.", severity: "error" });
     } finally {
       setDialogOpen(false);
       setSelectedPlaylist(null);
@@ -84,6 +97,7 @@ const RemovePlaylist = () => {
   if (!playlists.length) {
     return (
       <Box textAlign="center" mt={5}>
+        <BackButton />
         <Typography variant="h6" color="textSecondary">
           No saved playlists found.
         </Typography>
@@ -101,6 +115,7 @@ const RemovePlaylist = () => {
         py: 5,
       }}
     >
+      <BackButton />
       <Container maxWidth="lg">
         <Typography
           variant="h4"
@@ -122,27 +137,27 @@ const RemovePlaylist = () => {
               <Card
                 sx={{
                   cursor: "pointer",
-                  bgcolor: "#ffffff",
                   boxShadow: 3,
                   transition: "transform 0.3s",
                   "&:hover": { transform: "scale(1.05)" },
                 }}
                 onClick={() => openDialog(playlist)}
               >
-                <CardMedia
-                  component="img"
-                  height="200"
-                  image={
-                    playlist.images?.[0]?.url ||
-                    "https://via.placeholder.com/200x200?text=No+Image"
-                  }
-                  alt={playlist.name}
-                />
+                {playlist.images?.[0]?.url ? (
+                  <CardMedia
+                    component="img"
+                    height="200"
+                    image={playlist.images[0].url}
+                    alt={playlist.name}
+                  />
+                ) : (
+                  <PlaylistImageFallback />
+                )}
                 <CardContent>
                   <Typography variant="h6" sx={{ fontWeight: 600 }}>
                     {playlist.name}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: "#4a5568" }}>
+                  <Typography variant="body2" color="text.secondary">
                     {playlist.tracks.total} Tracks
                   </Typography>
                 </CardContent>
@@ -173,6 +188,17 @@ const RemovePlaylist = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert severity={snackbar.severity} onClose={() => setSnackbar((s) => ({ ...s, open: false }))}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

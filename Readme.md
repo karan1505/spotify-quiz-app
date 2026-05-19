@@ -1,85 +1,139 @@
-# Quizzify - A Spotify Quiz App
+# Quizzify
 
-[![Spotify Quiz App](https://img.shields.io/badge/Live-Demo-blue)](https://quizzify-frontend-6sp3.onrender.com/)
+[![Live Demo](https://img.shields.io/badge/Live-quizzify.space-1DB954?style=for-the-badge)](https://quizzify.space)
+![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?style=flat-square&logo=fastapi)
+![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?style=flat-square&logo=mongodb)
+![Spotify](https://img.shields.io/badge/Spotify-API-1DB954?style=flat-square&logo=spotify)
+![MUI](https://img.shields.io/badge/MUI-v6-007FFF?style=flat-square&logo=mui)
+![Playwright](https://img.shields.io/badge/Playwright-Scraper-2EAD33?style=flat-square&logo=playwright)
 
-A fun and interactive quiz app built around Spotify's music catalog, where users can test their knowledge of songs, artists, and genres. This project demonstrates ability to work with web APIs, backend technologies, and frontend design, along with an engaging user experience.
+A Spotify-powered music quiz app where users test their knowledge on curated playlists, artist deep dives, genre challenges, and their own Spotify library.
+
+> **Note:** Spotify's development mode requires whitelisted accounts. To try the live demo, email [karansreedhar15@gmail.com](mailto:karansreedhar15@gmail.com) or [srinath.ganesh@outlook.com](mailto:srinath.ganesh@outlook.com) with your Spotify account email.
 
 ---
 
-## Table of Contents
-1. [Demo](#demo)
-2. [Features](#features)
-3. [Tech Stack](#tech-stack)
-4. [Screenshots](#screenshots)
+## Architecture
 
----
+```
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│    Frontend      │────▶│    Backend       │────▶│    Scraper       │
+│  React 18 SPA    │     │  FastAPI + Mongo │     │ FastAPI+Playwright│
+│  quizzify.space  │     │ api.quizzify.space│    │  (Google Cloud)  │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+        │                        │
+        │   Spotify OAuth        │   MongoDB Atlas
+        └────────────────────────┘
+```
 
-## Demo
+**Auth flow:** Frontend redirects to backend `/login` → Spotify OAuth → callback sets HTTP-only cookie → frontend sends cookie automatically with every request.
 
-You can try out the live demo of the Spotify Quiz App here:
-
-ALERT: Authorised User Required for Demo, contact authors if interested in trying out the demo
-
-[Live Demo Link](https://quizzify-frontend-6sp3.onrender.com/)
-
-
+**Quiz flow:** Frontend POSTs playlist ID → backend picks 5 random tracks from MongoDB → generates 4-option questions → user answers with countdown timer → score saved to database.
 
 ---
 
 ## Features
 
-**Website Features**
-
-- **Track Name and Artist Guessing**: Users guess the song and artist based on a short preview clip
-- **Web Scraping**: Playwright based scraping for PreviewURL caching
-- **Custom Quizzes**: Users can provide a quiz of their own to quiz themselves
-- **Multiple Gamemodes**: Users can choose from a curated list of playlists to quiz themselves on
-- **Score Tracking**: Keep track of your score as you progress through the quizzes, and save it for viewing later
-- **Difficulty Based Quiz Timer**: Each question has a countdown timer for added challenge, which is determined by Difficulty level
-- **Spotify Integration**: Uses Spotify’s Web API to fetch songs, user playlists, album art, etc.
-
----
-
-## Tech Stack
-
-- **Frontend**: ReactJS
-- **Backend**: FastAPI (Python)
-- **Scraper**: Playwright (Python)
-- **Database**: MongoDB
-- **Authentication**: Spotify API
-- **Deployment**: Render -> Frontend & Backend, Google Cloud -> Scraping
+- **Curated quizzes** — Top 50 Global, Taylor Swift, Queen, Michael Jackson, 70s/80s, Rock, Pop, Rap
+- **Custom quizzes** — import any Spotify playlist (20+ tracks) and quiz yourself
+- **Difficulty levels** — Easy (30s), Medium (15s), Hard (5s) countdown timers
+- **Score tracking** — persistent scoreboard with per-quiz performance stats
+- **Audio previews** — listen to track clips and guess the song + artist
+- **Playlist scraper** — Playwright-based microservice scrapes Apple Music for preview URLs when Spotify doesn't provide them
 
 ---
 
 ## Screenshots
 
 ![Landing Page](images/screenshot1.png)
-*The Landing Page where the users are led to first*
+*Landing page with sign-in and demo carousel*
 
 ![Dashboard](images/screenshot2.png)
-*The Dashboard where users can choose their preferred gamemode* 
+*Dashboard with curated and custom quiz options*
 
 ![Quiz Start](images/screenshot3.png)
-*The Quiz start page where users pick difficulty* 
+*Difficulty selection before starting a quiz*
 
-![Quiz](images/screenshot4.png)
-*The Quiz Page, where users play the quiz, with a time limit for each track, and animations to indicate if the guess is correct* 
-
-![Scoreboard](images/screenshot5.png)
-*The score are saved on quiz completion and are viewable in the scoreboard section on the Dashboard* 
+![Quiz Gameplay](images/screenshot4.png)
+*Quiz in action with countdown timer and answer feedback*
 
 ![Scoreboard](images/screenshot5.png)
-*The score are saved on quiz completion and are viewable in the scoreboard section on the Dashboard* 
+*Score tracking with per-quiz performance breakdown*
 
-![Save Playlist Prompt](images/screenshot6.png)
-*Users can save a playlist, provided it meets the conditions* 
+![Save Playlist](images/screenshot6.png)
+*Conditions for saving a custom playlist*
 
-![Saving Playlist](images/screenshot7.png)
-*Playlist is saved after submitting* 
+![Processing](images/screenshot7.png)
+*Playlist processing in progress*
 
-![Saving Playlist](images/screenshot8.png)
-*Users can then select their saved playlist to play custom game mode*
+![Saved Playlists](images/screenshot8.png)
+*Saved playlists ready for custom quizzes*
 
-![Saving Playlist](images/screenshot9.png)
-*Custom Quiz UI*
+![Custom Quiz](images/screenshot9.png)
+*Custom quiz gameplay*
+
 ---
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- Python 3.10+
+- MongoDB Atlas account (or local MongoDB)
+- [Spotify Developer App](https://developer.spotify.com/dashboard) with redirect URI `http://127.0.0.1:8000/callback`
+
+### Setup
+
+1. **Clone the repo**
+   ```bash
+   git clone https://github.com/your-username/quizzify.git
+   cd quizzify/spotify-quiz-app
+   ```
+
+2. **Backend**
+   ```bash
+   cd backend
+   cp .env.example .env
+   # Fill in your Spotify credentials and MongoDB URI in .env
+   pip install -r requirements.txt
+   uvicorn main:app --port 8000 --reload
+   ```
+
+3. **Frontend**
+   ```bash
+   cd frontend
+   cp .env.example .env
+   # Ensure REACT_APP_API_URL=http://127.0.0.1:8000
+   npm install
+   npm start
+   ```
+
+4. **Scraper (optional)** — only needed for importing custom playlists with missing preview URLs
+   ```bash
+   cd scraper
+   pip install -r requirements.txt
+   uvicorn main:app --port 8001 --reload
+   ```
+
+5. Open `http://localhost:3000` and sign in with Spotify.
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Frontend | React 18, React Router v6, Material UI v6, Framer Motion, Axios |
+| Backend | FastAPI, Spotipy, PyMongo, Pydantic |
+| Database | MongoDB Atlas |
+| Scraper | FastAPI, Playwright (Chromium) |
+| Auth | Spotify OAuth 2.0 (HTTP-only cookies) |
+| Deployment | Render (frontend + backend), Google Cloud (scraper) |
+
+---
+
+## License
+
+[MIT](LICENSE)

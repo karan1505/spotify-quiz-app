@@ -13,11 +13,14 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { motion } from "framer-motion";
 import Confetti from "react-confetti";
 import config from "../config";
 import { CURATED_QUIZZES } from "./quizConfig";
+import BackButton from "../components/BackButton";
 
 const DEFAULT_BACKGROUND =
   "https://i.pinimg.com/736x/f5/8b/f2/f58bf2768a6d836a1a77c27ad450cbe4.jpg";
@@ -53,18 +56,18 @@ const Quiz = () => {
   const audioRef = useRef(null);
   const pendingTimeouts = useRef(0);
   const [difficulty, setDifficulty] = useState(null);
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "warning" });
 
   useEffect(() => {
     const fetchGamemode1 = async () => {
       try {
-        axios.defaults.withCredentials = true;
         const response = await axios.post(
           `${config.BASE_URL}/fetch_gamemode1`,
           { playlistID }
         );
         setQuestions(response.data.questions);
-      } catch (error) {
-        console.error("Failed to fetch gamemode1 data:", error);
+      } catch {
+        setSnackbar({ open: true, message: "Failed to load quiz questions. Please try again.", severity: "error" });
       }
     };
     fetchGamemode1();
@@ -136,9 +139,7 @@ const Quiz = () => {
 
       if (audioRef.current && audioUrl) {
         audioRef.current.src = audioUrl;
-        audioRef.current
-          .play()
-          .catch((error) => console.error("Audio play failed:", error));
+        audioRef.current.play().catch(() => {});
       }
       resetTimer();
     }
@@ -167,9 +168,8 @@ const Quiz = () => {
             quiz_name: scoreboardName,
             score: score,
           });
-          console.log("Score saved successfully!");
-        } catch (error) {
-          console.error("Error saving score:", error);
+        } catch {
+          setSnackbar({ open: true, message: "Failed to save your score.", severity: "error" });
         }
       };
 
@@ -206,7 +206,7 @@ const Quiz = () => {
 
   const handleStartQuiz = () => {
     if (!difficulty) {
-      alert("Please select a difficulty level before starting the quiz.");
+      setSnackbar({ open: true, message: "Please select a difficulty level before starting the quiz.", severity: "warning" });
       return;
     }
     setQuizStarted(true);
@@ -237,6 +237,7 @@ const Quiz = () => {
           overflow: "hidden",
         }}
       >
+        <BackButton />
         <Box
           sx={{
             position: "absolute",
@@ -290,7 +291,7 @@ const Quiz = () => {
                   <CardContent>
                     <Typography
                       variant="h6"
-                      sx={{ fontWeight: 500, color: "#333" }}
+                      sx={{ fontWeight: 500, color: "text.primary" }}
                     >
                       {content}
                     </Typography>
@@ -320,9 +321,9 @@ const Quiz = () => {
                       cursor: "pointer",
                       backgroundColor:
                         difficulty === level
-                          ? "#4caf50"
+                          ? "success.main"
                           : "rgba(255, 255, 255, 0.9)",
-                      color: difficulty === level ? "#fff" : "#333",
+                      color: difficulty === level ? "#fff" : "text.primary",
                       "&:hover": {
                         transform: "scale(1.05)",
                         boxShadow: "0 8px 20px rgba(0, 0, 0, 0.4)",
@@ -355,13 +356,13 @@ const Quiz = () => {
                 onClick={handleStartQuiz}
                 sx={{
                   mt: 3,
-                  backgroundColor: "#4caf50",
+                  backgroundColor: "success.main",
                   color: "#fff",
                   fontWeight: "bold",
                   borderRadius: "8px",
                   padding: "10px 20px",
                   boxShadow: "0 6px 15px rgba(0, 0, 0, 0.3)",
-                  "&:hover": { backgroundColor: "#43a047" },
+                  "&:hover": { backgroundColor: "success.dark" },
                 }}
               >
                 Start Quiz
@@ -369,6 +370,16 @@ const Quiz = () => {
             </motion.div>
           </Box>
         </Container>
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={4000}
+          onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        >
+          <Alert severity={snackbar.severity} onClose={() => setSnackbar((s) => ({ ...s, open: false }))}>
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
       </Box>
     );
   }
@@ -385,6 +396,7 @@ const Quiz = () => {
           overflow: "hidden",
         }}
       >
+        <BackButton />
         <Box
           sx={{
             position: "absolute",
@@ -423,7 +435,7 @@ const Quiz = () => {
             variant="h4"
             sx={{
               fontWeight: "bold",
-              color: "#333",
+              color: "text.primary",
               textShadow: "0 4px 6px rgba(0, 0, 0, 0.2)",
             }}
           >
@@ -433,13 +445,23 @@ const Quiz = () => {
             variant="h5"
             mt={2}
             sx={{
-              color: "#4caf50",
+              color: "success.main",
               fontWeight: "bold",
             }}
           >
             Your Score: {score} / {questions.length}
           </Typography>
         </Card>
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={4000}
+          onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        >
+          <Alert severity={snackbar.severity} onClose={() => setSnackbar((s) => ({ ...s, open: false }))}>
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
       </Box>
     );
   }
@@ -457,6 +479,7 @@ const Quiz = () => {
         overflow: "hidden",
       }}
     >
+      <BackButton />
       <Box
         sx={{
           position: "absolute",
@@ -497,7 +520,7 @@ const Quiz = () => {
             variant="h4"
             sx={{
               fontWeight: "bold",
-              color: "#333",
+              color: "text.primary",
               textShadow: "0 4px 6px rgba(0, 0, 0, 0.2)",
             }}
           >
@@ -506,7 +529,7 @@ const Quiz = () => {
           <Typography
             variant="h6"
             sx={{
-              color: "#4caf50",
+              color: "success.main",
               fontWeight: "bold",
             }}
           >
@@ -530,8 +553,8 @@ const Quiz = () => {
                     backgroundColor:
                       selectedOptionFeedback?.option === option
                         ? selectedOptionFeedback.isCorrect
-                          ? "#4caf50"
-                          : "#f44336"
+                          ? "success.main"
+                          : "error.main"
                         : "rgba(255, 255, 255, 0.9)",
                     "&:hover": {
                       boxShadow: "0 8px 20px rgba(0, 0, 0, 0.4)",
@@ -550,7 +573,7 @@ const Quiz = () => {
                       sx={{
                         fontWeight: 500,
                         fontSize: "15px",
-                        color: "#333",
+                        color: "text.primary",
                       }}
                     >
                       {option.name}
@@ -558,7 +581,7 @@ const Quiz = () => {
                     <Typography
                       variant="body2"
                       sx={{
-                        color: "#555",
+                        color: "text.hint",
                       }}
                     >
                       {option.artist}
@@ -594,7 +617,7 @@ const Quiz = () => {
               variant="h6"
               sx={{
                 fontWeight: "bold",
-                color: "#4caf50",
+                color: "success.main",
               }}
             >
               Loading..
